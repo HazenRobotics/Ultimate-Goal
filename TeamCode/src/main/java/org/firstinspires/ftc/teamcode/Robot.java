@@ -69,6 +69,7 @@ public class Robot {
      *              <br><i>NOTE: + is to the right, - is to the left</i>
      */
     public void turn( double power ) {
+
         mecanumDrive( 0, 0, power );
     }
 
@@ -93,6 +94,7 @@ public class Robot {
      */
 
     private void setFlyWheelMotorPower( double leftPower, double rightPower ) {
+
         leftFlyWheelMotor.setPower( leftPower );
         rightFlyWheelMotor.setPower( rightPower );
     }
