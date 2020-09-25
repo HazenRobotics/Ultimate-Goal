@@ -16,14 +16,14 @@ public class Robot {
     DcMotor leftFlyWheelMotor;
     DcMotor rightFlyWheelMotor;
 
-    DcMotor frontLeftMotor;
-    DcMotor frontRightMotor;
-    DcMotor backLeftMotor;
-    DcMotor backRightMotor;
+    DcMotor frontLeftWheelMotor;
+    DcMotor frontRightWheelMotor;
+    DcMotor backLeftWheelMotor;
+    DcMotor backRightWheelMotor;
     // Corban, we're gonna have 4 wheels (mecanum)
 
 
-    public Robot(HardwareMap hw){
+    public Robot( HardwareMap hw ) {
         this.hardwareMap = hw;
 
         intakeMotor = hardwareMap.dcMotor.get( "intakeMotor" );
@@ -34,50 +34,51 @@ public class Robot {
         leftFlyWheelMotor = hardwareMap.dcMotor.get( "leftFlyWheelMotor" );
         rightFlyWheelMotor = hardwareMap.dcMotor.get( "rightFlyWheelMotor" );
 
-        frontLeftMotor = hardwareMap.dcMotor.get( "frontLeftWheel" );
-        frontRightMotor = hardwareMap.dcMotor.get( "frontRightWheel" );
-        backLeftMotor = hardwareMap.dcMotor.get( "backLeftWheel" );
-        backRightMotor = hardwareMap.dcMotor.get( "backRightWheel" );
+        frontLeftWheelMotor = hardwareMap.dcMotor.get( "frontLeftWheel" );
+        frontRightWheelMotor = hardwareMap.dcMotor.get( "frontRightWheel" );
+        backLeftWheelMotor = hardwareMap.dcMotor.get( "backLeftWheel" );
+        backRightWheelMotor = hardwareMap.dcMotor.get( "backRightWheel" );
 
 
     }
 
     /**
      * Moves the robot forwards or backwards
+     *
      * @param power power at which to run the motors.
      *              <br><i>NOTE: + is forwards, - is backwards</i>
-     *
      */
-    public void move(double power){
-        setMotorPower( power, 0, 0 );
+    public void move( double power ) {
+        mecanumDrive( power, 0, 0 );
     }
 
     /**
      * Moves the robot forwards or backwards
+     *
      * @param power power at which to run the motors.
      *              <br><i>NOTE: + is forwards, - is backwards</i>
-     *
      */
-    public void strafe(double power){
-        setMotorPower( 0, power, 0 );
+    public void strafe( double power ) {
+        mecanumDrive( 0, power, 0 );
     }
 
     /**
      * Turns the robot to the left or the right
+     *
      * @param power power at which to run the motors.
      *              <br><i>NOTE: + is to the right, - is to the left</i>
      */
-    public void turn(double power){
-        setMotorPower( 0, 0, power );
+    public void turn( double power ) {
+        mecanumDrive( 0, 0, power );
     }
 
 
     // "raw" methods
 
 
-
     /**
      * Sets power to the intake motor
+     *
      * @param power power at which to run the intake motor
      */
     private void setIntakeMotorPower( double power ) {
@@ -86,9 +87,11 @@ public class Robot {
 
     /**
      * Sets power to the fly wheel motors
-     * @param leftPower power at which to run the left fly wheel motor
+     *
+     * @param leftPower  power at which to run the left fly wheel motor
      * @param rightPower power at which to run the right fly wheel motor
      */
+
     private void setFlyWheelMotorPower( double leftPower, double rightPower ) {
         leftFlyWheelMotor.setPower( leftPower );
         rightFlyWheelMotor.setPower( rightPower );
@@ -96,23 +99,38 @@ public class Robot {
 
     /**
      * Sets power to the wheel motors
-     * @param drive power for forward and back motion
+     *
+     * @param drive  power for forward and back motion
      * @param strafe power for left and right robot
      * @param rotate power for rotating the robot
      */
-    private void setMotorPower( double drive, double strafe, double rotate ) {
+    public void mecanumDrive( double drive, double strafe, double rotate ) {
 
+        // You might have to play with the + or - depending on how your motors are installed
         double frontLeftPower = drive + strafe + rotate;
         double frontRightPower = drive - strafe + rotate;
         double backLeftPower = drive - strafe - rotate;
         double backRightPower = drive + strafe - rotate;
 
-        frontLeftMotor.setPower( frontLeftPower );
-        frontRightMotor.setPower( frontRightPower );
-        backLeftMotor.setPower( backLeftPower );
-        backRightMotor.setPower( backRightPower );
-
+        setWheelMotorPower( frontLeftPower, frontRightPower, backLeftPower, backRightPower );
     }
 
+
+    /**
+     * Sets power to the motors
+     *
+     * @param frontLeftPower power at which to run the front left motor
+     * @param frontRightPower power at which to run the front right motor
+     * @param backLeftPower power at which to run the back left motor
+     * @param backRightPower power at which to run the back right motor
+     */
+    private void setWheelMotorPower( double frontLeftPower, double frontRightPower, double backLeftPower, double backRightPower ) {
+
+        frontLeftWheelMotor.setPower( frontLeftPower );
+        frontRightWheelMotor.setPower( frontRightPower );
+        backLeftWheelMotor.setPower( backLeftPower );
+        backRightWheelMotor.setPower( backRightPower );
+
+    }
 
 }
