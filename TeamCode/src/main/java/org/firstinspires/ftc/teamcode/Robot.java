@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.drives.MecanumDrive;
+import org.firstinspires.ftc.teamcode.mechanisms.GoalLift;
 import org.firstinspires.ftc.teamcode.mechanisms.RingShooter;
 
 /**
@@ -16,9 +17,12 @@ public class Robot {
     Servo leftPusherServo;
     Servo rightPusherServo;
 
-    RingShooter shooter;
-
+    //drive type
     MecanumDrive drive;
+
+    //mechanisms
+    RingShooter shooter;
+    GoalLift lift;
 
 
     /**
@@ -31,9 +35,12 @@ public class Robot {
         leftPusherServo = hardwareMap.servo.get( "leftPusherServo" );
         rightPusherServo = hardwareMap.servo.get( "rightPusherServo" );
 
-        shooter = new RingShooter(hw);
-
+        //drive
         drive = new MecanumDrive(hw);
+
+        //mechanisms
+        shooter = new RingShooter(hw);
+        lift = new GoalLift(hw);
     }
 
 }

@@ -7,10 +7,10 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
  * This class sets up and holds methods for running a mecanum drive
  */
 public class MecanumDrive implements Drive {
-    DcMotor frontRightMotor;
-    DcMotor frontLeftMotor;
-    DcMotor backRightMotor;
-    DcMotor backLeftMotor;
+    private DcMotor frontRightMotor;
+    private DcMotor frontLeftMotor;
+    private DcMotor backRightMotor;
+    private DcMotor backLeftMotor;
 
     /**
      * Creates a MechanumDrive with default names for the wheels

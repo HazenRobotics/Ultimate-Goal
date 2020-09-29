@@ -4,14 +4,14 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 /**
- * This class sets up and holds methods for running the ring shooter mechanism
+ * This class sets up and holds methods for using the ring shooter mechanism
  */
 public class RingShooter {
 
-    DcMotor intakeMotor;
+    private DcMotor intakeMotor;
 
-    DcMotor leftFlyWheelMotor;
-    DcMotor rightFlyWheelMotor;
+    private DcMotor leftFlyWheelMotor;
+    private DcMotor rightFlyWheelMotor;
 
 
     /**
