@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.mechanisms;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 /**
@@ -46,6 +47,10 @@ public class RingShooter {
 
         leftFlyWheelMotor = hw.dcMotor.get( leftFlyWheelName );
         rightFlyWheelMotor = hw.dcMotor.get( rightFlyWheelName );
+
+        //change these based on motor direction
+        leftFlyWheelMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        rightFlyWheelMotor.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
     /**
@@ -65,9 +70,8 @@ public class RingShooter {
      */
     public void setFlyWheelMotorPower( double power) {
 
-        //the negative sign depends on how the robot is set up
         leftFlyWheelMotor.setPower( power );
-        rightFlyWheelMotor.setPower( -power );
+        rightFlyWheelMotor.setPower( power );
     }
 
 }
