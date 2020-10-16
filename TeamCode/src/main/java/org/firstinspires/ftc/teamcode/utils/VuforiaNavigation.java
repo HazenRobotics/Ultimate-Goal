@@ -2,8 +2,6 @@ package org.firstinspires.ftc.teamcode.utils;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.robotcore.external.ClassFactory;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
@@ -11,7 +9,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,50 +18,32 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.XYZ;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.EXTRINSIC;
 
 /**
- * A class for tracking Vuforia targets on the field
+ * A class for tracking Vuforia targets on the field.
+ * {@link Vuforia#startVuforiaEngine(String, String, boolean, HardwareMap) Vuforia.startVuforiaEngine()} must be called before this class is instantiated
  */
 public class VuforiaNavigation {
 
-    VuforiaLocalizer vuforia;
+    //VuforiaLocalizer vuforia;
 
     VuforiaTrackables targets;
 
     public List<VuforiaTrackable> trackables;
 
-    VuforiaLocalizer.Parameters parameters;
+    //VuforiaLocalizer.Parameters parameters;
+
+    private boolean tracking = false;
 
 
     /**
      * Creates a VuforiaTargetTracker
-     * @param vuforiaKey vuforia liscense key
-     * @param webcamName name of the webcam in the robot configuration
-     * @param cameraMonitorViewId id of the camera monitor, null if no camera monitoring is wanted
      * @param trackablesAssetName name of the tensorflow asset file
-     * @param robotFromCamera a transformation matrix describing where the phone is on the robot
      */
-    public VuforiaNavigation(String vuforiaKey, String webcamName, @Nullable Integer cameraMonitorViewId, String trackablesAssetName,  OpenGLMatrix robotFromCamera, HardwareMap hw){
-        startVuforiaEngine(vuforiaKey, webcamName, cameraMonitorViewId, hw);
+    public VuforiaNavigation(String trackablesAssetName){
+        //startVuforiaEngine(vuforiaKey, webcamName, cameraMonitorViewId, hw);
 
         loadTrackables(trackablesAssetName);
 
-        setCameraPosition(robotFromCamera);
-    }
-
-    /**
-     * Starts the vuforia engine with the given parameters
-     * @param vuforiaKey vuforia liscense key
-     * @param webcamName name of the webcam in the robot configuration
-     * @param cameraMonitorViewId id of the camera monitor, null if no camera monitoring is wanted
-     */
-    private void startVuforiaEngine(String vuforiaKey, String webcamName, @Nullable Integer cameraMonitorViewId, HardwareMap hw){
-
-        parameters = cameraMonitorViewId != null? new VuforiaLocalizer.Parameters(cameraMonitorViewId) : new VuforiaLocalizer.Parameters();
-
-        parameters.vuforiaLicenseKey = vuforiaKey;
-        parameters.cameraName = hw.get(WebcamName.class, webcamName);
-        parameters.useExtendedTracking = false;
-
-        vuforia = ClassFactory.getInstance().createVuforia(parameters);
+        setCameraPosition();
     }
 
     /**
@@ -73,31 +52,23 @@ public class VuforiaNavigation {
      */
     private void loadTrackables(String assetName){
 
-        targets = vuforia.loadTrackablesFromAsset(assetName);
+        targets = Vuforia.vuforia.loadTrackablesFromAsset(assetName);
 
         trackables = new ArrayList<VuforiaTrackable>();
 
         for(int i = 0; i < targets.size(); i++){
             trackables.add(targets.get(i));
+            targets.get(i).setLocation(FieldMap.VuforiaTargets.TARGET_POSITIONS[i]);
         }
     }
 
     /**
-     * Tells tensorflow where the camera is located on the robot
-     * @param robotFromCamera a transformation matrix describing where the phone is on the robot
+     * Tells Vuforia where the camera is located on the robot
      */
-    private void setCameraPosition(OpenGLMatrix robotFromCamera){
+    private void setCameraPosition(){
         for(VuforiaTrackable trackable : trackables){
-            ((VuforiaTrackableDefaultListener) trackable.getListener()).setPhoneInformation(robotFromCamera, parameters.cameraDirection);
+            ((VuforiaTrackableDefaultListener) trackable.getListener()).setPhoneInformation(FieldMap.RobotInfo.CAMERA_FROM_ROBOT, VuforiaLocalizer.CameraDirection.BACK);
         }
-    }
-
-    /**
-     * Sets the trackables to the new set inputted
-     * @param newTrackables modified list of trackables
-     */
-    public void setTrackables(List<VuforiaTrackable> newTrackables){
-        trackables = newTrackables;
     }
 
     /**
@@ -113,6 +84,11 @@ public class VuforiaNavigation {
      */
     public void activateTracking(){
         targets.activate();
+        tracking = true;
+    }
+
+    public boolean isTracking(){
+        return tracking;
     }
 
     /**
@@ -120,6 +96,7 @@ public class VuforiaNavigation {
      */
     public void deactivateTracking(){
         targets.deactivate();
+        tracking = false;
     }
 
     /**
@@ -146,6 +123,13 @@ public class VuforiaNavigation {
             return null;
         }
         return ((VuforiaTrackableDefaultListener)currentVisibleTarget.getListener()).getUpdatedRobotLocation();
+    }
+
+    /**
+     * Updates the robot's position in the {@link FieldMap}
+     */
+    public void updateRobotLocation(){
+        FieldMap.RobotInfo.robotLocation = getRobotLocationTransform();
     }
 
     /**

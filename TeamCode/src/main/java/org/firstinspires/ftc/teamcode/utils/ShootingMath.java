@@ -15,7 +15,7 @@ public class ShootingMath {
      * @param targetPos the position of the target that is to be hit, in meters
      * @return angle at which the robot will be facing the target
      */
-    static double getAngleToTarget(VectorF currentPos, VectorF targetPos){
+    public static double getAngleToTarget(VectorF currentPos, VectorF targetPos){
         double changeInX = currentPos.get(0) - targetPos.get(0);
         double changeInY = currentPos.get(1) - targetPos.get(1);
 
@@ -30,11 +30,22 @@ public class ShootingMath {
      * @param launchAngle the angle of the object leaving the launcher, in degrees
      * @return velocity required to hit the target
      */
-    static double getVelocityToTarget(VectorF launchPos, VectorF targetPos, double launchAngle){
-        double changeInX = targetPos.get(0) - launchPos.get(0);
-        double changeInY = launchPos.get(1) - targetPos.get(1);
+    public static double getVelocityToTarget(VectorF launchPos, VectorF targetPos, double launchAngle){
+        double changeInX = FieldMap.getGroundDistanceBetweenTwoPoints(launchPos, targetPos);
+        double changeInY = FieldMap.getHeightDifferenceBetweenTwoPoints(launchPos, targetPos);
 
         double velocity = Math.sqrt(((0.5 * g) * Math.pow(changeInX / Math.cos(launchAngle), 2)) / (changeInY + (Math.tan(launchAngle) * changeInX)));
         return velocity;
+    }
+
+    /**
+     * Calculates the angular velocity for the given tangential velocity
+     * @param tangentialVelocity tangential velocity to be converted
+     * @param wheelRadius radius of the wheel
+     * @return angular velocity
+     */
+    public static double velocityToAngularVelocity(double tangentialVelocity, double wheelRadius){
+        double angularVelocity = tangentialVelocity / wheelRadius;
+        return  angularVelocity;
     }
 }
