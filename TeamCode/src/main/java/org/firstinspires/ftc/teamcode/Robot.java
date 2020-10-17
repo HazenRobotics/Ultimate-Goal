@@ -2,23 +2,10 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.drives.Drive;
 import org.firstinspires.ftc.teamcode.drives.MecanumDrive;
-import org.firstinspires.ftc.teamcode.mechanisms.GoalLift;
-import org.firstinspires.ftc.teamcode.mechanisms.RingShooter;
-import org.firstinspires.ftc.teamcode.utils.FieldMap;
-import org.firstinspires.ftc.teamcode.utils.ShootingMath;
 import org.firstinspires.ftc.teamcode.utils.TensorFlow;
-import org.firstinspires.ftc.teamcode.utils.Vuforia;
 import org.firstinspires.ftc.teamcode.utils.VuforiaNavigation;
-
-import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES;
-import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.YZX;
-import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.EXTRINSIC;
-import static org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit.mmPerInch;
 
 /**
  * This class sets up and manages a robot

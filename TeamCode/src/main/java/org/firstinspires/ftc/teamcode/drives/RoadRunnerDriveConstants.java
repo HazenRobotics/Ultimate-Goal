@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.road_runner.drive;
+package org.firstinspires.ftc.teamcode.drives;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
@@ -16,13 +16,13 @@ import com.acmerobotics.roadrunner.trajectory.constraints.DriveConstraints;
  * and op modes themselves.
  */
 @Config
-public class DriveConstants {
+public class RoadRunnerDriveConstants {
 
     /*
      * These are motor constants that should be listed online for your motors.
      */
-    public static final double TICKS_PER_REV = 0;
-    public static final double MAX_RPM = 0;
+    public static final double TICKS_PER_REV = 1440;
+    public static final double MAX_RPM = 100;
 
     /*
      * Set RUN_USING_ENCODER to true to enable built-in hub velocity control using drive encoders.
@@ -46,7 +46,7 @@ public class DriveConstants {
      */
     public static double WHEEL_RADIUS = 2; // in
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (motor) speed
-    public static double TRACK_WIDTH = 1; // in
+    public static double TRACK_WIDTH = 14.5; // in
 
     /*
      * These are the feedforward parameters used to model the drive motor behavior. If you are using

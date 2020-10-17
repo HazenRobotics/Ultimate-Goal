@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.road_runner.drive;
+package org.firstinspires.ftc.teamcode.drives;
 
 import androidx.annotation.NonNull;
 
@@ -30,6 +30,7 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.teamcode.road_runner.drive.TwoWheelTrackingLocalizer;
 import org.firstinspires.ftc.teamcode.road_runner.util.AxesSigns;
 import org.firstinspires.ftc.teamcode.road_runner.util.BNO055IMUUtil;
 import org.firstinspires.ftc.teamcode.road_runner.util.DashboardUtil;
@@ -53,7 +54,7 @@ import static org.firstinspires.ftc.teamcode.road_runner.drive.DriveConstants.kV
  * Simple mecanum drive hardware implementation for REV hardware.
  */
 @Config
-public class SampleMecanumDrive extends MecanumDrive {
+public class RoadRunnerMecanumDrive extends MecanumDrive {
     public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(0, 0, 0);
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(0, 0, 0);
 
@@ -85,7 +86,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     private Pose2d lastPoseOnTurn;
 
-    public SampleMecanumDrive(HardwareMap hardwareMap) {
+    public RoadRunnerMecanumDrive(HardwareMap hardwareMap) {
         super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
 
         dashboard = FtcDashboard.getInstance();
@@ -148,6 +149,8 @@ public class SampleMecanumDrive extends MecanumDrive {
 
         // TODO: if desired, use setLocalizer() to change the localization method
         // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
+
+        setLocalizer(new RoadRunnerTwoWheelTrackingLocalizer(hardwareMap, this));
     }
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {
