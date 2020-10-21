@@ -34,4 +34,12 @@ public class Vuforia {
 
         vuforia = ClassFactory.getInstance().createVuforia(parameters);
     }
+
+    public static boolean isRunning(){
+        return vuforia != null;
+    }
+
+    public static void stopVuforiaEngine(){
+        vuforia = null;
+    }
 }

@@ -35,8 +35,7 @@ public class Robot {
 
     //Vuforia
     VuforiaNavigation vuforiaNavigation;
-    private final String VUFORIA_KEY = hardwareMap.appContext.getResources().getString(R.string.vuforiakey);
-    private final String VUFORIA_TRACKABLES_ASSET_NAME = "Ultimate Goal";
+    private final String VUFORIA_TRACKABLES_ASSET_NAME = "UltimateGoal";
 
     //Tensor Flow
     TensorFlow tfod;
@@ -50,6 +49,8 @@ public class Robot {
      */
     public Robot( HardwareMap hw ) {
         this.hardwareMap = hw;
+
+        final String VUFORIA_KEY = hardwareMap.appContext.getResources().getString(R.string.vuforiakey);
 
         //drive type
         drive = new MecanumDrive(hw);
