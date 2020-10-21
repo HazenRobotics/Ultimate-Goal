@@ -20,4 +20,20 @@ repositories {
 
 dependencies {
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
+    implementation 'org.jetbrains:annotations-java5:15.0'
 }
+
+/*task pushJavaFiles (type: Exec) {
+    commandLine('adb', '-s', 'f1a5675e40aaaffb', 'push', 'D:\\Robotics\\Ultimate-Goal\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode\\.',  '/sdcard/FIRST/java/src')
+}
+
+task startREVCompiler(dependsOn: pushJavaFiles){
+    doLast{
+        exec{
+            commandLine('adb', '-s', 'f1a5675e40aaaffb', 'shell', 'cat', '>>', 'sdcard/FIRST/java/control/buildRequest.txt')
+        }
+        exec{
+            commandLine('adb', '-s', 'f1a5675e40aaaffb', 'push', 'D:\\Robotics\\buildRequest.txt', '/sdcard/FIRST/java/control')
+        }
+    }
+}*/

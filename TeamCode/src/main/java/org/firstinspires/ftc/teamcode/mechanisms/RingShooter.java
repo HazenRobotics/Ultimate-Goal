@@ -1,7 +1,11 @@
 package org.firstinspires.ftc.teamcode.mechanisms;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 /**
  * This class sets up and holds methods for using the ring shooter mechanism
@@ -47,6 +51,10 @@ public class RingShooter {
 
         leftFlyWheelMotor = hw.dcMotor.get( leftFlyWheelName );
         rightFlyWheelMotor = hw.dcMotor.get( rightFlyWheelName );
+
+        //change these based on motor direction
+        leftFlyWheelMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        rightFlyWheelMotor.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
     /**
@@ -65,10 +73,18 @@ public class RingShooter {
      * @param power power at which to run the flywheels
      */
     public void setFlyWheelMotorPower( double power) {
-
-        //the negative sign depends on how the robot is set up
         leftFlyWheelMotor.setPower( power );
-        rightFlyWheelMotor.setPower( -power );
+        rightFlyWheelMotor.setPower( power );
+    }
+
+    /**
+     * Sets velocity for the motor to run at
+     * @param velocity target velocity
+     * @param  angleUnit unit in which the input velocity is given, in units/second
+     */
+    public void setFlyWheelMotorVelocity(double velocity, AngleUnit angleUnit){
+        ((DcMotorEx)leftFlyWheelMotor).setVelocity(velocity, angleUnit);
+        ((DcMotorEx)rightFlyWheelMotor).setVelocity(velocity, angleUnit);
     }
 
 }

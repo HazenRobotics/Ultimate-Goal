@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.drives;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 /**
@@ -11,7 +12,6 @@ public class MecanumDrive implements Drive {
     private DcMotor frontLeftMotor;
     private DcMotor backRightMotor;
     private DcMotor backLeftMotor;
-
     /**
      * Creates a MechanumDrive with default names for the wheels
      * @param hw robot's hardware map
@@ -45,6 +45,11 @@ public class MecanumDrive implements Drive {
         frontLeftMotor = hw.dcMotor.get(frontLeftMotorName);
         backRightMotor = hw.dcMotor.get(backRightMotorName);
         backLeftMotor = hw.dcMotor.get(backLeftMotorName);
+
+        frontRightMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        backRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        frontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        backLeftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
     }
 
     /**
@@ -66,6 +71,14 @@ public class MecanumDrive implements Drive {
     }
 
     /**
+     * Stops Motors
+     */
+    @Override
+    public void stop() {
+        setMotorPower(0,0,0,0);
+    }
+
+    /**
      * Makes the robot strafe to the left or the right
      * @param power power at which to strafe (+ is to the right, - is to the left)
      */
@@ -80,13 +93,13 @@ public class MecanumDrive implements Drive {
      * @param strafe power for left and right robot
      * @param rotate power for rotating the robot
      */
-    public void drive( double drive, double strafe, double rotate ) {
+    public void drive( double drive, double rotate, double strafe ) {
 
         // You might have to play with the + or - depending on how your motors are installed
-        double frontLeftPower = drive + strafe + rotate;
-        double frontRightPower = drive - strafe + rotate;
-        double backLeftPower = drive - strafe - rotate;
-        double backRightPower = drive + strafe - rotate;
+        double frontLeftPower = drive + rotate + strafe;
+        double frontRightPower = drive - rotate - strafe;
+        double backLeftPower = drive - rotate + strafe;
+        double backRightPower = drive + rotate - strafe;
 
         setMotorPower( frontLeftPower, frontRightPower, backLeftPower, backRightPower );
     }
@@ -104,6 +117,4 @@ public class MecanumDrive implements Drive {
         backRightMotor.setPower(backRightPower);
         backLeftMotor.setPower(backLeftPower);
     }
-
-
 }

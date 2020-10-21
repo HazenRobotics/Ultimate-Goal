@@ -1,13 +1,17 @@
 package org.firstinspires.ftc.teamcode.mechanisms;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 
 /**
  * This class sets up and holds methods for using the goal lift mechanism
  * The goal lift mechanism is the ______ that does _______
  */
 public class GoalLift {
+
+    Servo liftLowerer;
 
     private DcMotor motor;
 
@@ -26,7 +30,12 @@ public class GoalLift {
      */
     public GoalLift( HardwareMap hw ){
 
+        liftLowerer = hw.servo.get("goalLiftLowerer");
+
         motor = hw.dcMotor.get( "goalLiftMotor" );
+
+        //change this based on needed motor direction
+        motor.setDirection(DcMotorSimple.Direction.FORWARD);
     }
 
     /**
@@ -37,6 +46,9 @@ public class GoalLift {
     public GoalLift( HardwareMap hw, String motorName ) {
 
         motor = hw.dcMotor.get( motorName );
+
+        //change this based on needed motor direction
+        motor.setDirection(DcMotorSimple.Direction.FORWARD);
     }
 
     /**
@@ -70,6 +82,10 @@ public class GoalLift {
             }
         }
 
+    }
+
+    public void lowerLift(){
+        liftLowerer.setPosition(1.0);
     }
 
     /**
