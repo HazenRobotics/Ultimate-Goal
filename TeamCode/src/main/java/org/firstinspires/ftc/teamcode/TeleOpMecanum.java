@@ -17,6 +17,6 @@ public class TeleOpMecanum extends OpMode {
 
     @Override
     public void loop() {
-        ((MecanumDrive)robot.drive).drive(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
+        robot.drive.drive(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
     }
 }
