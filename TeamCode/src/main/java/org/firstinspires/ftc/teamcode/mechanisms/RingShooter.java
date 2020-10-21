@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 /**
  * This class sets up and holds methods for using the ring shooter mechanism
+ * The ring shooter mechanism is the ______ that does _______
  */
 public class RingShooter {
 
