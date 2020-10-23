@@ -27,7 +27,7 @@ public class Robot {
     HardwareMap hardwareMap;
 
     //drive
-    Drive drive;
+    MecanumDrive drive;
 
     //mechanisms
     //RingShooter shooter;
