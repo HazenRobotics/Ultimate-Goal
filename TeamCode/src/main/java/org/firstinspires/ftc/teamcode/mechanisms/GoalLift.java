@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 /**
  * This class sets up and holds methods for using the goal lift mechanism
+ * The goal lift mechanism is the ______ that does _______
  */
 public class GoalLift {
 

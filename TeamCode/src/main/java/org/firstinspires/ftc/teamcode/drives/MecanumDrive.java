@@ -67,7 +67,7 @@ public class MecanumDrive implements Drive {
      */
     @Override
     public void turn(double power) {
-        drive(0, power, 0);
+        drive(0, 0, power);
     }
 
     /**
@@ -83,7 +83,7 @@ public class MecanumDrive implements Drive {
      * @param power power at which to strafe (+ is to the right, - is to the left)
      */
     public void strafe(double power){
-        drive(0, 0, power);
+        drive(0, power, 0 );
     }
 
     /**
@@ -93,7 +93,7 @@ public class MecanumDrive implements Drive {
      * @param strafe power for left and right robot
      * @param rotate power for rotating the robot
      */
-    public void drive( double drive, double rotate, double strafe ) {
+    public void drive( double drive, double strafe, double rotate ) {
 
         // You might have to play with the + or - depending on how your motors are installed
         double frontLeftPower = drive + rotate + strafe;

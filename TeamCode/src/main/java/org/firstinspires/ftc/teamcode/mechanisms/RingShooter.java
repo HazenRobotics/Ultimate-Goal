@@ -9,6 +9,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 /**
  * This class sets up and holds methods for using the ring shooter mechanism
+ * The ring shooter mechanism is the ______ that does _______
  */
 public class RingShooter {
 
