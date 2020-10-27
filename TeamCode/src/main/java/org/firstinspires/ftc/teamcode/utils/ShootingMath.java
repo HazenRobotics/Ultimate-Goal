@@ -1,12 +1,13 @@
 package org.firstinspires.ftc.teamcode.utils;
 
+import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 
 import java.lang.Math;
 
 public class ShootingMath {
 
-    static final double g = 9.81; // gravity in m/s^2
+    static final double g = -9.81; // gravity in m/s^2
 
 
     /**
