@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
@@ -15,6 +16,8 @@ import org.firstinspires.ftc.teamcode.utils.TensorFlow;
 import org.firstinspires.ftc.teamcode.utils.Vuforia;
 import org.firstinspires.ftc.teamcode.utils.VuforiaNavigation;
 
+import java.util.function.Function;
+
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.YZX;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.EXTRINSIC;
@@ -23,11 +26,11 @@ import static org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit.m
 /**
  * This class sets up and manages a robot
  */
-public class Robot {
+public abstract class Robot {
     HardwareMap hardwareMap;
 
     //drive
-    MecanumDrive drive;
+    Drive drive;
 
     //mechanisms
     //RingShooter shooter;
@@ -35,7 +38,8 @@ public class Robot {
 
     //Vuforia
     VuforiaNavigation vuforiaNavigation;
-    private final String VUFORIA_TRACKABLES_ASSET_NAME = "UltimateGoal";
+    private final String VUFORIA_TRACKABLES_ASSET_NAME = "Ultimate Goal";
+    String vuforiaKey;
 
     //Tensor Flow
     TensorFlow tfod;
@@ -50,10 +54,9 @@ public class Robot {
     public Robot( HardwareMap hw ) {
         this.hardwareMap = hw;
 
-        final String VUFORIA_KEY = hardwareMap.appContext.getResources().getString(R.string.vuforiakey);
+        vuforiaKey = hardwareMap.appContext.getResources().getString(R.string.vuforiakey);
 
         //drive type
-        drive = new MecanumDrive(hw);
 
         //mechanisms
         //shooter = new RingShooter(hw);
@@ -62,6 +65,11 @@ public class Robot {
         //Vuforia.startVuforiaEngine(VUFORIA_KEY, "webcam", true, hw);
         //vuforiaNavigation = new VuforiaNavigation(VUFORIA_TRACKABLES_ASSET_NAME);
         //tfod = new TensorFlow(TFOD_MODEL_ASSET_NAME, 0.8f, true, hardwareMap, TFOD_MODEL_LABELS);
-    }
 
+
+        //Bulk Caching to decrease cycle times
+        for (LynxModule module : hw.getAll(LynxModule.class)) {
+            module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
+        }
+    }
 }

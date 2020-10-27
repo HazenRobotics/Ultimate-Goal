@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.utils;
 
+import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 
 import java.lang.Math;
@@ -30,7 +31,7 @@ public class ShootingMath {
      * @param launchAngle the angle of the object leaving the launcher, in degrees
      * @return velocity required to hit the target
      */
-    public static double getVelocityToTarget(VectorF launchPos, VectorF targetPos, double launchAngle){
+    public static double getVelocityToTarget(OpenGLMatrix launchPos, OpenGLMatrix targetPos, double launchAngle){
         double changeInX = FieldMap.getGroundDistanceBetweenTwoPoints(launchPos, targetPos);
         double changeInY = FieldMap.getHeightDifferenceBetweenTwoPoints(launchPos, targetPos);
 
