@@ -22,6 +22,9 @@ public class TeleOpWood extends OpMode {
         // moves the robot • left stick - forwards/backwards - y axis, turning - right/left - x axis • right stick -  strafing - x axis
         ( (MecanumDrive)robot.drive ).drive( gamepad1.left_stick_y, gamepad1.right_stick_x, gamepad1.left_stick_x );
 
+        telemetry.addData( "", "" );
+        telemetry.addData( "", "" );
 
+        telemetry.update();
     }
 }
