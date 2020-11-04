@@ -72,4 +72,9 @@ public abstract class Robot {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
     }
+
+    public void sleep(long millis){
+        long startTime = System.currentTimeMillis();
+        while(System.currentTimeMillis() < startTime + millis);
+    }
 }
