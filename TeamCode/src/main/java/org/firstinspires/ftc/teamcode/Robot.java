@@ -1,8 +1,11 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
@@ -28,6 +31,11 @@ import static org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit.m
  */
 public abstract class Robot {
     HardwareMap hardwareMap;
+    OpMode opMode;
+    Telemetry telemetry;
+
+    //time
+    double previousTime;
 
     //drive
     Drive drive;
@@ -51,8 +59,12 @@ public abstract class Robot {
      * Creates a Robot
      * @param hw robot's hardware map
      */
-    public Robot( HardwareMap hw ) {
+    public Robot( HardwareMap hw, OpMode op ) {
         this.hardwareMap = hw;
+        this.opMode = op;
+        telemetry = opMode.telemetry;
+
+
 
         vuforiaKey = hardwareMap.appContext.getResources().getString(R.string.vuforiakey);
 
@@ -71,10 +83,45 @@ public abstract class Robot {
         for (LynxModule module : hw.getAll(LynxModule.class)) {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
+
+
+
     }
 
     public void sleep(long millis){
         long startTime = System.currentTimeMillis();
         while(System.currentTimeMillis() < startTime + millis);
     }
+
+    /**
+     * opMode version of LinearOpmode's opModeIsActive
+     * @return
+     */
+    public boolean opModeIsActive()
+    {
+        try {
+            return ((LinearOpMode) opMode).opModeIsActive();
+        } catch (ClassCastException e){
+            return true;
+        }
+    }
+
+    /**
+     *
+     * @param delay - delay/wait time in SECONDS
+     */
+    public void sleepRobot(long delay)
+    {
+        long setTime = System.currentTimeMillis();
+        previousTime = opMode.getRuntime();
+
+        while(System.currentTimeMillis() - setTime < (delay) && opModeIsActive())
+            previousTime = opMode.getRuntime();
+
+        telemetry.addData("Finished Sleep", "");
+        telemetry.update();
+    }
+
+
+
 }

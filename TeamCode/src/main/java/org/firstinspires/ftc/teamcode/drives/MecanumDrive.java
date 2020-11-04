@@ -37,7 +37,7 @@ public class MecanumDrive extends FourWheelDrive {
      * @param power power at which to strafe (+ is to the right, - is to the left)
      */
     public void strafe(double power){
-        drive(0, 0, power );
+        driveOmni(0, 0, power );
     }
 
     /**
@@ -47,13 +47,13 @@ public class MecanumDrive extends FourWheelDrive {
      * @param strafe power for left and right robot
      * @param rotate power for rotating the robot
      */
-    public void drive( double drive, double rotate, double strafe ) {
+    public void driveOmni( double drive, double strafe, double rotate ) {
 
         // You might have to play with the + or - depending on how your motors are installed
-        double frontLeftPower = drive + rotate + strafe;
-        double frontRightPower = drive - rotate - strafe;
-        double backLeftPower = drive - rotate - strafe;
-        double backRightPower = drive + rotate + strafe;
+        double frontLeftPower = drive + strafe + rotate;
+        double backLeftPower = drive - strafe + rotate;
+        double frontRightPower = drive - strafe - rotate;
+        double backRightPower = drive + strafe - rotate;
 
         setMotorPower( frontLeftPower, frontRightPower, backLeftPower, backRightPower );
     }

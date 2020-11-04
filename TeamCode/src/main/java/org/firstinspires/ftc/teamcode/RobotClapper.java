@@ -10,4 +10,5 @@ public class RobotClapper extends Robot {
         super(hw);
         drive = new MecanumDrive(hw);
     }
+
 }

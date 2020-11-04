@@ -119,7 +119,7 @@ public class FourWheelDrive implements Drive {
      * @param backLeftBehavior zero power behavior of the back left motor
      * @param backRightBehavior zero power behavior of the back right motor
      */
-    public  void setZeroPowerBehavior(ZeroPowerBehavior frontLeftBehavior, ZeroPowerBehavior frontRightBehavior, ZeroPowerBehavior backLeftBehavior, ZeroPowerBehavior backRightBehavior){
+    public void setZeroPowerBehavior(ZeroPowerBehavior frontLeftBehavior, ZeroPowerBehavior frontRightBehavior, ZeroPowerBehavior backLeftBehavior, ZeroPowerBehavior backRightBehavior){
         frontLeft.setZeroPowerBehavior(frontLeftBehavior);
         frontRight.setZeroPowerBehavior(frontRightBehavior);
         backLeft.setZeroPowerBehavior(backLeftBehavior);
