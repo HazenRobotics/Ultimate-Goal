@@ -62,29 +62,21 @@ public class TeleOpDriverTest extends OpMode
         telemetry.addData("left_stick_x", gamepad1.left_stick_x);
         telemetry.addData("right_stick_x", gamepad1.right_stick_x);
 
-        telemetry.addLine("-------------2-");
+        telemetry.addLine("--------------");
 
         telemetry.addData("Front Left Power", frontLeftMotor.getPower() );
         telemetry.addData("Front Right Power", frontRightMotor.getPower() );
         telemetry.addData("Back Left Power", backLeftMotor.getPower() );
         telemetry.addData("Back Right Power", backRightMotor.getPower() );
 
+        telemetry.addLine();
+
         //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 
-
-        /*
-
-        drive+: 1, -1, 1, 1
-        drive-: 1, -1, 1, 1
-
-        strafe+: 1, -1, 1, -1
-        strafe-: -1, 1, -1, 1
-
-        rotate+: 1, 1, 1, 1
-        rotate-: -1, 1, 1, -1
-
-
-         */
+        telemetry.addData("Front Left Position", frontLeftMotor.getCurrentPosition() );
+        telemetry.addData("Front Right Position", frontRightMotor.getCurrentPosition() );
+        telemetry.addData("Back Left Position", backLeftMotor.getCurrentPosition() );
+        telemetry.addData("Back Right Position", backRightMotor.getCurrentPosition() );
 
         telemetry.update();
 
