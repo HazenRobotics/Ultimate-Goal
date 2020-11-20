@@ -13,18 +13,27 @@ public class TeleOpClapper extends OpMode {
 
     @Override
     public void init() {
-        robot = new RobotClapper(hardwareMap);
+        robot = new RobotClapper(hardwareMap, this);
+        robot.drive = new MecanumDrive(hardwareMap);
     }
 
     @Override
     public void loop() {
 
-        // moves the robot • left stick - forwards/backwards - y axis, turning - right/left - x axis • right stick -  strafing - x axis
-        ( (MecanumDrive)robot.drive ).drive( gamepad1.left_stick_y, gamepad1.right_stick_x, gamepad1.left_stick_x );
+        telemetry.addData("              Controls", "   ");
+        telemetry.addData("Drive", "Gp1: left stick y (axis)");
+        telemetry.addData("Strafe", "Gp1: left stick x (axis)");
+        telemetry.addData("Rotate", "Gp1: right stick x (axis)");
+        telemetry.addLine();
 
-        telemetry.addData( "", "" );
-        telemetry.addData( "", "" );
+        // moves the robot • left stick; moves forwards/backwards (y axis), strafing left/right (x axis) • right stick; rotating left/right ()x axis)
+        ( (MecanumDrive)robot.drive ).drive( -gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x );
+
+        telemetry.addData("left_stick_y", gamepad1.left_stick_y);
+        telemetry.addData("left_stick_x", gamepad1.left_stick_x);
+        telemetry.addData("right_stick_x", gamepad1.right_stick_x);
 
         telemetry.update();
+
     }
 }

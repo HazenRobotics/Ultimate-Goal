@@ -71,6 +71,17 @@ public class FourWheelDrive implements Drive {
         setMotorPower( frontLeftPower, frontRightPower, backLeftPower, backRightPower );
     }
 
+    public void drive( double drive, double strafe, double rotate ) {
+
+        // You might have to play with the + or - depending on how your motors are installed
+        double frontLeftPower = drive + strafe + rotate;
+        double backLeftPower = drive - strafe + rotate;
+        double frontRightPower = drive - strafe - rotate;
+        double backRightPower = drive + strafe - rotate;
+
+        setMotorPower( frontLeftPower, frontRightPower, backLeftPower, backRightPower );
+    }
+
     @Override
     public State getState() {
         updateState();
