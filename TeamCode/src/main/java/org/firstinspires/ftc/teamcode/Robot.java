@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -38,7 +39,12 @@ public abstract class Robot {
     double previousTime;
 
     //drive
-    Drive drive;
+    Drive driveTrain;
+
+    // gyro
+    BNO055IMU gyro;
+
+    //
 
     //mechanisms
     //RingShooter shooter;
@@ -64,7 +70,7 @@ public abstract class Robot {
         this.opMode = op;
         telemetry = opMode.telemetry;
 
-
+        gyro = hardwareMap.get( BNO055IMU.class, "imu" );
 
         vuforiaKey = hardwareMap.appContext.getResources().getString(R.string.vuforiakey);
 

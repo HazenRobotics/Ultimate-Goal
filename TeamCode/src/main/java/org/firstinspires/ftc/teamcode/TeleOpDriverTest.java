@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -17,6 +18,8 @@ public class TeleOpDriverTest extends OpMode
     double backLeftPower;
     double backRightPower;
 
+    BNO055IMU gyro;
+
     @Override
     public void init()
     {
@@ -25,7 +28,8 @@ public class TeleOpDriverTest extends OpMode
         frontRightMotor = hardwareMap.dcMotor.get("frontRightWheel");
         backLeftMotor = hardwareMap.dcMotor.get("backLeftWheel");
         backRightMotor = hardwareMap.dcMotor.get("backRightWheel");
-        //leftMotor.setDirection(DcMotor.Direction.REVERSE);
+
+        gyro = hardwareMap.get( BNO055IMU.class, "imu" );
 
     }
 

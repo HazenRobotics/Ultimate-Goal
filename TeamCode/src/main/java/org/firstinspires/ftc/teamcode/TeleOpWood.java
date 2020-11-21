@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.drives.MecanumDrive;
 
@@ -15,7 +14,7 @@ public class TeleOpWood extends OpMode {
     @Override
     public void init() {
         robot = new RobotWood(hardwareMap, this);
-        robot.drive = new MecanumDrive(hardwareMap);
+        robot.driveTrain = new MecanumDrive(hardwareMap);
     }
 
     @Override
@@ -28,7 +27,7 @@ public class TeleOpWood extends OpMode {
         telemetry.addLine();
 
         // moves the robot • left stick; moves forwards/backwards (y axis), strafing left/right (x axis) • right stick; rotating left/right ()x axis)
-        ( (MecanumDrive)robot.drive ).drive( -gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x );
+        ((MecanumDrive)robot.driveTrain).drive( -gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x );
 
         telemetry.addData("left_stick_y", gamepad1.left_stick_y);
         telemetry.addData("left_stick_x", gamepad1.left_stick_x);

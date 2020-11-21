@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.drives.MecanumDrive;
@@ -10,7 +9,7 @@ public class RobotClapper extends Robot {
 
     public RobotClapper(HardwareMap hw, OpMode op){
         super(hw, op);
-        drive = new MecanumDrive(hw);
+        driveTrain = new MecanumDrive(hw);
     }
 
 
