@@ -78,9 +78,7 @@ public class TeleOpDriverTest extends OpMode
         //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 
         telemetry.addData("Front Left Position", frontLeftMotor.getCurrentPosition() );
-        telemetry.addData("Front Right Position", frontRightMotor.getCurrentPosition() );
         telemetry.addData("Back Left Position", backLeftMotor.getCurrentPosition() );
-        telemetry.addData("Back Right Position", backRightMotor.getCurrentPosition() );
 
         telemetry.update();
 
