@@ -1,13 +1,14 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp(name="TeleOpDriverTest", group="teleop")
-public class TeleOpDriverTest extends OpMode
+public class TeleOpTest extends OpMode
 {
     DcMotor frontLeftMotor;
     DcMotor frontRightMotor;
@@ -30,7 +31,19 @@ public class TeleOpDriverTest extends OpMode
         backRightMotor = hardwareMap.dcMotor.get("backRightWheel");
 
         gyro = hardwareMap.get( BNO055IMU.class, "imu" );
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        gyro.initialize( parameters );
 
+        // make sure the imu gyro is calibrated before continuing.
+        while ( !gyro.isGyroCalibrated() )
+        {
+            long startTime = System.currentTimeMillis();
+            while( System.currentTimeMillis() < startTime + 50 /* milliseconds to wait */ );
+        }
+
+        telemetry.addData("Mode", "waiting for start");
+        telemetry.addData("imu calib status", gyro.getCalibrationStatus().toString());
+        telemetry.update();
     }
 
     @Override
@@ -79,6 +92,22 @@ public class TeleOpDriverTest extends OpMode
 
         telemetry.addData("Front Left Position", frontLeftMotor.getCurrentPosition() );
         telemetry.addData("Back Left Position", backLeftMotor.getCurrentPosition() );
+
+        telemetry.addLine();
+
+        //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+
+        telemetry.addData("Gyro x", gyro.getPosition().x );
+        telemetry.addData("Gyro y", gyro.getPosition().y );
+        telemetry.addData("Gyro z", gyro.getPosition().z );
+        telemetry.addData("Gyro unit", gyro.getPosition().unit );
+        telemetry.addData("Gyro unit", gyro.getPosition().unit.toString() );
+        telemetry.addData("Gyro", gyro.readCalibrationData() );
+
+
+
+
+
 
         telemetry.update();
 

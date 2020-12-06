@@ -5,11 +5,10 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * A class that holds an instance of the vuforia engine.
- * {@link #startVuforiaEngine(String, String, boolean, HardwareMap)}  Vuforia.startVuforiaEngine()} method must be called before instantiating {@link VuforiaNavigation} or {@link TensorFlow}
+ * {@link #startVuforiaEngine(String, String, boolean, HardwareMap)}  Vuforia.startVuforiaEngine()} method must be called before instantiating {@link VuforiaLocalization} or {@link TensorFlow}
  */
 public class Vuforia {
 

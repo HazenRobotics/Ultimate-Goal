@@ -7,25 +7,9 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.drives.Drive;
-import org.firstinspires.ftc.teamcode.drives.MecanumDrive;
-import org.firstinspires.ftc.teamcode.mechanisms.GoalLift;
-import org.firstinspires.ftc.teamcode.mechanisms.RingShooter;
-import org.firstinspires.ftc.teamcode.utils.FieldMap;
-import org.firstinspires.ftc.teamcode.utils.ShootingMath;
 import org.firstinspires.ftc.teamcode.utils.TensorFlow;
-import org.firstinspires.ftc.teamcode.utils.Vuforia;
-import org.firstinspires.ftc.teamcode.utils.VuforiaNavigation;
-
-import java.util.function.Function;
-
-import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES;
-import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.YZX;
-import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.EXTRINSIC;
-import static org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit.mmPerInch;
+import org.firstinspires.ftc.teamcode.utils.VuforiaLocalization;
 
 /**
  * This class sets up and manages a robot
@@ -51,7 +35,7 @@ public abstract class Robot {
     //GoalLift lift;
 
     //Vuforia
-    VuforiaNavigation vuforiaNavigation;
+    VuforiaLocalization vuforiaLocalization;
     private final String VUFORIA_TRACKABLES_ASSET_NAME = "Ultimate Goal";
     String vuforiaKey;
 

@@ -8,10 +8,14 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
  * This class sets up and holds methods for running a mecanum drive
  */
 public class MecanumDrive extends FourWheelDrive {
+
     private DcMotor frontRightMotor;
     private DcMotor frontLeftMotor;
     private DcMotor backRightMotor;
     private DcMotor backLeftMotor;
+
+    final double WHEEL_DIAMETER = 1.4960629921;
+
     /**
      * Creates a MechanumDrive with default names for the wheels
      * @param hw robot's hardware map
@@ -30,6 +34,11 @@ public class MecanumDrive extends FourWheelDrive {
      */
     public MecanumDrive(HardwareMap hw, String frontLeftMotorName, String frontRightMotorName, String backLeftMotorName, String backRightMotorName){
         super(hw, frontRightMotorName, frontLeftMotorName, backRightMotorName, backLeftMotorName);
+    }
+
+    public int convertDistTicks( double distanceToTravel )
+    {
+        return convertDistTicks( distanceToTravel, Math.PI * WHEEL_DIAMETER );
     }
 
     /**

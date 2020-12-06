@@ -22,15 +22,21 @@ import org.firstinspires.ftc.teamcode.drives.MecanumDrive;
 //@disabled
 public class AutonomousTest extends LinearOpMode
 {
-    Robot robot;
+    //Robot robot;
+    RobotWood robotWood;
 
     @Override
     public void runOpMode() throws InterruptedException
     {
-        robot = new RobotWood(hardwareMap, this);
-        robot.driveTrain = new MecanumDrive(hardwareMap);
+        //robot = new RobotWood(hardwareMap, this);
+        //robot.driveTrain = new MecanumDrive(hardwareMap);
+        robotWood = new RobotWood(hardwareMap, this);
+        robotWood.driveTrain = new MecanumDrive(hardwareMap);
+
 
         telemetry.addLine("init finished");
+        telemetry.addLine("longitudinal position_0 = " + robotWood.tracker.getLongitudinalPosition() );
+        telemetry.addLine("lateral position_0 = " + robotWood.tracker.getLateralPosition() );
         telemetry.update();
 
         waitForStart();
@@ -38,11 +44,24 @@ public class AutonomousTest extends LinearOpMode
         //==========================================================================================
         //Official Start
 
+        /*
+        robotWood.driveDistance( 4, 0.5, true );
+
+        telemetry.addLine( "driveDistance: 0.50 - completed" );
+        telemetry.update();
+
+        robotWood.sleep( 500 );
+
+         */
+
+        robotWood.driveDistance( 4, 0.25, true );
+
+        telemetry.addLine("longitudinal position_1 = " + robotWood.tracker.getLongitudinalPosition() );
+        telemetry.addLine("lateral position_1 = " + robotWood.tracker.getLateralPosition() );
+        telemetry.update();
 
 
-
-
-
+        robotWood.sleep( 10*100 );
 
 
     }
