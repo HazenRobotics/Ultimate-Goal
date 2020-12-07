@@ -19,15 +19,22 @@ public class RobotWood extends Robot {
 
     }
 
-    public void driveDistance( int distance, double power, boolean setPowerZero ) {
+    public void driveDistance( double distance, double power, boolean setPowerZero ) {
 
         mecanumDrive.drive( power, 0, 0 );
 
         int ticksToTravel = mecanumDrive.convertDistTicks(distance);
-        int initialPosition = tracker.getLongitudinalPosition();
+        int initialXPos = tracker.getLongitudinalPosition();
+        int initialYPos = tracker.getLateralPosition();
 
-        while( tracker.getLongitudinalPosition() - initialPosition < ticksToTravel && opModeIsActive()) {
+        while( tracker.getLongitudinalPosition() - initialXPos < ticksToTravel && opModeIsActive()) {
             mecanumDrive.drive( power, 0, 0 );
+            /*
+            if( tracker.getLateralPosition() < initialYPos && opModeIsActive() ) {
+                strafeDistance( mecanumDrive.convertTicksDist(distance), power, false )
+            if( tracker.getLateralPosition() > initialYPos && opModeIsActive() ) {
+                strafeDistance( mecanumDrive.convertTicksDist(distance), -power, false )
+            }*/
         }
 
         //sets all power to zero afterwords
@@ -38,7 +45,7 @@ public class RobotWood extends Robot {
 
     }
 
-    public void strafeDistance( int distance, double power, boolean setPowerZero ) {
+    public void strafeDistance( double distance, double power, boolean setPowerZero ) {
 
         mecanumDrive.drive( 0, power, 0 );
 
@@ -56,35 +63,15 @@ public class RobotWood extends Robot {
 
 
     }
-        // doesn't work
-    public void rotateDistance( int distance, double power, boolean setPowerZero ) {
-
-        mecanumDrive.drive( 0, 0, power );
-
-        int ticksToTravel = mecanumDrive.convertDistTicks(distance);
-
-        double initialPosition = 0;
-        double currentPosition = 0;
-
-        while( currentPosition < ticksToTravel && opModeIsActive()) {
-            mecanumDrive.drive( 0, 0, power );
-            currentPosition++;
-        }
-
-        //sets all power to zero afterwords
-        if(setPowerZero) {
-            mecanumDrive.drive( 0, 0, 0 );
-        }
-
-
-    }
 
     /*
-    public void rotateDegrees( int degrees, double power, boolean setPowerZero ) {
+    public void rotateDegrees( double degrees, double power, boolean setPowerZero ) {
 
         mecanumDrive.drive( 0, 0, power );
 
-        while( tracker.getGyroDegrees() < degrees && opModeIsActive()) {
+        double initialDegrees = tracker.getGyroDegrees();
+
+        while( tracker.getGyroDegrees() - initialDegrees < degrees && opModeIsActive()) {
             mecanumDrive.drive( 0, 0, power );
         }
 
@@ -147,7 +134,7 @@ public class RobotWood extends Robot {
 
     /**
      *
-     * @param time - time to rotate the robot
+     * @param time - time to rotate the robot in milliseconds
      * @param power - power for the wheels to rotate the robot
      * @param setPowerZero - (boolean) set power to zero after rotating
      */

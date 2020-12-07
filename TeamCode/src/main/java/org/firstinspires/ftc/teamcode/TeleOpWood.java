@@ -29,6 +29,7 @@ public class TeleOpWood extends OpMode {
     @Override
     public void loop() {
 
+
         telemetry.addData("              Controls", "   ");
         telemetry.addData("Drive", "Gp1: left stick y (axis)");
         telemetry.addData("Strafe", "Gp1: left stick x (axis)");
@@ -55,13 +56,26 @@ public class TeleOpWood extends OpMode {
         telemetry.addLine("lateral position = " + robotWood.tracker.getLateralPosition() );
 
         telemetry.addLine();
+        /*
 
+        for (int travelDistance = 0; travelDistance <= 20; travelDistance++) {
+            String data = "Move " + travelDistance + " inch" + (travelDistance == 1 ? "    " : "es") + (travelDistance <= 9 ? "   " : "");
+            telemetry.addData(data, mecanumDrive.convertDistTicks(travelDistance) );
+        }
 
-        telemetry.addData("Move 17 inches", mecanumDrive.convertDistTicks( 6.5) );
+        telemetry.addLine();
 
+        telemetry.addData("Move 20 inches", mecanumDrive.convertDistTicks( 20) ); // 4255(.30058379) with 250 ppr, 3404(.24046704) with 200 ppr
+        String data = "Move " + mecanumDrive.convertDistTicks( 20) + " ticks";
+        telemetry.addData(data, mecanumDrive.convertTicksDist( mecanumDrive.convertDistTicks( 20) )  );
+*/
         //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 
-        //telemetry.addData("Gyro", gyro.getPosition() );
+        telemetry.addData("getGyroPosition", robotWood.tracker.getGyroPosition() );
+        telemetry.addData("getGyroX", robotWood.tracker.getGyroHeading() );
+        telemetry.addData("getGyroY", robotWood.tracker.getGyroRoll() );
+        telemetry.addData("getGyroZ", robotWood.tracker.getGyroPitch() );
+        telemetry.addData("getGyro", robotWood.tracker.getGyro() );
 
         telemetry.update();
 

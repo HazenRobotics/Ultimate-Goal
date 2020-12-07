@@ -51,18 +51,29 @@ public class AutonomousTest extends LinearOpMode
         telemetry.update();
 
         robotWood.sleep( 500 );
-
+s
          */
 
-        robotWood.driveDistance( 4, 0.25, true );
+        robotWood.driveDistance( 20, 0.25, true );
 
         telemetry.addLine("longitudinal position_1 = " + robotWood.tracker.getLongitudinalPosition() );
         telemetry.addLine("lateral position_1 = " + robotWood.tracker.getLateralPosition() );
         telemetry.update();
 
+        boolean testTwice = false;
 
-        robotWood.sleep( 10*100 );
+        if( testTwice ) {
+            robotWood.sleep( 20 * 1000 );
 
+
+            robotWood.driveDistance( 20, 0.25, true );
+
+            telemetry.addLine( "longitudinal position_2 = " + robotWood.tracker.getLongitudinalPosition() );
+            telemetry.addLine( "lateral position_2 = " + robotWood.tracker.getLateralPosition() );
+            telemetry.update();
+        }
+
+       // robotWood.turnTime( 1000, 0.25, true );
 
     }
 

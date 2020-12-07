@@ -19,7 +19,7 @@ public class FourWheelDrive implements Drive {
     private DcMotorEx backLeft;
     private DcMotorEx backRight;
 
-    final int PULSES_PER_REVOLUTION = 250;
+    final double PULSES_PER_REVOLUTION = 250;
     final double GEAR_RATIO = 0.25;
 
     private State currentState = State.STOPPED;
@@ -36,14 +36,21 @@ public class FourWheelDrive implements Drive {
      *
      * @param distanceToTravel the distance to move in inches
      * @param circumference the circumference of the wheel that has the encoder
-     * @return
+     * @return totalTicks - the amount of ticks to move forward
      */
-    public int convertDistTicks(double distanceToTravel, double circumference)
+    public int convertDistTicks( double distanceToTravel, double circumference )
     {
         double revolutions = distanceToTravel / circumference;
-        int totalTicks = (int) Math.round( revolutions * PULSES_PER_REVOLUTION / GEAR_RATIO );
+        int totalTicks = (int) Math.round( (revolutions * PULSES_PER_REVOLUTION) / GEAR_RATIO );
 
         return totalTicks;
+    }
+    public int convertTicksDist( double ticksToTravel, double circumference )
+    {
+        double calculations = ticksToTravel * circumference * GEAR_RATIO;
+        int totalDistance = (int) Math.round( calculations / PULSES_PER_REVOLUTION );
+
+        return totalDistance;
     }
 
     /**

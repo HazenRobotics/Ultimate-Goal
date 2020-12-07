@@ -14,8 +14,8 @@ public class MecanumDrive extends FourWheelDrive {
     private DcMotor backRightMotor;
     private DcMotor backLeftMotor;
 
-    final double WHEEL_DIAMETER = 1.4960629921;
-
+    final double WHEEL_DIAMETER = 1.4960629921; // odometry wheel 38mm
+    // mecanum wheel diameter = 3.9788735773; circumference = 12.5
     /**
      * Creates a MechanumDrive with default names for the wheels
      * @param hw robot's hardware map
@@ -39,6 +39,11 @@ public class MecanumDrive extends FourWheelDrive {
     public int convertDistTicks( double distanceToTravel )
     {
         return convertDistTicks( distanceToTravel, Math.PI * WHEEL_DIAMETER );
+    }
+
+    public int convertTicksDist( double ticksToTravel )
+    {
+        return convertTicksDist( ticksToTravel, Math.PI * WHEEL_DIAMETER );
     }
 
     /**
