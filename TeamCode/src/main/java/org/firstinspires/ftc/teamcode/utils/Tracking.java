@@ -15,23 +15,13 @@ public class Tracking {
     BNO055IMU gyro;
     MecanumDrive mecanumDrive;
     Orientation angles;
+    Acceleration gravity;
 
     public Tracking( MecanumDrive mDrv, HardwareMap hw ) {
 
         mecanumDrive = mDrv;
 
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
-        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
-        parameters.loggingEnabled      = true;
-        parameters.loggingTag          = "IMU";
-        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
-
-        gyro = hw.get( BNO055IMU.class, "imu" );
-        gyro.initialize(parameters);
-
-        angles = gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        initGyro(hw);
 
     }
 
@@ -51,40 +41,42 @@ public class Tracking {
         return mecanumDrive.getFrontLeftPosition();
     }
 
+    public void initGyro( HardwareMap hw ) {
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
+        parameters.loggingEnabled      = true;
+        parameters.loggingTag          = "IMU";
+        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
 
-    public Position getGyroPosition() {
-        return gyro.getPosition();
+        gyro = hw.get( BNO055IMU.class, "imu" );
+        gyro.initialize(parameters);
+
+        angles = gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
     }
 
-
-
-    public String getGyroHeading() {
-        return formatAngle(angles.angleUnit, angles.firstAngle);
+    public float getGyroHeading() {
+        angles = gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        return angles.firstAngle;
+        //return formatAngle(angles.angleUnit, angles.firstAngle);
     }
 
-    public String getGyroRoll() {
-        return formatAngle(angles.angleUnit, angles.secondAngle);
+    public float getGyroRoll() {
+        angles = gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        return angles.secondAngle;
+        //return formatAngle(angles.angleUnit, angles.secondAngle);
     }
 
-    public String getGyroPitch() {
-        return formatAngle(angles.angleUnit, angles.thirdAngle);
+    public float getGyroPitch() {
+        angles = gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        return angles.thirdAngle;
     }
 
-
-    public DistanceUnit getGyro() {
-        return gyro.getPosition().unit;
+    public float getNewGyroHeading()
+    {
+        return (-getGyroHeading() + 360) % 360;
     }
-
-
-    String formatAngle(AngleUnit angleUnit, double angle) {
-        return formatDegrees(AngleUnit.DEGREES.fromUnit(angleUnit, angle));
-    }
-
-    String formatDegrees(double degrees){
-        return String.format( Locale.getDefault(), "%.1f", AngleUnit.DEGREES.normalize(degrees));
-    }
-
-
     /**
      * will sleep the robot for [millis] milliseconds
      * @param millis

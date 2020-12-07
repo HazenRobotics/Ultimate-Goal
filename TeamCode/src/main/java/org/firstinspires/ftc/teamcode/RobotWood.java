@@ -11,6 +11,8 @@ public class RobotWood extends Robot {
     MecanumDrive mecanumDrive;
     Tracking tracker;
 
+    public static double MIN_POWER = 0.4;
+
     public RobotWood(HardwareMap hw, OpMode op){
         super(hw, op);
         super.driveTrain = new MecanumDrive(hw);
@@ -64,16 +66,24 @@ public class RobotWood extends Robot {
 
     }
 
-    /*
+    /**
+     *
+     * @param degrees forward is zero, turning right is positive, limit: 359 degrees
+     * @param power positive will turn right, negative turns left
+     * @param setPowerZero if true, will set the power to zero once finished
+     */
     public void rotateDegrees( double degrees, double power, boolean setPowerZero ) {
 
         mecanumDrive.drive( 0, 0, power );
 
-        double initialDegrees = tracker.getGyroDegrees();
+        double initialDegrees = tracker.getGyroHeading();
 
-        while( tracker.getGyroDegrees() - initialDegrees < degrees && opModeIsActive()) {
-            mecanumDrive.drive( 0, 0, power );
-        }
+        if( degrees > 0 )
+            while( tracker.getGyroHeading() - initialDegrees < degrees && opModeIsActive())
+                mecanumDrive.drive( 0, 0, power );
+        else if( degrees < 0 )
+            while( tracker.getGyroHeading() - initialDegrees > degrees && opModeIsActive())
+                mecanumDrive.drive( 0, 0, power );
 
         //sets all power to zero afterwords
         if(setPowerZero) {
@@ -82,7 +92,62 @@ public class RobotWood extends Robot {
 
 
     }
-*/
+
+    /**
+     *
+     * @param degrees forward is zero, turning right is positive, limit: 359 degrees
+     * @param power positive will turn right, negative turns left
+     */
+    public void rotateDegrees( double degrees, double power ) {
+
+        //mecanumDrive.drive( 0, 0, power );
+
+        double initialDegrees = tracker.getNewGyroHeading();
+        double percent = 0.75;
+        double variable = 5*power;
+
+        if (power > 0) {
+            mecanumDrive.drive( 0, 0, power );
+            while( opModeIsActive() && tracker.getNewGyroHeading() - initialDegrees < degrees - variable || tracker.getNewGyroHeading() - initialDegrees > degrees + variable )
+            {
+                telemetry.addData("While:", tracker.getNewGyroHeading() - initialDegrees < degrees)
+                        .addData("While:", tracker.getNewGyroHeading() - initialDegrees > degrees)
+                        .addData("Heading", tracker.getNewGyroHeading());
+                telemetry.update();
+                /*
+                if( tracker.getNewGyroHeading() - initialDegrees > degrees*percent  )
+                    power = ((MIN_POWER-power)/(1-percent)*power);*/
+                mecanumDrive.drive( 0, 0, power );
+            }
+            mecanumDrive.drive( 0, 0, 0 );
+        }/*
+        else if ( power != 0 )
+        {
+            mecanumDrive.drive( 0, 0, power );
+            while( opModeIsActive() && tracker.getNewGyroHeading() - initialDegrees > degrees )
+            {
+                telemetry.addData("While:", tracker.getNewGyroHeading() < degrees)
+                    .addData("Heading", tracker.getNewGyroHeading());
+                telemetry.update();
+
+                if( tracker.getNewGyroHeading() > degrees*percent  )
+                    power = ((MIN_POWER-power)/(1-percent)*power);
+                mecanumDrive.drive( 0, 0, power );
+            }
+            mecanumDrive.drive( 0, 0, 0 );
+        }*/
+
+        /*
+        while( opModeIsActive())
+        {
+            telemetry.addData("getGyroHeading", tracker.getGyroHeading())
+                    .addData("getNewGyroHeading", tracker.getNewGyroHeading());
+            telemetry.update();
+        }*/
+
+
+    }
+
 
     /**
      *
@@ -143,7 +208,6 @@ public class RobotWood extends Robot {
         mecanumDrive.drive( 0, 0, power );
 
         //wait for certain amount of time while motors are running
-        //robotMecanum.wait(time);
         long setTime = System.currentTimeMillis();
         previousTime = opMode.getRuntime();
 

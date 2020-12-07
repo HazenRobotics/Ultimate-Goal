@@ -30,25 +30,25 @@ public class TeleOpWood extends OpMode {
     public void loop() {
 
 
-        telemetry.addData("              Controls", "   ");
-        telemetry.addData("Drive", "Gp1: left stick y (axis)");
-        telemetry.addData("Strafe", "Gp1: left stick x (axis)");
-        telemetry.addData("Rotate", "Gp1: right stick x (axis)");
+        telemetry.addData("              Controls", "   ")
+                .addData("Drive", "Gp1: left stick y (axis)")
+                .addData("Strafe", "Gp1: left stick x (axis)")
+                .addData("Rotate", "Gp1: right stick x (axis)");
         telemetry.addLine();
 
         // moves the robot • left stick; moves forwards/backwards (y axis), strafing left/right (x axis) • right stick; rotating left/right ()x axis)
         mecanumDrive.drive( -gamepad1.left_stick_y/2, gamepad1.left_stick_x/2, gamepad1.right_stick_x/2 );
 
-        telemetry.addData("left_stick_y", gamepad1.left_stick_y);
-        telemetry.addData("left_stick_x", gamepad1.left_stick_x);
-        telemetry.addData("right_stick_x", gamepad1.right_stick_x);
+        telemetry.addData("left_stick_y", gamepad1.left_stick_y)
+                .addData("left_stick_x", gamepad1.left_stick_x)
+                .addData("right_stick_x", gamepad1.right_stick_x);
 
         telemetry.addLine("--------------");
 
-        telemetry.addData("Front Left Power", mecanumDrive.getFrontLeftPower() );
-        telemetry.addData("Front Right Power", mecanumDrive.getFrontRightPower() );
-        telemetry.addData("Back Left Power", mecanumDrive.getBackLeftPower() );
-        telemetry.addData("Back Right Power", mecanumDrive.getBackRightPower() );
+        telemetry.addData("Front Left Power", mecanumDrive.getFrontLeftPower() )
+                .addData("Front Right Power", mecanumDrive.getFrontRightPower() )
+                .addData("Back Left Power", mecanumDrive.getBackLeftPower() )
+                .addData("Back Right Power", mecanumDrive.getBackRightPower() );
 
         telemetry.addLine();
 
@@ -56,8 +56,8 @@ public class TeleOpWood extends OpMode {
         telemetry.addLine("lateral position = " + robotWood.tracker.getLateralPosition() );
 
         telemetry.addLine();
-        /*
 
+        /*
         for (int travelDistance = 0; travelDistance <= 20; travelDistance++) {
             String data = "Move " + travelDistance + " inch" + (travelDistance == 1 ? "    " : "es") + (travelDistance <= 9 ? "   " : "");
             telemetry.addData(data, mecanumDrive.convertDistTicks(travelDistance) );
@@ -68,14 +68,14 @@ public class TeleOpWood extends OpMode {
         telemetry.addData("Move 20 inches", mecanumDrive.convertDistTicks( 20) ); // 4255(.30058379) with 250 ppr, 3404(.24046704) with 200 ppr
         String data = "Move " + mecanumDrive.convertDistTicks( 20) + " ticks";
         telemetry.addData(data, mecanumDrive.convertTicksDist( mecanumDrive.convertDistTicks( 20) )  );
-*/
+        */
+
         //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 
-        telemetry.addData("getGyroPosition", robotWood.tracker.getGyroPosition() );
-        telemetry.addData("getGyroX", robotWood.tracker.getGyroHeading() );
-        telemetry.addData("getGyroY", robotWood.tracker.getGyroRoll() );
-        telemetry.addData("getGyroZ", robotWood.tracker.getGyroPitch() );
-        telemetry.addData("getGyro", robotWood.tracker.getGyro() );
+        telemetry.addData("getNewGyroHeading", robotWood.tracker.getNewGyroHeading())
+                .addData("getGyroHeading", robotWood.tracker.getGyroHeading() )
+                .addData("getGyroRoll", robotWood.tracker.getGyroRoll() )
+                .addData("getGyroPitch", robotWood.tracker.getGyroPitch() );
 
         telemetry.update();
 
