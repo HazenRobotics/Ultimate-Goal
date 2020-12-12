@@ -72,4 +72,9 @@ public class MecanumDrive extends FourWheelDrive {
         setMotorPower( frontLeftPower, frontRightPower, backLeftPower, backRightPower );
     }
 
+    /*
+    public void setMotorPower(double frontLeftPower, double frontRightPower, double backLeftPower, double backRightPower){
+        setMotorPower(frontLeftPower, frontRightPower, backLeftPower, backRightPower);
+    }*/
+
 }

@@ -105,7 +105,7 @@ public abstract class Robot {
         long setTime = System.currentTimeMillis();
         previousTime = opMode.getRuntime();
 
-        while(System.currentTimeMillis() - setTime < (delay) && opModeIsActive())
+        while( (System.currentTimeMillis() - setTime)*1000 < (delay) && opModeIsActive())
             previousTime = opMode.getRuntime();
 
         telemetry.addData("Finished Sleep", "");

@@ -54,6 +54,19 @@ public class Tracking {
         gyro.initialize(parameters);
 
         angles = gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+
+    }
+
+    public double getGyroXVelocity() {
+        return gyro.getVelocity().xVeloc;
+    }
+
+    public double getGyroYVelocity() {
+        return gyro.getVelocity().yVeloc;
+    }
+
+    public double getGyroZVelocity() {
+        return gyro.getVelocity().zVeloc;
     }
 
     public float getGyroHeading() {

@@ -56,13 +56,16 @@ s
 
         boolean testTwice = false;
 
+        robotWood.driveTime( 500, .5, true );
+        robotWood.rotateTime( 500, .5, true );
+
+        //robotWood.driveDistance( 20, .5, true );
+
+        telemetry.addLine("longitudinal position_1 = " + robotWood.tracker.getLongitudinalPosition() );
+        telemetry.addLine("lateral position_1 = " + robotWood.tracker.getLateralPosition() );
+        telemetry.update();
+
         if( testTwice ) {
-
-            robotWood.driveDistance( 5, 0.4, true );
-
-            telemetry.addLine("longitudinal position_1 = " + robotWood.tracker.getLongitudinalPosition() );
-            telemetry.addLine("lateral position_1 = " + robotWood.tracker.getLateralPosition() );
-            telemetry.update();
 
 
             robotWood.sleep( 20 * 1000 );
@@ -76,9 +79,9 @@ s
         }
 
 
-        robotWood.rotateDegrees( 90, 0.5/*, true*/ ); // should turn right 90 degrees
+        //robotWood.rotateDegrees( 270, -1/*, true*/ ); // should turn right 90 degrees
 
-        robotWood.rotateDegrees( 180, 0.3/*, true*/ ); // should turn right 90 degrees
+        //robotWood.rotateDegrees( 9, 0.6/*, true*/ ); // should turn right 90 degrees
 
     }
 

@@ -11,7 +11,7 @@ public class RobotWood extends Robot {
     MecanumDrive mecanumDrive;
     Tracking tracker;
 
-    public static double MIN_POWER = 0.4;
+    public static double MIN_POWER = 0.1;
 
     public RobotWood(HardwareMap hw, OpMode op){
         super(hw, op);
@@ -27,16 +27,21 @@ public class RobotWood extends Robot {
 
         int ticksToTravel = mecanumDrive.convertDistTicks(distance);
         int initialXPos = tracker.getLongitudinalPosition();
-        int initialYPos = tracker.getLateralPosition();
+        double percent = 0.5;
+        //int initialYPos = tracker.getLateralPosition();
 
+        mecanumDrive.drive( power, 0, 0 );
         while( tracker.getLongitudinalPosition() - initialXPos < ticksToTravel && opModeIsActive()) {
+
+            double m = (power-(Math.signum(power)*MIN_POWER))/(-distance*(1-distance));
+            double x = mecanumDrive.convertDistTicks(tracker.getLateralPosition() - ticksToTravel);
+            double b = (Math.signum(power)*MIN_POWER)-m*distance;
+
+            if( tracker.getLateralPosition() - initialXPos > ticksToTravel*percent )
+                power = m*x + b;
+
             mecanumDrive.drive( power, 0, 0 );
-            /*
-            if( tracker.getLateralPosition() < initialYPos && opModeIsActive() ) {
-                strafeDistance( mecanumDrive.convertTicksDist(distance), power, false )
-            if( tracker.getLateralPosition() > initialYPos && opModeIsActive() ) {
-                strafeDistance( mecanumDrive.convertTicksDist(distance), -power, false )
-            }*/
+
         }
 
         //sets all power to zero afterwords
@@ -54,8 +59,10 @@ public class RobotWood extends Robot {
         int ticksToTravel = mecanumDrive.convertDistTicks(distance);
         int initialPosition = tracker.getLateralPosition();
 
-        while( tracker.getLateralPosition() - ticksToTravel < ticksToTravel && opModeIsActive()) {
-            mecanumDrive.drive( 0, power, 0 );
+        mecanumDrive.drive( 0, 0, power );
+        while( tracker.getLateralPosition() - initialPosition < ticksToTravel && opModeIsActive()) {
+
+
         }
 
         //sets all power to zero afterwords
@@ -98,44 +105,55 @@ public class RobotWood extends Robot {
      * @param degrees forward is zero, turning right is positive, limit: 359 degrees
      * @param power positive will turn right, negative turns left
      */
-    public void rotateDegrees( double degrees, double power ) {
+    public void rotateDegrees( double degrees, double power ) throws InterruptedException {
 
         //mecanumDrive.drive( 0, 0, power );
 
         double initialDegrees = tracker.getNewGyroHeading();
-        double percent = 0.75;
+        double percent = 0.5;
         double variable = 5*power;
 
         if (power > 0) {
             mecanumDrive.drive( 0, 0, power );
-            while( opModeIsActive() && tracker.getNewGyroHeading() - initialDegrees < degrees - variable || tracker.getNewGyroHeading() - initialDegrees > degrees + variable )
+            sleep( 250 );
+            while( opModeIsActive() && tracker.getNewGyroHeading() - initialDegrees < degrees - variable )
             {
                 telemetry.addData("While:", tracker.getNewGyroHeading() - initialDegrees < degrees)
                         .addData("While:", tracker.getNewGyroHeading() - initialDegrees > degrees)
                         .addData("Heading", tracker.getNewGyroHeading());
                 telemetry.update();
-                /*
-                if( tracker.getNewGyroHeading() - initialDegrees > degrees*percent  )
-                    power = ((MIN_POWER-power)/(1-percent)*power);*/
+
+                double m = (power-(Math.signum(power)*MIN_POWER))/(-degrees*(1-percent));
+                double x = tracker.getNewGyroHeading() - initialDegrees;
+                double b = (Math.signum(power)*MIN_POWER)-m*degrees;
+
+                if( tracker.getNewGyroHeading() - initialDegrees > degrees*percent )
+                    power = m*x + b;
                 mecanumDrive.drive( 0, 0, power );
             }
             mecanumDrive.drive( 0, 0, 0 );
-        }/*
+        }
         else if ( power != 0 )
         {
             mecanumDrive.drive( 0, 0, power );
-            while( opModeIsActive() && tracker.getNewGyroHeading() - initialDegrees > degrees )
+            while( opModeIsActive() && tracker.getNewGyroHeading() - initialDegrees > degrees + variable )
             {
-                telemetry.addData("While:", tracker.getNewGyroHeading() < degrees)
-                    .addData("Heading", tracker.getNewGyroHeading());
+                telemetry.addData("While:", tracker.getNewGyroHeading() - initialDegrees < degrees)
+                        .addData("While:", tracker.getNewGyroHeading() - initialDegrees > degrees)
+                        .addData("Heading", tracker.getNewGyroHeading());
                 telemetry.update();
 
-                if( tracker.getNewGyroHeading() > degrees*percent  )
-                    power = ((MIN_POWER-power)/(1-percent)*power);
+                double m = (power-(Math.signum(power)*MIN_POWER))/(-degrees*(1-percent));
+                double x = tracker.getNewGyroHeading() - initialDegrees;
+                double b = (Math.signum(power)*MIN_POWER)-m*degrees;
+
+                if( tracker.getNewGyroHeading() - initialDegrees > degrees*percent )
+                    power = m*x + b;
+                mecanumDrive.drive( 0, 0, power );
                 mecanumDrive.drive( 0, 0, power );
             }
             mecanumDrive.drive( 0, 0, 0 );
-        }*/
+        }
 
         /*
         while( opModeIsActive())
@@ -189,6 +207,30 @@ public class RobotWood extends Robot {
 
         while(System.currentTimeMillis() - setTime < (time) && opModeIsActive()) {
             mecanumDrive.drive( 0, power, 0 );
+        }
+
+        //sets all power to zero afterwords
+        if(setPowerZero) {
+            mecanumDrive.drive( 0, 0, 0 );
+        }
+    }
+
+    /**
+     *
+     * @param time - time to strafe the robot
+     * @param power - power for the wheels to strafe the robot
+     * @param setPowerZero - (boolean) set power to zero after strafing
+     */
+    public void rotateTime( long time, double power, boolean setPowerZero ) {
+
+        mecanumDrive.drive( 0, 0, power );
+
+        //wait for certain amount of time while motors are running
+        long setTime = System.currentTimeMillis();
+        previousTime = opMode.getRuntime();
+
+        while(System.currentTimeMillis() - setTime < (time) && opModeIsActive()) {
+            mecanumDrive.drive( 0, 0, power );
         }
 
         //sets all power to zero afterwords

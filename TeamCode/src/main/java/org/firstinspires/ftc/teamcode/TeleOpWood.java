@@ -39,6 +39,8 @@ public class TeleOpWood extends OpMode {
         // moves the robot • left stick; moves forwards/backwards (y axis), strafing left/right (x axis) • right stick; rotating left/right ()x axis)
         mecanumDrive.drive( -gamepad1.left_stick_y/2, gamepad1.left_stick_x/2, gamepad1.right_stick_x/2 );
 
+        //mecanumDrive.setMotorPower( gamepad1.left_trigger, gamepad1.right_trigger, (gamepad1.left_bumper) ? 1:0, (gamepad1.right_bumper) ? 1:0 );
+
         telemetry.addData("left_stick_y", gamepad1.left_stick_y)
                 .addData("left_stick_x", gamepad1.left_stick_x)
                 .addData("right_stick_x", gamepad1.right_stick_x);
@@ -76,6 +78,10 @@ public class TeleOpWood extends OpMode {
                 .addData("getGyroHeading", robotWood.tracker.getGyroHeading() )
                 .addData("getGyroRoll", robotWood.tracker.getGyroRoll() )
                 .addData("getGyroPitch", robotWood.tracker.getGyroPitch() );
+
+        telemetry.addData("getGyroXVelocity", robotWood.tracker.getGyroXVelocity())
+                .addData("getGyroYVelocity", robotWood.tracker.getGyroYVelocity() )
+                .addData("getGyroZVelocity", robotWood.tracker.getGyroZVelocity() );
 
         telemetry.update();
 
