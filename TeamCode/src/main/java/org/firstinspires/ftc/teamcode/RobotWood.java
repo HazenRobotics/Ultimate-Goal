@@ -11,7 +11,7 @@ public class RobotWood extends Robot {
     MecanumDrive mecanumDrive;
     Tracking tracker;
 
-    public static double MIN_POWER = 0.1;
+    public static double MIN_POWER = 0.4;
 
     public RobotWood(HardwareMap hw, OpMode op){
         super(hw, op);
@@ -27,24 +27,27 @@ public class RobotWood extends Robot {
 
         int ticksToTravel = mecanumDrive.convertDistTicks(distance);
         int initialXPos = tracker.getLongitudinalPosition();
-        double percent = 0.5;
+        double percent = 0.25;
         //int initialYPos = tracker.getLateralPosition();
 
         mecanumDrive.drive( power, 0, 0 );
         while( tracker.getLongitudinalPosition() - initialXPos < ticksToTravel && opModeIsActive()) {
 
-            double m = (power-(Math.signum(power)*MIN_POWER))/(-distance*(1-distance));
-            double x = mecanumDrive.convertDistTicks(tracker.getLateralPosition() - ticksToTravel);
-            double b = (Math.signum(power)*MIN_POWER)-m*distance;
+            double maxPower;
+            double a = (MIN_POWER - power)/Math.pow(ticksToTravel - percent * ticksToTravel, 2);
+            //double m = (maxPower-(Math.signum(maxPower)*MIN_POWER))/(-distance*(1-distance));
+            double x = tracker.getLateralPosition() - initialXPos;
+            //double b = (Math.signum(maxPower)*MIN_POWER)-m*distance;
 
-            if( tracker.getLateralPosition() - initialXPos > ticksToTravel*percent )
-                power = m*x + b;
+            //if( tracker.getLateralPosition() - initialXPos > ticksToTravel*percent )
+                //maxPower = m*x + b;
+            maxPower = a * Math.pow(x - percent * ticksToTravel, 2) + power;
 
-            mecanumDrive.drive( power, 0, 0 );
+            mecanumDrive.drive( maxPower, 0, 0 );
 
         }
 
-        //sets all power to zero afterwords
+        //sets all maxPower to zero afterwords
         if(setPowerZero) {
             mecanumDrive.drive( 0, 0, 0 );
         }
