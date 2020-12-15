@@ -59,9 +59,9 @@ s
         //robotWood.driveTime( 500, .5, true );
         //robotWood.rotateTime( 1500, .5, true );
 
-        //robotWood.driveDistance( 12, 0.75 , true );
+        robotWood.driveDistance( 12, 0.75 , true );
         //robotWood.strafeDistance( 12, 0.75 , true );
-        robotWood.rotateDegrees( 90, 0.75 );
+        //robotWood.rotateDegrees( 90, 0.75 );
 
         telemetry.addLine("longitudinal position_1 = " + robotWood.tracker.getLongitudinalPosition() );
         telemetry.addLine("lateral position_1 = " + robotWood.tracker.getLateralPosition() );
