@@ -21,7 +21,7 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.
  * A class for tracking Vuforia targets on the field.
  * {@link Vuforia#startVuforiaEngine(String, String, boolean, HardwareMap) Vuforia.startVuforiaEngine()} must be called before this class is instantiated
  */
-public class VuforiaNavigation {
+public class VuforiaLocalization {
 
     //VuforiaLocalizer vuforia;
 
@@ -38,7 +38,7 @@ public class VuforiaNavigation {
      * Creates a VuforiaTargetTracker
      * @param trackablesAssetName name of the tensorflow asset file
      */
-    public VuforiaNavigation(String trackablesAssetName){
+    public VuforiaLocalization( String trackablesAssetName){
         //startVuforiaEngine(vuforiaKey, webcamName, cameraMonitorViewId, hw);
 
         loadTrackables(trackablesAssetName);

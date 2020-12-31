@@ -9,19 +9,81 @@ import org.firstinspires.ftc.teamcode.drives.MecanumDrive;
 @TeleOp(name="teleopWood", group="teleop")
 public class TeleOpWood extends OpMode {
 
-    Robot robot;
+    //Robot robot;
+    RobotWood robotWood;
+    MecanumDrive mecanumDrive;
 
     @Override
     public void init() {
-        robot = new RobotWood(hardwareMap);
+        //robot = new RobotWood(hardwareMap, this);
+        //robot.driveTrain = new MecanumDrive(hardwareMap);
+        robotWood = new RobotWood(hardwareMap, this);
+        robotWood.driveTrain = new MecanumDrive(hardwareMap);
+        mecanumDrive = ((MecanumDrive) robotWood.driveTrain);
+
+        telemetry.addLine("init finished" );
+
+        telemetry.update();
     }
 
     @Override
     public void loop() {
 
-        // moves the robot • left stick - forwards/backwards - y axis, turning - right/left - x axis • right stick -  strafing - x axis
-        ((MecanumDrive)robot.drive).drive(gamepad1.left_stick_y, gamepad1.right_stick_x, gamepad1.left_stick_x);
 
+        telemetry.addData("              Controls", "   ")
+                .addData("Drive", "Gp1: left stick y (axis)")
+                .addData("Strafe", "Gp1: left stick x (axis)")
+                .addData("Rotate", "Gp1: right stick x (axis)");
+        telemetry.addLine();
+
+        // moves the robot • left stick; moves forwards/backwards (y axis), strafing left/right (x axis) • right stick; rotating left/right ()x axis)
+        mecanumDrive.drive( -gamepad1.left_stick_y/2, gamepad1.left_stick_x/2, gamepad1.right_stick_x/2 );
+
+        //mecanumDrive.setMotorPower( gamepad1.left_trigger, gamepad1.right_trigger, (gamepad1.left_bumper) ? 1:0, (gamepad1.right_bumper) ? 1:0 );
+
+        telemetry.addData("left_stick_y", gamepad1.left_stick_y)
+                .addData("left_stick_x", gamepad1.left_stick_x)
+                .addData("right_stick_x", gamepad1.right_stick_x);
+
+        telemetry.addLine("--------------");
+
+        telemetry.addData("Front Left Power", mecanumDrive.getFrontLeftPower() )
+                .addData("Front Right Power", mecanumDrive.getFrontRightPower() )
+                .addData("Back Left Power", mecanumDrive.getBackLeftPower() )
+                .addData("Back Right Power", mecanumDrive.getBackRightPower() );
+
+        telemetry.addLine();
+
+        telemetry.addLine("longitudinal position = " + robotWood.tracker.getLongitudinalPosition() );
+        telemetry.addLine("lateral position = " + robotWood.tracker.getLateralPosition() );
+
+        telemetry.addLine();
+
+        /*
+        for (int travelDistance = 0; travelDistance <= 20; travelDistance++) {
+            String data = "Move " + travelDistance + " inch" + (travelDistance == 1 ? "    " : "es") + (travelDistance <= 9 ? "   " : "");
+            telemetry.addData(data, mecanumDrive.convertDistTicks(travelDistance) );
+        }
+
+        telemetry.addLine();
+
+        telemetry.addData("Move 20 inches", mecanumDrive.convertDistTicks( 20) ); // 4255(.30058379) with 250 ppr, 3404(.24046704) with 200 ppr
+        String data = "Move " + mecanumDrive.convertDistTicks( 20) + " ticks";
+        telemetry.addData(data, mecanumDrive.convertTicksDist( mecanumDrive.convertDistTicks( 20) )  );
+        */
+
+        //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+
+        telemetry.addData("getNewGyroHeading", robotWood.tracker.getNewGyroHeading())
+                .addData("getGyroHeading", robotWood.tracker.getGyroHeading() )
+                .addData("getGyroRoll", robotWood.tracker.getGyroRoll() )
+                .addData("getGyroPitch", robotWood.tracker.getGyroPitch() );
+
+        telemetry.addData("getGyroXVelocity", robotWood.tracker.getGyroXVelocity())
+                .addData("getGyroYVelocity", robotWood.tracker.getGyroYVelocity() )
+                .addData("getGyroZVelocity", robotWood.tracker.getGyroZVelocity() );
+
+        telemetry.update();
 
     }
 }

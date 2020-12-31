@@ -5,14 +5,14 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.utils.Vuforia;
-import org.firstinspires.ftc.teamcode.utils.VuforiaNavigation;
+import org.firstinspires.ftc.teamcode.utils.VuforiaLocalization;
 
 @TeleOp(name="Vuforia Test")
 public class VuforiaTest extends OpMode {
 
     private final String VUFORIA_TRACKABLES_ASSET_NAME = "UltimateGoal";
 
-    VuforiaNavigation vuforiaNavigation;
+    VuforiaLocalization vuforiaLocalization;
 
 
     @Override
@@ -20,17 +20,18 @@ public class VuforiaTest extends OpMode {
         final String VUFORIA_KEY = hardwareMap.appContext.getResources().getString(R.string.vuforiakey);
         Vuforia.startVuforiaEngine(VUFORIA_KEY, "webcam", true, hardwareMap);
 
-        vuforiaNavigation = new VuforiaNavigation(VUFORIA_TRACKABLES_ASSET_NAME);
+        vuforiaLocalization = new VuforiaLocalization(VUFORIA_TRACKABLES_ASSET_NAME);
     }
     @Override
     public void start(){
-        vuforiaNavigation.activateTracking();
+        vuforiaLocalization.activateTracking();
     }
 
     @Override
     public void loop() {
-        if(vuforiaNavigation.getVisibleTarget() != null) {
-            telemetry.addData("Visible Vuforia Mark", vuforiaNavigation.getVisibleTarget().getName());
+        if(vuforiaLocalization.getVisibleTarget() != null) {
+            telemetry.addData("Visible Vuforia Mark", vuforiaLocalization.getVisibleTarget().getName());
+            telemetry.addData("Robot Position", vuforiaLocalization.getRobotPosition());
         }
         else{
             telemetry.addData("Visible Vuforia Mark", "none");
@@ -40,7 +41,7 @@ public class VuforiaTest extends OpMode {
 
     @Override
     public void stop(){
-        vuforiaNavigation.deactivateTracking();
+        vuforiaLocalization.deactivateTracking();
         if(Vuforia.isRunning()){
             Vuforia.stopVuforiaEngine();
         }

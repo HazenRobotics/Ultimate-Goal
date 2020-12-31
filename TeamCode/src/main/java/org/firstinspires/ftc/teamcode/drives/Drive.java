@@ -36,8 +36,18 @@ public interface Drive {
     void drive(double move, double turn);
 
     /**
+     *
+     * @param distanceToMove
+     * @param circumference
+     * @return
+     */
+    int convertDistTicks( double distanceToMove, double circumference );
+
+    /**
      * Returns the current state of the drive train
      * @return current state
      */
     State getState();
+
+
 }

@@ -2,17 +2,16 @@ package org.firstinspires.ftc.teamcode.utils;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 
 /**
  * A class that holds an instance of the vuforia engine.
- * {@link #startVuforiaEngine(String, String, boolean, HardwareMap)}  Vuforia.startVuforiaEngine()} method must be called before instantiating {@link VuforiaNavigation} or {@link TensorFlow}
+ * {@link #startVuforiaEngine(String, String, boolean, HardwareMap)}  Vuforia.startVuforiaEngine()} method must be called before instantiating {@link VuforiaLocalization} or {@link TensorFlow}
  */
 public class Vuforia {
 
-    public static VuforiaLocalizer vuforia = null;
+    public static VuforiaLocalizerPlus vuforia = null;
 
     private static VuforiaLocalizer.Parameters parameters;
 
@@ -31,7 +30,7 @@ public class Vuforia {
         parameters.cameraName = hw.get(WebcamName.class, webcamName);
         parameters.useExtendedTracking = false;
 
-        vuforia = ClassFactory.getInstance().createVuforia(parameters);
+        vuforia = new VuforiaLocalizerPlus(parameters);
     }
 
     public static boolean isRunning(){
@@ -39,6 +38,7 @@ public class Vuforia {
     }
 
     public static void stopVuforiaEngine(){
+        vuforia.close();
         vuforia = null;
     }
 }

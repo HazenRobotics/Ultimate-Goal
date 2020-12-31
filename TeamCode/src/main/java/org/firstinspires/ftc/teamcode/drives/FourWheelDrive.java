@@ -1,10 +1,13 @@
 package org.firstinspires.ftc.teamcode.drives;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotor.RunMode;
 import com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.DcMotorSimple.Direction;
 
+import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.STOP_AND_RESET_ENCODER;
 import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.FORWARD;
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE;
@@ -16,6 +19,9 @@ public class FourWheelDrive implements Drive {
     private DcMotorEx backLeft;
     private DcMotorEx backRight;
 
+    final double PULSES_PER_REVOLUTION = 250;
+    final double GEAR_RATIO = 0.25;
+
     private State currentState = State.STOPPED;
 
     public FourWheelDrive(HardwareMap hw){
@@ -24,6 +30,27 @@ public class FourWheelDrive implements Drive {
 
     public FourWheelDrive(HardwareMap hw, String frontLeftName, String frontRightName, String backLeftName, String backRightName){
         setUpMotors(hw, frontLeftName, frontRightName, backLeftName, backRightName);
+    }
+
+    /**
+     *
+     * @param distanceToTravel the distance to move in inches
+     * @param circumference the circumference of the wheel that has the encoder
+     * @return totalTicks - the amount of ticks to move forward
+     */
+    public int convertDistTicks( double distanceToTravel, double circumference )
+    {
+        double revolutions = distanceToTravel / circumference;
+        int totalTicks = (int) Math.round( (revolutions * PULSES_PER_REVOLUTION) / GEAR_RATIO );
+
+        return totalTicks;
+    }
+    public int convertTicksDist( double ticksToTravel, double circumference )
+    {
+        double calculations = ticksToTravel * circumference * GEAR_RATIO;
+        int totalDistance = (int) Math.round( calculations / PULSES_PER_REVOLUTION );
+
+        return totalDistance;
     }
 
     /**
@@ -42,6 +69,9 @@ public class FourWheelDrive implements Drive {
 
         setMotorDirections(FORWARD, REVERSE, FORWARD, REVERSE);
         setZeroPowerBehavior(BRAKE, BRAKE, BRAKE, BRAKE);
+        //setRunMode(STOP_AND_RESET_ENCODER, STOP_AND_RESET_ENCODER, STOP_AND_RESET_ENCODER, STOP_AND_RESET_ENCODER );
+
+
     }
 
     @Override
@@ -119,10 +149,56 @@ public class FourWheelDrive implements Drive {
      * @param backLeftBehavior zero power behavior of the back left motor
      * @param backRightBehavior zero power behavior of the back right motor
      */
-    public  void setZeroPowerBehavior(ZeroPowerBehavior frontLeftBehavior, ZeroPowerBehavior frontRightBehavior, ZeroPowerBehavior backLeftBehavior, ZeroPowerBehavior backRightBehavior){
+    public void setZeroPowerBehavior(ZeroPowerBehavior frontLeftBehavior, ZeroPowerBehavior frontRightBehavior, ZeroPowerBehavior backLeftBehavior, ZeroPowerBehavior backRightBehavior){
         frontLeft.setZeroPowerBehavior(frontLeftBehavior);
         frontRight.setZeroPowerBehavior(frontRightBehavior);
         backLeft.setZeroPowerBehavior(backLeftBehavior);
         backRight.setZeroPowerBehavior(backRightBehavior);
+    }
+
+    /**
+     * Sets the run modes of the motors
+     * @param frontLeftMode run mode of the front left motor
+     * @param frontRightMode run mode of the front right motor
+     * @param backLeftMode run mode of the back left motor
+     * @param backMode run mode of the back right motor
+     */
+    public void setRunMode( RunMode frontLeftMode, RunMode frontRightMode, RunMode backLeftMode, RunMode backMode ) {
+        frontLeft.setMode( frontLeftMode );
+        frontRight.setMode(frontRightMode );
+        backLeft.setMode( backLeftMode );
+        backRight.setMode( backMode );
+    }
+
+    public double getFrontLeftPower() {
+        return frontLeft.getPower();
+    }
+
+    public double getFrontRightPower() {
+        return frontRight.getPower();
+    }
+
+    public double getBackLeftPower() {
+        return backLeft.getPower();
+    }
+
+    public double getBackRightPower() {
+        return backRight.getPower();
+    }
+
+    public int getFrontLeftPosition() {
+        return frontLeft.getCurrentPosition();
+    }
+
+    public int getFrontRightPosition() {
+        return frontRight.getCurrentPosition();
+    }
+
+    public int getBackLeftPosition() {
+        return backLeft.getCurrentPosition();
+    }
+
+    public int getBackRightPosition() {
+        return backRight.getCurrentPosition();
     }
 }
