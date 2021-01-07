@@ -23,8 +23,9 @@ public class RingShooter {
 
     private Servo pusher;
 
-    private double flyWheelRadius; //in inches
-    private double launchAngle; //in degrees
+    private double flyWheelRadius;
+    private double launchAngle;
+    private double currentIntakePower;
 
 
     /**
@@ -76,6 +77,7 @@ public class RingShooter {
     public void setIntakeMotorPower( double power ) {
 
         intakeMotor.setPower( power );
+        currentIntakePower = power;
     }
 
     /**
@@ -104,8 +106,9 @@ public class RingShooter {
      * @param inputUnit unit used when inputting the velocity, in units/second
      */
     public void launchRingVelocity(double velocity, DistanceUnit inputUnit) {
-        setFlyWheelMotorVelocity(ShootingMath.velocityToAngularVelocity(inputUnit.toMeters(velocity), DistanceUnit.INCH.toMeters(flyWheelRadius)), AngleUnit.RADIANS);
+        setFlyWheelMotorVelocity(ShootingMath.velocityToAngularVelocity(inputUnit.toMeters(velocity), inputUnit.toMeters(flyWheelRadius)), AngleUnit.RADIANS);
         pushRing();
+        setFlyWheelMotorVelocity(0, AngleUnit.RADIANS);
     }
 
     /**
@@ -115,6 +118,7 @@ public class RingShooter {
     public void launchRingPower(double power) {
         setFlyWheelMotorPower(power);
         pushRing();
+        setFlyWheelMotorPower(0);
     }
 
     private void pushRing() {
@@ -125,6 +129,10 @@ public class RingShooter {
 
     public double getLaunchAngle() {
         return launchAngle;
+    }
+
+    public double getCurrentIntakePower() {
+        return  currentIntakePower;
     }
 
 }

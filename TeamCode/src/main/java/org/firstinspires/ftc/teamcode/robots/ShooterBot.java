@@ -16,8 +16,8 @@ public class ShooterBot extends Robot {
 
     MecanumDrive mecanumDrive;
 
-    GoalLift goalLift;
-    RingShooter ringShooter;
+    public GoalLift goalLift;
+    public RingShooter ringShooter;
 
     public Tracking tracker;
 
@@ -69,6 +69,10 @@ public class ShooterBot extends Robot {
         goalLift.setGoalLiftPosition(liftPosition, liftPower);
     }
 
+    public void setClawPosition(GoalLift.ClawPosition clawPosition) {
+        goalLift.setClawPosition(clawPosition);
+    }
+
     /**
      *
      * @param degrees forward is zero, turning right is positive, limit: 359 degrees
@@ -91,5 +95,8 @@ public class ShooterBot extends Robot {
         mecanumDrive.drive( 0, 0, 0 );
 
 
+    }
+    public void drive(double forwardPower, double strafePower, double turnPower) {
+        mecanumDrive.drive(forwardPower, strafePower, turnPower);
     }
 }
