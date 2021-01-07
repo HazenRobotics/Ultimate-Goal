@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 
 /**
  * This class sets up and holds methods for using the goal lift mechanism
@@ -11,31 +12,34 @@ import com.qualcomm.robotcore.hardware.Servo;
  */
 public class GoalLift {
 
-    Servo liftLowerer;
+    TouchSensor liftedButton;
+    TouchSensor loweredButton;
+
+    Servo claw;
 
     private DcMotor motor;
 
     private final int TICKS_TO_LIFTED_POSITION = 1440;
 
-    public enum LiftPosition{
-        TOP,
-        BOTTOM
+    public enum LiftPosition {
+        LIFTED,
+        LOWERED
+    }
+    public enum ClawPosition {
+        OPEN,
+        CLOSED
     }
 
-    private LiftPosition currentPosition;
+    private LiftPosition currentLiftPosition;
+
+    private  ClawPosition currentClawPosition;
 
     /**
      * Creates a GoalLift with the default name for the motor
      * @param hw robot's hardware map
      */
     public GoalLift( HardwareMap hw ){
-
-        liftLowerer = hw.servo.get("goalLiftLowerer");
-
-        motor = hw.dcMotor.get( "goalLiftMotor" );
-
-        //change this based on needed motor direction
-        motor.setDirection(DcMotorSimple.Direction.FORWARD);
+        this(hw, "goalLiftMotor", "claw", "liftedButton", "loweredButton");
     }
 
     /**
@@ -43,9 +47,13 @@ public class GoalLift {
      * @param hw robot's hardware map
      * @param motorName name of the lift motor in the hardware map
      */
-    public GoalLift( HardwareMap hw, String motorName ) {
+    public GoalLift( HardwareMap hw, String motorName, String clawName, String liftedButtonName, String loweredButtonName ) {
+        claw = hw.servo.get(clawName);
 
         motor = hw.dcMotor.get( motorName );
+
+        liftedButton = hw.touchSensor.get(liftedButtonName);
+        loweredButton = hw.touchSensor.get(loweredButtonName);
 
         //change this based on needed motor direction
         motor.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -68,24 +76,36 @@ public class GoalLift {
     public void setGoalLiftPosition( LiftPosition position, double power ) {
 
         switch( position ) {
-            case TOP: {
-                if ( currentPosition == LiftPosition.TOP )
+            case LIFTED: {
+                if ( currentLiftPosition == LiftPosition.LIFTED)
                     break;
 
                 liftToPosition( TICKS_TO_LIFTED_POSITION, power );
+                currentLiftPosition = LiftPosition.LIFTED;
+                break;
             }
-            case BOTTOM:{
-                if( currentPosition == LiftPosition.BOTTOM )
+            case LOWERED:{
+                if( currentLiftPosition == LiftPosition.LOWERED)
                     break;
 
                 liftToPosition( 0, power );
+                currentLiftPosition = LiftPosition.LOWERED;
+                break;
             }
         }
 
     }
-
-    public void lowerLift(){
-        liftLowerer.setPosition(1.0);
+    public void setClawPosition( ClawPosition position) {
+        switch (position) {
+            case OPEN:
+                claw.setPosition(1.0);
+                currentClawPosition = ClawPosition.OPEN;
+                break;
+            case CLOSED:
+                claw.setPosition(0.0);
+                currentClawPosition = ClawPosition.CLOSED;
+                break;
+        }
     }
 
     /**
@@ -101,5 +121,13 @@ public class GoalLift {
         while( motor.isBusy() );
             setGoalLiftPower( 0 );
         motor.setMode( DcMotor.RunMode.RUN_WITHOUT_ENCODER );
+    }
+
+    public ClawPosition getCurrentClawPosition() {
+        return currentClawPosition;
+    }
+
+    public LiftPosition getCurrentLiftPosition() {
+        return currentLiftPosition;
     }
 }

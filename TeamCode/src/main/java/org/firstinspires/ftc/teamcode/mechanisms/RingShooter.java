@@ -25,6 +25,7 @@ public class RingShooter {
 
     private double flyWheelRadius;
     private double launchAngle;
+    private double currentIntakePower;
 
 
     /**
@@ -76,6 +77,7 @@ public class RingShooter {
     public void setIntakeMotorPower( double power ) {
 
         intakeMotor.setPower( power );
+        currentIntakePower = power;
     }
 
     /**
@@ -106,6 +108,7 @@ public class RingShooter {
     public void launchRingVelocity(double velocity, DistanceUnit inputUnit) {
         setFlyWheelMotorVelocity(ShootingMath.velocityToAngularVelocity(inputUnit.toMeters(velocity), inputUnit.toMeters(flyWheelRadius)), AngleUnit.RADIANS);
         pushRing();
+        setFlyWheelMotorVelocity(0, AngleUnit.RADIANS);
     }
 
     /**
@@ -115,6 +118,7 @@ public class RingShooter {
     public void launchRingPower(double power) {
         setFlyWheelMotorPower(power);
         pushRing();
+        setFlyWheelMotorPower(0);
     }
 
     private void pushRing() {
@@ -125,6 +129,10 @@ public class RingShooter {
 
     public double getLaunchAngle() {
         return launchAngle;
+    }
+
+    public double getCurrentIntakePower() {
+        return  currentIntakePower;
     }
 
 }
