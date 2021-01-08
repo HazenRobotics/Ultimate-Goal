@@ -80,7 +80,7 @@ public class GoalLift {
                 if ( currentLiftPosition == LiftPosition.LIFTED)
                     break;
 
-                liftToPosition( TICKS_TO_LIFTED_POSITION, power );
+                liftToPosition( LiftPosition.LIFTED, power );
                 currentLiftPosition = LiftPosition.LIFTED;
                 break;
             }
@@ -88,7 +88,7 @@ public class GoalLift {
                 if( currentLiftPosition == LiftPosition.LOWERED)
                     break;
 
-                liftToPosition( 0, power );
+                liftToPosition( LiftPosition.LOWERED, power );
                 currentLiftPosition = LiftPosition.LOWERED;
                 break;
             }
@@ -113,14 +113,18 @@ public class GoalLift {
      * @param position position to move the lift to
      * @param power power at which to move the lift
      */
-    private void liftToPosition( int position, double power ) {
+    private void liftToPosition( LiftPosition position, double power ) {
+        if(position == LiftPosition.LIFTED) {
+            motor.setPower(power);
+            while (!liftedButton.isPressed());
+            motor.setPower(0);
+        }
+        else {
+            motor.setPower(-power);
+            while (!loweredButton.isPressed());
+            motor.setPower(0);
+        }
 
-        motor.setMode( DcMotor.RunMode.RUN_TO_POSITION );
-        motor.setTargetPosition( position );
-        setGoalLiftPower( power );
-        while( motor.isBusy() );
-            setGoalLiftPower( 0 );
-        motor.setMode( DcMotor.RunMode.RUN_WITHOUT_ENCODER );
     }
 
     public ClawPosition getCurrentClawPosition() {
