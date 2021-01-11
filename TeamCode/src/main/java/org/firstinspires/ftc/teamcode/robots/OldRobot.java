@@ -1,5 +1,5 @@
 
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.robots;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -120,13 +120,13 @@ public class OldRobot extends LinearOpMode
 
     //==============================================================================================
 
-    //method takes in 2nd parameter for circumfrence of spinning object
-    public int convertDistTicks(double distanceToTravel, double circumfrence)
+    //method takes in 2nd parameter for circumference of spinning object
+    public int convertDistTicks(double distanceToTravel, double circumference)
     {
         //1440 revolutions = 1 rotation
         //1 rotation = 4
 
-        double revolutions = distanceToTravel / circumfrence;
+        double revolutions = distanceToTravel / circumference;
         int totalTicks = (int) Math.round(revolutions * tickPerRevlolution);
 
         return totalTicks;

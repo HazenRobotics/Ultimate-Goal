@@ -1,12 +1,13 @@
 package org.firstinspires.ftc.teamcode.utils;
 
+import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 
 import java.lang.Math;
 
 public class ShootingMath {
 
-    static final double g = 9.81; // gravity in m/s^2
+    static final double g = -9.81; // gravity in m/s^2
 
 
     /**
@@ -40,9 +41,9 @@ public class ShootingMath {
 
     /**
      * Calculates the angular velocity for the given tangential velocity
-     * @param tangentialVelocity tangential velocity to be converted
-     * @param wheelRadius radius of the wheel
-     * @return angular velocity
+     * @param tangentialVelocity tangential velocity to be converted in meters/second
+     * @param wheelRadius radius of the wheel in meters
+     * @return angular velocity in radians/second
      */
     public static double velocityToAngularVelocity(double tangentialVelocity, double wheelRadius){
         double angularVelocity = tangentialVelocity / wheelRadius;

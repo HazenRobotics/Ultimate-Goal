@@ -154,6 +154,17 @@ public class FieldMap {
          */
         public static OpenGLMatrix robotLocation = null;
 
+        public static VectorF getRobotPosition() {
+            if(robotLocation == null) return null;
+            return robotLocation.getTranslation();
+        }
+
+        public static Orientation getRobotOrientation() {
+            if(robotLocation == null) return null;
+            return Orientation.getOrientation(robotLocation, EXTRINSIC, XYZ, DEGREES);
+
+        }
+
         private static OpenGLMatrix ringLaunchPosition = null;
 
 
