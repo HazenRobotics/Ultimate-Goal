@@ -15,6 +15,7 @@ import org.firstinspires.ftc.teamcode.mechanisms.RingShooter;
 import org.firstinspires.ftc.teamcode.utils.FieldMap;
 import org.firstinspires.ftc.teamcode.utils.ShootingMath;
 import org.firstinspires.ftc.teamcode.utils.Tracking;
+import org.jetbrains.annotations.NotNull;
 
 public class ShooterBotRR {
 
@@ -56,7 +57,7 @@ public class ShooterBotRR {
         ringShooter.setIntakeMotorPower(power);
     }
 
-    public void driveTo(Pose2d... poses) {
+    public void driveTo(@NotNull Pose2d... poses) {
         TrajectoryBuilder trajectoryBuilder = trajectoryBuilder();
         for(Pose2d pose : poses) {
             trajectoryBuilder = trajectoryBuilder.splineToLinearHeading(pose, 0);
@@ -65,7 +66,8 @@ public class ShooterBotRR {
     }
 
     public TrajectoryBuilder trajectoryBuilder() {
-        return drive.trajectoryBuilder(FieldMap.toPose2d(FieldMap.RobotInfo.robotLocation));
+        //If the robot's location is known and stored in field map, use that. else, get a pose estimate from the dead wheels only
+        return FieldMap.RobotInfo.robotLocation != null ? drive.trajectoryBuilder(FieldMap.toPose2d(FieldMap.RobotInfo.robotLocation)) : drive.trajectoryBuilder(drive.getPoseEstimate());
     }
 
     public void drive(Trajectory trajectory) {

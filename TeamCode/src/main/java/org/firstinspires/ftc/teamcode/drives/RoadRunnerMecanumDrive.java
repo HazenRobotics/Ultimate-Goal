@@ -122,10 +122,10 @@ public class RoadRunnerMecanumDrive extends MecanumDrive {
         // BNO055IMUUtil.remapAxes(imu, AxesOrder.XYZ, AxesSigns.NPN);
         BNO055IMUUtil.remapAxes(imu, AxesOrder.XYZ, AxesSigns.NPN);
 
-        leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
-        leftRear = hardwareMap.get(DcMotorEx.class, "leftRear");
-        rightRear = hardwareMap.get(DcMotorEx.class, "rightRear");
-        rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
+        leftFront = hardwareMap.get(DcMotorEx.class, "frontLeftWheel");
+        leftRear = hardwareMap.get(DcMotorEx.class, "backLeftWheel");
+        rightRear = hardwareMap.get(DcMotorEx.class, "backRightWheel");
+        rightFront = hardwareMap.get(DcMotorEx.class, "frontRightWheel");
 
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
 
