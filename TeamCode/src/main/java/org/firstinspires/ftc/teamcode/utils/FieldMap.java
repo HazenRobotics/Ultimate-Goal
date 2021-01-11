@@ -178,20 +178,18 @@ public class FieldMap {
         }
     }
 
-    public static double getDistanceBetweenTwoPoints(OpenGLMatrix point1, OpenGLMatrix point2){
+    public static double getDistanceBetweenTwoPoints(VectorF point1, VectorF point2){
         double x = getGroundDistanceBetweenTwoPoints(point1, point2);
         double y = getHeightDifferenceBetweenTwoPoints(point1, point2);
         return Math.sqrt(Math.pow(x,2) + Math.pow(y,2));
     }
 
-    public static double getGroundDistanceBetweenTwoPoints(OpenGLMatrix point1, OpenGLMatrix point2){
-        VectorF point1V = toVectorF(point1);
-        VectorF point2V = toVectorF(point2);
-        return Math.sqrt(Math.pow(point2V.get(0) - point1V.get(0), 2) + Math.pow(point2V.get(1) - point1V.get(1), 2));
+    public static double getGroundDistanceBetweenTwoPoints(VectorF point1, VectorF point2){
+        return Math.sqrt(Math.pow(point2.get(0) - point1.get(0), 2) + Math.pow(point2.get(1) - point1.get(1), 2));
     }
 
-    public static double getHeightDifferenceBetweenTwoPoints(OpenGLMatrix point1, OpenGLMatrix point2){
-        return toVectorF(point2).get(2) - toVectorF(point1).get(2);
+    public static double getHeightDifferenceBetweenTwoPoints(VectorF point1, VectorF point2){
+        return point2.get(2) - point1.get(2);
     }
 
     public static VectorF toVectorF(OpenGLMatrix position){
