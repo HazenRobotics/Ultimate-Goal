@@ -38,11 +38,14 @@ public class RoadRunnerTwoWheelTrackingLocalizer extends TwoTrackingWheelLocaliz
     public static double WHEEL_RADIUS = 1.49606; // in
     public static double GEAR_RATIO = 0.25; // output (wheel) speed / input (encoder) speed
 
-    public static double PARALLEL_X = 0; // X is the up and down direction
-    public static double PARALLEL_Y = 0; // Y is the strafe direction
+    public static double PARALLEL_X = 3; // X is the up and down direction
+    public static double PARALLEL_Y = -5.5; // Y is the strafe direction
 
-    public static double PERPENDICULAR_X = 0;
-    public static double PERPENDICULAR_Y = 0;
+    public static double PERPENDICULAR_X = -3.5;
+    public static double PERPENDICULAR_Y = -6;
+
+    public static double X_MULTIPLIER = 1; // Multiplier in the X direction
+    public static double Y_MULTIPLIER = 1; // Multiplier in the Y direction
 
     // Parallel/Perpendicular to the forward axis
     // Parallel wheel is parallel to the forward axis
@@ -57,8 +60,8 @@ public class RoadRunnerTwoWheelTrackingLocalizer extends TwoTrackingWheelLocaliz
                 new Pose2d(PERPENDICULAR_X, PERPENDICULAR_Y, Math.toRadians(90))
         ));
 
-        parallelEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "parallelEncoder"));
-        perpendicularEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "perpendicularEncoder"));
+        parallelEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "intakeMotor"));
+        perpendicularEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "goalLiftMotor"));
 
         // TODO: reverse any encoders using Encoder.setDirection(Encoder.Direction.REVERSE)
 
@@ -78,8 +81,8 @@ public class RoadRunnerTwoWheelTrackingLocalizer extends TwoTrackingWheelLocaliz
     @Override
     public List<Double> getWheelPositions() {
         return Arrays.asList(
-                encoderTicksToInches(parallelEncoder.getCurrentPosition()),
-                encoderTicksToInches(perpendicularEncoder.getCurrentPosition())
+                encoderTicksToInches(parallelEncoder.getCurrentPosition() * X_MULTIPLIER),
+                encoderTicksToInches(perpendicularEncoder.getCurrentPosition() * Y_MULTIPLIER)
         );
     }
 
