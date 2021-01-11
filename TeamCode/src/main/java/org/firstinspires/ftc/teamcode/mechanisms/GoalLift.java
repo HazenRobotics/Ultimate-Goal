@@ -39,7 +39,7 @@ public class GoalLift {
      * @param hw robot's hardware map
      */
     public GoalLift( HardwareMap hw ){
-        this(hw, "goalLiftMotor", "claw", "liftedButton", "loweredButton");
+        this(hw, "goalLift", "claw", "liftedButton", "loweredButton");
     }
 
     /**

@@ -19,17 +19,23 @@ public class TeleOpShooter extends OpMode {
     @Override
     public void loop() {
         robot.drive(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
-        if(gamepad1.a) {
+        /*if(gamepad1.a) {
             robot.setClawPosition(robot.goalLift.getCurrentClawPosition() == GoalLift.ClawPosition.OPEN ? GoalLift.ClawPosition.CLOSED : GoalLift.ClawPosition.OPEN);
         }
         if(gamepad1.x) {
             robot.setLiftPosition(robot.goalLift.getCurrentLiftPosition() == GoalLift.LiftPosition.LIFTED ? GoalLift.LiftPosition.LOWERED : GoalLift.LiftPosition.LIFTED, 0.5);
         }
+        if(gamepad1.y) {
+            robot.ringShooter.launchRingPower(0.8);
+        }*/
         if(gamepad1.b) {
             robot.setIntakePower(robot.ringShooter.getCurrentIntakePower() == 0 ? 1 : 0);
         }
         if(gamepad1.y) {
-            robot.ringShooter.launchRingPower(0.8);
+            robot.ringShooter.setFlyWheelMotorPower(1);
+        }
+        if(gamepad1.x) {
+            robot.ringShooter.setFlyWheelMotorPower(0);
         }
     }
 }

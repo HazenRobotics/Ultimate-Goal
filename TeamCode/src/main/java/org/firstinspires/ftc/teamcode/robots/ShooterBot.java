@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.utils.Tracking;
 
 public class ShooterBot extends Robot {
 
-    MecanumDrive mecanumDrive;
+    public MecanumDrive mecanumDrive;
 
     public GoalLift goalLift;
     public RingShooter ringShooter;
@@ -97,6 +97,6 @@ public class ShooterBot extends Robot {
 
     }
     public void drive(double forwardPower, double strafePower, double turnPower) {
-        mecanumDrive.drive(forwardPower, strafePower, turnPower);
+        mecanumDrive.drive(-forwardPower, strafePower, turnPower);
     }
 }

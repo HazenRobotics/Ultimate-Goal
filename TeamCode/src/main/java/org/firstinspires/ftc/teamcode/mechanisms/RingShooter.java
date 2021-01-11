@@ -18,10 +18,10 @@ public class RingShooter {
 
     private DcMotor intakeMotor;
 
-    private DcMotor leftFlyWheelMotor;
-    private DcMotor rightFlyWheelMotor;
+    public DcMotor leftFlyWheelMotor;
+    public DcMotor rightFlyWheelMotor;
 
-    private Servo pusher;
+    public Servo pusher;
 
     private double flyWheelRadius;
     private double launchAngle;
@@ -33,7 +33,7 @@ public class RingShooter {
      * @param hw robot's hardware map
      */
     public RingShooter(HardwareMap hw, double flyWheelRadius){
-        this( hw, "intakeMotor", "leftFlyWheelMotor", "rightFlyWheelMotor", "pusher", flyWheelRadius );
+        this( hw, "intake", "leftFlyWheel", "rightFlyWheel", "pusher", flyWheelRadius );
     }
 
     /**
@@ -122,9 +122,9 @@ public class RingShooter {
     }
 
     private void pushRing() {
-        pusher.setPosition(1.0);
-        //Might need to put a pause here
         pusher.setPosition(0.0);
+        //Might need to put a pause here
+        pusher.setPosition(0.3);
     }
 
     public double getLaunchAngle() {
