@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.road_runner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.road_runner.util.Encoder;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.List;
@@ -35,7 +36,7 @@ import java.util.List;
  */
 public class RoadRunnerTwoWheelTrackingLocalizer extends TwoTrackingWheelLocalizer {
     public static double TICKS_PER_REV = 250;
-    public static double WHEEL_RADIUS = 1.49606; // in
+    public static double WHEEL_RADIUS = 0.748; // in
     public static double GEAR_RATIO = 0.25; // output (wheel) speed / input (encoder) speed
 
     public static double PARALLEL_X = 3; // X is the up and down direction
@@ -60,10 +61,11 @@ public class RoadRunnerTwoWheelTrackingLocalizer extends TwoTrackingWheelLocaliz
                 new Pose2d(PERPENDICULAR_X, PERPENDICULAR_Y, Math.toRadians(90))
         ));
 
-        parallelEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "intakeMotor"));
-        perpendicularEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "goalLiftMotor"));
+        parallelEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "intake"));
+        perpendicularEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "goalLift"));
 
         // TODO: reverse any encoders using Encoder.setDirection(Encoder.Direction.REVERSE)
+        parallelEncoder.setDirection(Encoder.Direction.REVERSE);
 
         this.drive = drive;
     }
@@ -75,6 +77,12 @@ public class RoadRunnerTwoWheelTrackingLocalizer extends TwoTrackingWheelLocaliz
     @Override
     public double getHeading() {
         return drive.getRawExternalHeading();
+    }
+
+    @Nullable
+    @Override
+    public Double getHeadingVelocity() {
+        return drive.getExternalHeadingVelocity();
     }
 
     @NonNull
