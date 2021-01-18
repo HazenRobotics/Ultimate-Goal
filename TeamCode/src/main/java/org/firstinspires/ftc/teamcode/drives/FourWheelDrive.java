@@ -14,10 +14,10 @@ import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE;
 
 public class FourWheelDrive implements Drive {
 
-    private DcMotorEx frontLeft;
-    private DcMotorEx frontRight;
-    private DcMotorEx backLeft;
-    private DcMotorEx backRight;
+    public DcMotorEx frontLeft;
+    public DcMotorEx frontRight;
+    public DcMotorEx backLeft;
+    public DcMotorEx backRight;
 
     final double PULSES_PER_REVOLUTION = 250;
     final double GEAR_RATIO = 0.25;
@@ -25,7 +25,7 @@ public class FourWheelDrive implements Drive {
     private State currentState = State.STOPPED;
 
     public FourWheelDrive(HardwareMap hw){
-        this(hw, "frontLeftWheel","frontRightWheel", "backLeftWheel", "backRightWheel" );
+        this(hw, "frontLeft","frontRight", "backLeft", "backRight" );
     }
 
     public FourWheelDrive(HardwareMap hw, String frontLeftName, String frontRightName, String backLeftName, String backRightName){

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.robots;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.utils.*;
 public class RobotWood extends Robot {
 
     MecanumDrive mecanumDrive;
-    Tracking tracker;
+    public Tracking tracker;
 
     public static double MIN_POWER = 0.4;
 

@@ -9,11 +9,6 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
  */
 public class MecanumDrive extends FourWheelDrive {
 
-    private DcMotor frontRightMotor;
-    private DcMotor frontLeftMotor;
-    private DcMotor backRightMotor;
-    private DcMotor backLeftMotor;
-
     final double WHEEL_DIAMETER = 1.4960629921; // odometry wheel 38mm
     // mecanum wheel diameter = 3.9788735773; circumference = 12.5
     /**

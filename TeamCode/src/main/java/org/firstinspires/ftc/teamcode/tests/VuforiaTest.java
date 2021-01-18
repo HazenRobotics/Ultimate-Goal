@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.R;
+import org.firstinspires.ftc.teamcode.utils.FieldMap;
 import org.firstinspires.ftc.teamcode.utils.Vuforia;
 import org.firstinspires.ftc.teamcode.utils.VuforiaLocalization;
 
@@ -31,6 +32,9 @@ public class VuforiaTest extends OpMode {
     public void loop() {
         if(vuforiaLocalization.getVisibleTarget() != null) {
             telemetry.addData("Visible Vuforia Mark", vuforiaLocalization.getVisibleTarget().getName());
+            vuforiaLocalization.updateRobotLocation();
+            telemetry.addData("Robot Position", FieldMap.RobotInfo.getRobotPosition());
+            telemetry.addData("Robot Rotation", FieldMap.RobotInfo.getRobotOrientation());
         }
         else{
             telemetry.addData("Visible Vuforia Mark", "none");
@@ -39,9 +43,9 @@ public class VuforiaTest extends OpMode {
     }
 
     @Override
-    public void stop(){
+    public void stop() {
         vuforiaLocalization.deactivateTracking();
-        if(Vuforia.isRunning()){
+        if(Vuforia.isRunning()) {
             Vuforia.stopVuforiaEngine();
         }
     }
