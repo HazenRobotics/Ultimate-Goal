@@ -41,6 +41,18 @@ public class MecanumDrive extends FourWheelDrive {
         return convertTicksDist( ticksToTravel, Math.PI * WHEEL_DIAMETER );
     }
 
+
+    /**
+     * Sets specified power to the motors
+     * @param frontRightPower power at which to run the front right motor.
+     * @param frontLeftPower power at which to run the front left motor.
+     * @param backRightPower power at which to run the back right motor.
+     * @param backLeftPower power at which to run the back left motor.
+     */
+    public void setMotorPower(double frontLeftPower, double frontRightPower, double backLeftPower, double backRightPower){
+        setMotorPower( frontLeftPower, frontRightPower, backLeftPower, backRightPower );
+    }
+
     /**
      * Makes the robot strafe to the left or the right
      * @param power power at which to strafe (+ is to the right, - is to the left)

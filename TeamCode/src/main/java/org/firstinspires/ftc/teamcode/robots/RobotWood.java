@@ -4,22 +4,42 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.drives.MecanumDrive;
+import org.firstinspires.ftc.teamcode.mechanisms.GoalLiftWood;
+import org.firstinspires.ftc.teamcode.mechanisms.RingShooter;
 import org.firstinspires.ftc.teamcode.utils.*;
 
 public class RobotWood extends Robot {
 
-    MecanumDrive mecanumDrive;
+    public MecanumDrive mecanumDrive;
+
+    public GoalLiftWood goalLift;
+
     public Tracking tracker;
 
     public static double MIN_POWER = 0.1;
 
     public RobotWood(HardwareMap hw, OpMode op){
         super(hw, op);
+
         super.driveTrain = new MecanumDrive(hw);
         mecanumDrive = (MecanumDrive) driveTrain;
-        tracker = new Tracking( mecanumDrive, hw );
+        tracker = new Tracking(mecanumDrive, hw);
+        goalLift = new GoalLiftWood(hw);
 
     }
+
+    /**
+     * Sets the position of the lift
+     * @param liftPower power at which to move the lift
+     */
+    public void setLiftPower(double liftPower) {
+        goalLift.setGoalLiftPower(liftPower);
+    }
+
+    public void setClawPosition(GoalLiftWood.ClawPosition clawPosition) {
+        goalLift.setClawPosition(clawPosition);
+    }
+
 
     public void driveDistance( double distance, double power, boolean setPowerZero ) {
 
