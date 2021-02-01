@@ -4,40 +4,64 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.drives.MecanumDrive;
+import org.firstinspires.ftc.teamcode.mechanisms.GoalLiftWood;
+import org.firstinspires.ftc.teamcode.mechanisms.RingShooter;
 import org.firstinspires.ftc.teamcode.utils.*;
 
 public class RobotWood extends Robot {
 
-    MecanumDrive mecanumDrive;
+    public MecanumDrive mecanumDrive;
+
+    public GoalLiftWood goalLift;
+
     public Tracking tracker;
 
-    public static double MIN_POWER = 0.4;
+    public static double MIN_POWER = 0.1;
 
     public RobotWood(HardwareMap hw, OpMode op){
         super(hw, op);
+
         super.driveTrain = new MecanumDrive(hw);
         mecanumDrive = (MecanumDrive) driveTrain;
-        tracker = new Tracking( mecanumDrive, hw );
+        tracker = new Tracking(mecanumDrive, hw);
+        goalLift = new GoalLiftWood(hw);
 
     }
 
-    public void driveDistance( double distance, double maxPower, boolean setPowerZero ) {
+    /**
+     * Sets the position of the lift
+     * @param liftPower power at which to move the lift
+     */
+    public void setLiftPower(double liftPower) {
+        goalLift.setGoalLiftPower(liftPower);
+    }
+
+    public void setClawPosition(GoalLiftWood.ClawPosition clawPosition) {
+        goalLift.setClawPosition(clawPosition);
+    }
+
+
+    public void driveDistance( double distance, double power, boolean setPowerZero ) {
+
+        mecanumDrive.drive( power, 0, 0 );
 
         int ticksToTravel = mecanumDrive.convertDistTicks(distance);
         int initialXPos = tracker.getLongitudinalPosition();
-        double percent = 0.25;
+        double percent = 0.5;
         //int initialYPos = tracker.getLateralPosition();
 
-        double curPower;
-
-        curPower = powerSlopeCalculations( maxPower, ticksToTravel, initialXPos, percent );
-        mecanumDrive.drive( curPower, 0, 0 );
-
+        mecanumDrive.drive( power, 0, 0 );
         while( tracker.getLongitudinalPosition() - initialXPos < ticksToTravel && opModeIsActive()) {
 
-            curPower = powerSlopeCalculations( maxPower, ticksToTravel, initialXPos, percent );
+            double m = (power-(Math.signum(power)*MIN_POWER))/(-distance*(1-distance));
+            double x = mecanumDrive.convertDistTicks(tracker.getLateralPosition() - ticksToTravel);
+            double b = (Math.signum(power)*MIN_POWER)-m*distance;
 
-            mecanumDrive.drive( curPower, 0, 0 );
+            if( tracker.getLateralPosition() - initialXPos > ticksToTravel*percent )
+                power = m*x + b;
+
+            mecanumDrive.drive( power, 0, 0 );
+
         }
 
         //sets all power to zero afterwords
@@ -48,23 +72,17 @@ public class RobotWood extends Robot {
 
     }
 
-    public void strafeDistance( double distance, double maxPower, boolean setPowerZero ) {
+    public void strafeDistance( double distance, double power, boolean setPowerZero ) {
+
+        mecanumDrive.drive( 0, power, 0 );
 
         int ticksToTravel = mecanumDrive.convertDistTicks(distance);
-        int initialXPos = tracker.getLongitudinalPosition();
-        int initialYPos = tracker.getLateralPosition();
-        double percent = 0.25;
+        int initialPosition = tracker.getLateralPosition();
 
-        double curPower;
+        mecanumDrive.drive( 0, 0, power );
+        while( tracker.getLateralPosition() - initialPosition < ticksToTravel && opModeIsActive()) {
 
-        curPower = powerSlopeCalculations( maxPower, ticksToTravel, initialXPos, percent );
-        mecanumDrive.drive( 0, curPower, 0 );
 
-        while( tracker.getLateralPosition() - initialYPos < ticksToTravel && opModeIsActive()) {
-
-            curPower = powerSlopeCalculations( maxPower, ticksToTravel, initialYPos, percent );
-
-            mecanumDrive.drive(0, curPower, 0);
         }
 
         //sets all power to zero afterwords
@@ -78,65 +96,21 @@ public class RobotWood extends Robot {
     /**
      *
      * @param degrees forward is zero, turning right is positive, limit: 359 degrees
-     * @param maxPower positive will turn right, negative turns left
+     * @param power positive will turn right, negative turns left
      * @param setPowerZero if true, will set the power to zero once finished
      */
-    public void rotateDegrees( double degrees, double maxPower, boolean setPowerZero ) {
+    public void rotateDegrees( double degrees, double power, boolean setPowerZero ) {
 
-        mecanumDrive.drive( 0, 0, maxPower );
+        mecanumDrive.drive( 0, 0, power );
 
         double initialDegrees = tracker.getGyroHeading();
-        double percent = 0.25;
 
-        double a, m, x, b, curPower;
-
-        if( degrees > 0 ) {
-            while (tracker.getGyroHeading() - initialDegrees < degrees && opModeIsActive()) {
-
-                /*
-                a = (MIN_POWER - maxPower)/Math.pow(degrees - percent * degrees, 2);
-                x = tracker.getNewGyroHeading() - initialDegrees;
-
-                curPower = a * Math.pow(x - percent * degrees, 2) + maxPower;
-
-                telemetry.addLine("long :" + tracker.getLongitudinalPosition() );
-                telemetry.addLine("lat  :" + tracker.getLateralPosition() );
-                telemetry.addLine("-----------------");
-
-                telemetry.addLine("a :: " + a );
-                telemetry.addLine("x :: " + x );
-                telemetry.addLine("c :: " + curPower );
-                telemetry.update();
-                 */
-
-                curPower = powerSlopeCalculations( maxPower, degrees, initialDegrees, percent );
-
-                mecanumDrive.drive(0, 0, maxPower);
-            }
-        } else if( degrees < 0 ) {
-            while (tracker.getGyroHeading() - initialDegrees > degrees && opModeIsActive()) {
-
-                /*
-                a = (MIN_POWER - maxPower)/Math.pow(degrees - percent * degrees, 2);
-                x = tracker.getNewGyroHeading() - initialDegrees;
-
-                curPower = a * Math.pow(x - percent * degrees, 2) + maxPower;
-
-                telemetry.addLine("long :" + tracker.getLongitudinalPosition() );
-                telemetry.addLine("lat  :" + tracker.getLateralPosition() );
-                telemetry.addLine("-----------------");
-
-                telemetry.addLine("a :: " + a );
-                telemetry.addLine("x :: " + x );
-                telemetry.addLine("c :: " + curPower );
-                telemetry.update();
-                 */
-
-                curPower = powerSlopeCalculations( maxPower, degrees, initialDegrees, percent );
-
-                mecanumDrive.drive(0, 0, maxPower);
-            }
-        }
+        if( degrees > 0 )
+            while( tracker.getGyroHeading() - initialDegrees < degrees && opModeIsActive())
+                mecanumDrive.drive( 0, 0, power );
+        else if( degrees < 0 )
+            while( tracker.getGyroHeading() - initialDegrees > degrees && opModeIsActive())
+                mecanumDrive.drive( 0, 0, power );
 
         //sets all power to zero afterwords
         if(setPowerZero) {
@@ -146,98 +120,57 @@ public class RobotWood extends Robot {
 
     }
 
-    public double powerSlopeCalculations( double maxPower, double movement, double initialMovement, double percent ) {
-
-        double a, x, curPower;
-
-        a = (MIN_POWER - maxPower)/Math.pow( movement - percent * movement, 2);
-        x = tracker.getNewGyroHeading() - initialMovement;
-
-        curPower = a * Math.pow(x - percent * movement, 2) + maxPower;
-
-        telemetry.addLine("long :" + tracker.getLongitudinalPosition() );
-        telemetry.addLine("lat  :" + tracker.getLateralPosition() );
-        telemetry.addLine("-----------------");
-
-        telemetry.addLine("a :: " + a );
-        telemetry.addLine("x :: " + x );
-        telemetry.addLine("c :: " + curPower );
-        telemetry.update();
-
-        return curPower;
-    }
-
     /**
      *
      * @param degrees forward is zero, turning right is positive, limit: 359 degrees
-     * @param maxPower positive will turn right, negative turns left
+     * @param power positive will turn right, negative turns left
      */
-    public void rotateDegrees( double degrees, double maxPower ) throws InterruptedException {
+    public void rotateDegrees( double degrees, double power ) throws InterruptedException {
 
-        mecanumDrive.drive( 0, 0, maxPower );
+        //mecanumDrive.drive( 0, 0, power );
 
         double initialDegrees = tracker.getNewGyroHeading();
-        double variable = 5*maxPower;
-        double percent = 0.25;
+        double percent = 0.5;
+        double variable = 5*power;
 
-        double a, m, x, b, curPower;
-
-        if (maxPower > 0) {
+        if (power > 0) {
+            mecanumDrive.drive( 0, 0, power );
+            sleep( 250 );
             while( opModeIsActive() && tracker.getNewGyroHeading() - initialDegrees < degrees - variable )
             {
                 telemetry.addData("While:", tracker.getNewGyroHeading() - initialDegrees < degrees)
                         .addData("While:", tracker.getNewGyroHeading() - initialDegrees > degrees)
                         .addData("Heading", tracker.getNewGyroHeading());
-
-                /*
-                a = (MIN_POWER - maxPower)/Math.pow(degrees - percent * degrees, 2);
-                x = tracker.getNewGyroHeading() - initialDegrees;
-
-                curPower = a * Math.pow(x - percent * degrees, 2) + maxPower;
-
-                telemetry.addLine("long :" + tracker.getLongitudinalPosition() );
-                telemetry.addLine("lat  :" + tracker.getLateralPosition() );
-                telemetry.addLine("-----------------");
-
-                telemetry.addLine("a :: " + a );
-                telemetry.addLine("x :: " + x );
-                telemetry.addLine("c :: " + curPower );
                 telemetry.update();
-                */
 
-                curPower = powerSlopeCalculations( maxPower, degrees, initialDegrees, percent );
+                double m = (power-(Math.signum(power)*MIN_POWER))/(-degrees*(1-percent));
+                double x = tracker.getNewGyroHeading() - initialDegrees;
+                double b = (Math.signum(power)*MIN_POWER)-m*degrees;
 
-                mecanumDrive.drive( 0, 0, curPower );
+                if( tracker.getNewGyroHeading() - initialDegrees > degrees*percent )
+                    power = m*x + b;
+                mecanumDrive.drive( 0, 0, power );
             }
             mecanumDrive.drive( 0, 0, 0 );
         }
-        else if ( maxPower != 0 )
+        else if ( power != 0 )
         {
+            mecanumDrive.drive( 0, 0, power );
             while( opModeIsActive() && tracker.getNewGyroHeading() - initialDegrees > degrees + variable )
             {
                 telemetry.addData("While:", tracker.getNewGyroHeading() - initialDegrees < degrees)
                         .addData("While:", tracker.getNewGyroHeading() - initialDegrees > degrees)
                         .addData("Heading", tracker.getNewGyroHeading());
-
-                /*
-                a = (MIN_POWER - maxPower)/Math.pow(degrees - percent * degrees, 2);
-                x = tracker.getNewGyroHeading() - initialDegrees;
-
-                curPower = a * Math.pow(x - percent * degrees, 2) + maxPower;
-
-                telemetry.addLine("long :" + tracker.getLongitudinalPosition() );
-                telemetry.addLine("lat  :" + tracker.getLateralPosition() );
-                telemetry.addLine("-----------------");
-
-                telemetry.addLine("a :: " + a );
-                telemetry.addLine("x :: " + x );
-                telemetry.addLine("c :: " + curPower );
                 telemetry.update();
-                */
 
-                curPower = powerSlopeCalculations( maxPower, degrees, initialDegrees, percent );
+                double m = (power-(Math.signum(power)*MIN_POWER))/(-degrees*(1-percent));
+                double x = tracker.getNewGyroHeading() - initialDegrees;
+                double b = (Math.signum(power)*MIN_POWER)-m*degrees;
 
-                mecanumDrive.drive( 0, 0, curPower );
+                if( tracker.getNewGyroHeading() - initialDegrees > degrees*percent )
+                    power = m*x + b;
+                mecanumDrive.drive( 0, 0, power );
+                mecanumDrive.drive( 0, 0, power );
             }
             mecanumDrive.drive( 0, 0, 0 );
         }
