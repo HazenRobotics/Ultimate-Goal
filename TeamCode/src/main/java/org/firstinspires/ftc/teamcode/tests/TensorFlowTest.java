@@ -16,11 +16,14 @@ public class TensorFlowTest extends OpMode {
     private static final String LABEL_FIRST_ELEMENT = "Quad";
     private static final String LABEL_SECOND_ELEMENT = "Single";
 
+    private Vuforia vuforia = Vuforia.getInstance();
+
     TensorFlow tensorFlow;
     @Override
     public void init() {
         final String VUFORIA_KEY = hardwareMap.appContext.getResources().getString(R.string.vuforiakey);
-        Vuforia.startVuforiaEngine(VUFORIA_KEY, "webcam", true, hardwareMap);
+        vuforia.setParameters(VUFORIA_KEY, "webcam", true, hardwareMap);
+        vuforia.start();
 
         tensorFlow = new TensorFlow(TENSOR_FLOW_MODEL_NAME, 0.8f, true, hardwareMap, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);
     }
@@ -49,8 +52,8 @@ public class TensorFlowTest extends OpMode {
     @Override
     public void stop() {
         tensorFlow.shutdown();
-        if(Vuforia.isRunning()) {
-            Vuforia.stopVuforiaEngine();
+        if(vuforia.isRunning()) {
+            vuforia.close();
         }
     }
 

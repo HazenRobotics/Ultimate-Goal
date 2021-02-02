@@ -14,12 +14,14 @@ public class VuforiaTest extends OpMode {
     private final String VUFORIA_TRACKABLES_ASSET_NAME = "UltimateGoal";
 
     VuforiaLocalization vuforiaLocalization;
+    Vuforia vuforia = Vuforia.getInstance();
 
 
     @Override
     public void init() {
         final String VUFORIA_KEY = hardwareMap.appContext.getResources().getString(R.string.vuforiakey);
-        Vuforia.startVuforiaEngine(VUFORIA_KEY, "webcam", true, hardwareMap);
+        vuforia.setParameters(VUFORIA_KEY, "webcam", true, hardwareMap);
+        vuforia.start();
 
         vuforiaLocalization = new VuforiaLocalization(VUFORIA_TRACKABLES_ASSET_NAME);
     }
@@ -45,8 +47,8 @@ public class VuforiaTest extends OpMode {
     @Override
     public void stop() {
         vuforiaLocalization.deactivateTracking();
-        if(Vuforia.isRunning()) {
-            Vuforia.stopVuforiaEngine();
+        if(vuforia.isRunning()) {
+            vuforia.close();
         }
     }
 }
