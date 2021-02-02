@@ -24,7 +24,7 @@ public class RingShooter {
     public Servo pusher;
 
     private double flyWheelRadius;
-    private double launchAngle;
+    private static double launchAngle;
     private double currentIntakePower;
 
 
