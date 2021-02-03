@@ -10,7 +10,7 @@ import java.util.List;
 
 /**
  * A class for utilizing a Tensor Flow model.
- * {@link Vuforia#startVuforiaEngine(String, String, boolean, HardwareMap) Vuforia.startVuforiaEngine()} must be called before this class is instantiated
+ *
  */
 public class TensorFlow {
 
@@ -20,6 +20,8 @@ public class TensorFlow {
 
     private List<Recognition> recognitions = null;
     private List<Recognition> updatedRecognitions;
+
+    private Vuforia vuforia = Vuforia.getInstance();
 
     /**
      * Creates a TensorFlow
@@ -48,7 +50,7 @@ public class TensorFlow {
         TFObjectDetector.Parameters tfodParameters = monitorCamera == true ? new TFObjectDetector.Parameters(hw.appContext.getResources().getIdentifier(
                 "tfodMonitorViewId", "id", hw.appContext.getPackageName())) : new TFObjectDetector.Parameters();
         tfodParameters.minResultConfidence = minResultConfidence;
-        tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, Vuforia.vuforia);
+        tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia.getLocalizer());
         tfod.loadModelFromAsset(tfodModelAssetName, labels);
     }
 
