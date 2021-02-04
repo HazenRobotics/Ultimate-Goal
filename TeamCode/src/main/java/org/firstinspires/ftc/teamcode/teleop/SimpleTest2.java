@@ -1,14 +1,12 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
 
-@TeleOp(name="TeleOpDriverTest", group="teleop")
-public class TeleOpTest extends OpMode
+//@TeleOp(name="SimpleTest2", group="SimpleTests") // uncomment this for it to appear in the DS app
+public class SimpleTest2 extends OpMode
 {
     DcMotor frontLeftMotor;
     DcMotor frontRightMotor;
