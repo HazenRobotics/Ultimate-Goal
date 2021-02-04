@@ -19,17 +19,18 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.
 
 /**
  * A class for tracking Vuforia targets on the field.
- * {@link Vuforia#startVuforiaEngine(String, String, boolean, HardwareMap) Vuforia.startVuforiaEngine()} must be called before this class is instantiated
+ *
  */
 public class VuforiaLocalization {
 
-    //VuforiaLocalizer vuforia;
+    private Vuforia vuforia = Vuforia.getInstance();
+    private VuforiaLocalizer vuforiaLocalizer;
 
-    VuforiaTrackables targets;
+
+
+    private VuforiaTrackables targets;
 
     public List<VuforiaTrackable> trackables;
-
-    //VuforiaLocalizer.Parameters parameters;
 
     private boolean tracking = false;
 
@@ -39,7 +40,10 @@ public class VuforiaLocalization {
      * @param trackablesAssetName name of the tensorflow asset file
      */
     public VuforiaLocalization( String trackablesAssetName){
-        //startVuforiaEngine(vuforiaKey, webcamName, cameraMonitorViewId, hw);
+        if(!vuforia.isRunning()) {
+            vuforia.start();
+        }
+        vuforiaLocalizer = vuforia.getLocalizer();
 
         loadTrackables(trackablesAssetName);
 
@@ -52,7 +56,7 @@ public class VuforiaLocalization {
      */
     private void loadTrackables(String assetName){
 
-        targets = Vuforia.vuforia.loadTrackablesFromAsset(assetName);
+        targets = vuforiaLocalizer.loadTrackablesFromAsset(assetName);
 
         trackables = new ArrayList<VuforiaTrackable>();
 
