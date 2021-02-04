@@ -22,6 +22,7 @@ public class ShooterBot extends Robot {
     public Tracking tracker;
 
     private final double FLY_WHEEL_RADIUS = 0;
+    private final double tangentalVelocityMultiplier = 1; //calculated tangental velocity / actual velocity
 
     /**
      * Creates a Robot

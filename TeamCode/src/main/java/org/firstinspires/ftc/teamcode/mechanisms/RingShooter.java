@@ -22,9 +22,11 @@ public class RingShooter {
     public DcMotor rightFlyWheelMotor;
 
     public Servo pusher;
+    public double pushedPosition = 0.0;
+    public double retractedPosition = 0.3;
 
     private double flyWheelRadius;
-    private double launchAngle;
+    private static double launchAngle = 35; //degrees
     private double currentIntakePower;
 
 
@@ -122,9 +124,9 @@ public class RingShooter {
     }
 
     private void pushRing() {
-        pusher.setPosition(0.0);
+        pusher.setPosition(pushedPosition);
         //Might need to put a pause here
-        pusher.setPosition(0.3);
+        pusher.setPosition(retractedPosition);
     }
 
     public double getLaunchAngle() {

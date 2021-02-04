@@ -4,41 +4,86 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
+import org.jetbrains.annotations.NotNull;
 
 /**
- * A class that holds an instance of the vuforia engine.
- * {@link #startVuforiaEngine(String, String, boolean, HardwareMap)}  Vuforia.startVuforiaEngine()} method must be called before instantiating {@link VuforiaLocalization} or {@link TensorFlow}
+ * A class that holds an instance of the Vuforia engine.
+ *
  */
 public class Vuforia {
 
-    public static VuforiaLocalizerPlus vuforia = null;
+    private static Vuforia vuforia = new Vuforia();
 
-    private static VuforiaLocalizer.Parameters parameters;
+    private static VuforiaLocalizerPlus vuforiaLocalizer = null;
+
+    private static VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
+
+
+    private Vuforia() { }
 
     /**
-     * Starts the vuforia engine with the given parameters
-     * @param vuforiaKey vuforia liscense key
+     * Sets the vuforia engine parameters
+     * @param vuforiaKey vuforia license key
      * @param webcamName name of the webcam in the robot configuration
      * @param monitorCamera if the camera monitor should run
      * @param hw robot's hardware map
      */
-    public static void startVuforiaEngine(String vuforiaKey, String webcamName, boolean monitorCamera, HardwareMap hw){
-
-        parameters = monitorCamera == true? new VuforiaLocalizer.Parameters(hw.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hw.appContext.getPackageName())) : new VuforiaLocalizer.Parameters();
-
+    public void setParameters(String vuforiaKey, String webcamName, boolean monitorCamera, @NotNull HardwareMap hw) {
+        parameters = new VuforiaLocalizer.Parameters();
+        parameters.cameraMonitorViewIdParent = monitorCamera ? hw.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hw.appContext.getPackageName()) : null;
         parameters.vuforiaLicenseKey = vuforiaKey;
         parameters.cameraName = hw.get(WebcamName.class, webcamName);
         parameters.useExtendedTracking = false;
-
-        vuforia = new VuforiaLocalizerPlus(parameters);
     }
 
-    public static boolean isRunning(){
-        return vuforia != null;
+    /**
+     * Whether or not the Vuforia engine is running
+     * @return if vuforia engine is running or not
+     */
+    public boolean isRunning(){
+        return vuforiaLocalizer != null;
     }
 
-    public static void stopVuforiaEngine(){
-        vuforia.close();
-        vuforia = null;
+    /**
+     * Stops and closes the current running instance of the Vuforia engine
+     */
+    public void close(){
+        vuforiaLocalizer.close();
+        vuforiaLocalizer = null;
+    }
+
+    /**
+     * The instance of the Vuforia class
+     * @return Vuforia instance
+     */
+    public static Vuforia getInstance() {
+        return vuforia;
+    }
+
+    /**
+     * Starts the Vuforia engine
+     */
+    public void start() {
+        if (vuforiaLocalizer == null) {
+            vuforiaLocalizer = new VuforiaLocalizerPlus(parameters);
+        }
+        else {
+            vuforiaLocalizer.resume();
+        }
+    }
+
+    /**
+     * Pauses the current running instance of the Vuforia engine
+     */
+    public void pause() {
+        vuforiaLocalizer.pause();
+    }
+
+    public void resume() {
+        vuforiaLocalizer.resume();
+    }
+
+    public VuforiaLocalizer getLocalizer() {
+        return  vuforiaLocalizer;
     }
 }
