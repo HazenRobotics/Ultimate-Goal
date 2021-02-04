@@ -405,4 +405,7 @@ public class RoadRunnerMecanumDrive extends MecanumDrive {
     public double getRawExternalHeading() {
         return imu.getAngularOrientation().firstAngle;
     }
+
+    @Override
+    public Double getExternalHeadingVelocity() { return (double) imu.getAngularVelocity().zRotationRate; }
 }

@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.drives;
 
 import androidx.annotation.NonNull;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.localization.TwoTrackingWheelLocalizer;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -34,6 +35,7 @@ import java.util.List;
  *    \--------------/
  *
  */
+@Config
 public class RoadRunnerTwoWheelTrackingLocalizer extends TwoTrackingWheelLocalizer {
     public static double TICKS_PER_REV = 250;
     public static double WHEEL_RADIUS = 0.748; // in
@@ -74,12 +76,13 @@ public class RoadRunnerTwoWheelTrackingLocalizer extends TwoTrackingWheelLocaliz
         return WHEEL_RADIUS * 2 * Math.PI * GEAR_RATIO * ticks / TICKS_PER_REV;
     }
 
+    @NonNull
     @Override
     public double getHeading() {
         return drive.getRawExternalHeading();
     }
 
-    @Nullable
+    @NonNull
     @Override
     public Double getHeadingVelocity() {
         return drive.getExternalHeadingVelocity();

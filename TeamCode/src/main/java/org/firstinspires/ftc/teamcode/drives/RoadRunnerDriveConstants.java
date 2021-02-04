@@ -34,7 +34,7 @@ public class RoadRunnerDriveConstants {
      * Set the value of MOTOR_VELO_PID to `new PIDCoefficients(kP, kI, kD);`
      */
     public static final boolean RUN_USING_ENCODER = true;
-    public static final PIDFCoefficients MOTOR_VELO_PID = null;
+    public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(6, 0, 4, 8);
 
     /*
      * These are physical constants that can be determined from your robot (including the track
@@ -65,8 +65,8 @@ public class RoadRunnerDriveConstants {
      * small and gradually increase them later after everything is working. All distance units are
      * inches.
      */
-    public static double MAX_VEL = 30;
-    public static double MAX_ACCEL = 30;
+    public static double MAX_VEL = 12;
+    public static double MAX_ACCEL = 8;
     public static double MAX_ANG_VEL = Math.toRadians(60);
     public static double MAX_ANG_ACCEL = Math.toRadians(60);
 
