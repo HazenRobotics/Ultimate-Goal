@@ -3,9 +3,9 @@ package org.firstinspires.ftc.teamcode.teleop;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.drives.MecanumDrive;
-import org.firstinspires.ftc.teamcode.mechanisms.GoalLiftWood;
 import org.firstinspires.ftc.teamcode.robots.RobotWood;
+import org.firstinspires.ftc.teamcode.mechanisms.GoalLiftWood;
+import org.firstinspires.ftc.teamcode.drives.MecanumDrive;
 
 // TeleOp class for the new wooden robot
 @TeleOp(name="teleopWood", group="teleop")
@@ -17,6 +17,9 @@ public class TeleOpWood extends OpMode {
     @Override
     public void init() {
         robot = new RobotWood(hardwareMap, this);
+
+        telemetry.addLine("init finished");
+        telemetry.update();
     }
 
     @Override
@@ -29,13 +32,16 @@ public class TeleOpWood extends OpMode {
                 .addData("Rotate", "Gp1: right stick x (axis)");
         telemetry.addLine();
 
+
+
+/*
         // moves the robot • left stick; moves forwards/backwards (y axis), strafing left/right (x axis) • right stick; rotating left/right ()x axis)
-        double slow = 1/2;
-        robot.mecanumDrive.drive( -gamepad1.left_stick_y*slow, gamepad1.left_stick_x*slow, gamepad1.right_stick_x*slow );
+        double powerChange = 1/2;
+        robot.mecanumDrive.drive( -gamepad1.left_stick_y*powerChange, gamepad1.left_stick_x*powerChange, gamepad1.right_stick_x*powerChange );
 
         double maxDrivePower = 1.0;
         robot.mecanumDrive.setMotorPower( gamepad1.left_trigger, gamepad1.right_trigger, (gamepad1.left_bumper) ? maxDrivePower : 0, (gamepad1.right_bumper) ? maxDrivePower : 0 );
-
+*/
 
         if(gamepad1.a)
             robot.setClawPosition(robot.goalLift.getCurrentClawPosition() == GoalLiftWood.ClawPosition.OPEN ? GoalLiftWood.ClawPosition.CLOSED : GoalLiftWood.ClawPosition.OPEN);
@@ -78,14 +84,14 @@ public class TeleOpWood extends OpMode {
 
         //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 
-        telemetry.addData("getNewGyroHeading", robot.tracker.getNewGyroHeading())
-                .addData("getGyroHeading", robot.tracker.getGyroHeading() )
-                .addData("getGyroRoll", robot.tracker.getGyroRoll() )
+        telemetry.addData("getNewGyroHeading", robot.tracker.getNewGyroHeading() )
+                .addData("getGyroHeading", robot.tracker.getGyroHeading() );
+        telemetry.addData("getGyroRoll", robot.tracker.getGyroRoll() )
                 .addData("getGyroPitch", robot.tracker.getGyroPitch() );
 
-        telemetry.addData("getGyroXVelocity", robot.tracker.getGyroXVelocity())
-                .addData("getGyroYVelocity", robot.tracker.getGyroYVelocity() )
-                .addData("getGyroZVelocity", robot.tracker.getGyroZVelocity() );
+        //telemetry.addData("getGyroXVelocity", robot.tracker.getGyroXVelocity())
+        //        .addData("getGyroYVelocity", robot.tracker.getGyroYVelocity() )
+        //        .addData("getGyroZVelocity", robot.tracker.getGyroZVelocity() );
 
         telemetry.update();
 

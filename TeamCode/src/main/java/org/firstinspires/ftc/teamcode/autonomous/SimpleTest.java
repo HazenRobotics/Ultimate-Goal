@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.robots.RobotWood;
 // backs up to the starting point using encoders to measure the distance.
 // This example assumes there is one encoder, attached to the left motor
 
-//@Autonomous(name="SimpleTest", group="SimpleTests") // uncomment this for it to appear in the DS app
+//@Autonomous(name="simpletest", group="SimpleTests") // uncomment this for it to appear in the DS app
 //@disabled
 public class SimpleTest extends LinearOpMode
 {

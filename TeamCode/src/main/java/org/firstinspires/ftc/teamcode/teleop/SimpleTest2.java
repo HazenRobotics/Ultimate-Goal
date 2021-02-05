@@ -59,9 +59,10 @@ public class SimpleTest2 extends OpMode
         //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
         //driving
 
-        double drive = -gamepad1.left_stick_y;
-        double strafe = gamepad1.left_stick_x;
-        double rotate = gamepad1.right_stick_x;
+        double percent = 0.5;
+        double drive = percent * gamepad1.left_stick_y;
+        double strafe = percent * gamepad1.left_stick_x;
+        double rotate = percent * gamepad1.right_stick_x;
 
         frontLeftPower = drive + strafe + rotate;
         frontRightPower = -drive + strafe - rotate;

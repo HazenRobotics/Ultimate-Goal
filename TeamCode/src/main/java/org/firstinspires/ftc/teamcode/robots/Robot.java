@@ -26,9 +26,6 @@ public abstract class Robot {
     //drive
     public Drive driveTrain;
 
-    // gyro
-    BNO055IMU gyro;
-
     //
 
     //mechanisms
@@ -54,8 +51,6 @@ public abstract class Robot {
         this.hardwareMap = hw;
         this.opMode = op;
         telemetry = opMode.telemetry;
-
-        gyro = hardwareMap.get( BNO055IMU.class, "imu" );
 
         vuforiaKey = hardwareMap.appContext.getResources().getString(R.string.vuforiakey);
 

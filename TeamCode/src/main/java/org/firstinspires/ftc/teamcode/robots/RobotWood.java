@@ -28,6 +28,10 @@ public class RobotWood extends Robot {
 
     }
 
+    public void drive(double drivePower, double strafePower, double rotatePower) {
+        mecanumDrive.drive(drivePower, strafePower, rotatePower);
+    }
+
     /**
      * Sets the position of the lift
      * @param liftPower power at which to move the lift

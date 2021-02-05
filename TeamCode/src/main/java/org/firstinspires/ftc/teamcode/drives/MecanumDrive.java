@@ -70,7 +70,7 @@ public class MecanumDrive extends FourWheelDrive {
      */
     public void drive( double drive, double strafe, double rotate ) {
 
-        // You might have to play with the + or - depending on how your motors are installed
+        // You might have to play with the + or - depending on how your motors and wheels are installed
         double frontLeftPower = drive + strafe + rotate;
         double backLeftPower = drive - strafe + rotate;
         double frontRightPower = drive - strafe - rotate;
@@ -78,10 +78,5 @@ public class MecanumDrive extends FourWheelDrive {
 
         setMotorPower( frontLeftPower, frontRightPower, backLeftPower, backRightPower );
     }
-
-    /*
-    public void setMotorPower(double frontLeftPower, double frontRightPower, double backLeftPower, double backRightPower){
-        setMotorPower(frontLeftPower, frontRightPower, backLeftPower, backRightPower);
-    }*/
 
 }
