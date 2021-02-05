@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
+import android.util.Log;
+
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -18,13 +20,18 @@ public class TeleOpWood extends OpMode {
     public void init() {
         robot = new RobotWood(hardwareMap, this);
 
+        robot.setClawPosition( GoalLiftWood.ClawPosition.OPEN );
+
         telemetry.addLine("init finished");
         telemetry.update();
+
+        Log.i(this.getClass().getName(),"************ inti() finished ************");
     }
 
     @Override
     public void loop() {
 
+        Log.i(this.getClass().getName(),"************ loop() started ************");
 
         telemetry.addData("              Controls", "   ")
                 .addData("Drive", "Gp1: left stick y (axis)")
@@ -32,7 +39,11 @@ public class TeleOpWood extends OpMode {
                 .addData("Rotate", "Gp1: right stick x (axis)");
         telemetry.addLine();
 
-
+        try {
+            robot.mecanumDrive.drive( -gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x );
+        } catch (Exception e) {
+            Log.e("MYAPP", "exception", e);
+        }
 
 /*
         // moves the robot • left stick; moves forwards/backwards (y axis), strafing left/right (x axis) • right stick; rotating left/right ()x axis)
@@ -43,11 +54,12 @@ public class TeleOpWood extends OpMode {
         robot.mecanumDrive.setMotorPower( gamepad1.left_trigger, gamepad1.right_trigger, (gamepad1.left_bumper) ? maxDrivePower : 0, (gamepad1.right_bumper) ? maxDrivePower : 0 );
 */
 
-        if(gamepad1.a)
+        if(gamepad1.x)
             robot.setClawPosition(robot.goalLift.getCurrentClawPosition() == GoalLiftWood.ClawPosition.OPEN ? GoalLiftWood.ClawPosition.CLOSED : GoalLiftWood.ClawPosition.OPEN);
 
         double maxLiftPower = 0.5;
-        robot.setLiftPower( gamepad1.x ? maxLiftPower : 0 );
+        robot.setLiftPower( gamepad1.a ? maxLiftPower : 0 );
+        robot.setLiftPower( gamepad1.b ? -maxLiftPower : 0 );
 
 
 
