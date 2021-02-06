@@ -24,14 +24,10 @@ public class TeleOpWood extends OpMode {
 
         telemetry.addLine("init finished");
         telemetry.update();
-
-        Log.i(this.getClass().getName(),"************ inti() finished ************");
     }
 
     @Override
     public void loop() {
-
-        Log.i(this.getClass().getName(),"************ loop() started ************");
 
         telemetry.addData("              Controls", "   ")
                 .addData("Drive", "Gp1: left stick y (axis)")
