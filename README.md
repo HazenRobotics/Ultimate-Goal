@@ -48,7 +48,11 @@ Documentation for the FTC SDK is also included with this repository.  There is a
 ### Online User Forum
 For technical questions regarding the Control System or the FTC SDK, please visit the FTC Technology forum:
 
+<<<<<<< HEAD
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[FTC Technology Forum](https://ftcforum.firstinspires.org/forumdisplay.php?156-FTC-Technology)
+=======
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[FTC Technology Forum](https://ftcforum.firstinspires.org/forum/ftc-technology)
+>>>>>>> 5b8d84a3cd0a407401329038cc6f1182154089b4
 
 # Release Information
 

@@ -16,18 +16,10 @@ public class GoalLiftWood {
 
     private DcMotor motor;
 
-    private final int TICKS_TO_LIFTED_POSITION = 1440;
-
-    public enum LiftPosition {
-        LIFTED,
-        LOWERED
-    }
     public enum ClawPosition {
         OPEN,
         CLOSED
     }
-
-    private LiftPosition currentLiftPosition;
 
     private ClawPosition currentClawPosition;
 
@@ -76,9 +68,5 @@ public class GoalLiftWood {
 
     public ClawPosition getCurrentClawPosition() {
         return currentClawPosition;
-    }
-
-    public LiftPosition getCurrentLiftPosition() {
-        return currentLiftPosition;
     }
 }
