@@ -98,6 +98,6 @@ public class ShooterBot extends Robot {
 
     }
     public void drive(double forwardPower, double strafePower, double turnPower) {
-        mecanumDrive.drive(-forwardPower, strafePower, turnPower);
+        mecanumDrive.drive(forwardPower, strafePower, turnPower);
     }
 }

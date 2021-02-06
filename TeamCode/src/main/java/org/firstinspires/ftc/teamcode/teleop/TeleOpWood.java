@@ -39,27 +39,20 @@ public class TeleOpWood extends OpMode {
                 .addData("Rotate", "Gp1: right stick x (axis)");
         telemetry.addLine();
 
-        try {
-            robot.mecanumDrive.drive( -gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x );
-        } catch (Exception e) {
-            Log.e("MYAPP", "exception", e);
-        }
-
-/*
         // moves the robot • left stick; moves forwards/backwards (y axis), strafing left/right (x axis) • right stick; rotating left/right ()x axis)
-        double powerChange = 1/2;
-        robot.mecanumDrive.drive( -gamepad1.left_stick_y*powerChange, gamepad1.left_stick_x*powerChange, gamepad1.right_stick_x*powerChange );
+        double powerChange = 1;
+        robot.mecanumDrive.drive( gamepad1.left_stick_y*powerChange, -gamepad1.left_stick_x*powerChange, -gamepad1.right_stick_x*powerChange );
 
         double maxDrivePower = 1.0;
-        robot.mecanumDrive.setMotorPower( gamepad1.left_trigger, gamepad1.right_trigger, (gamepad1.left_bumper) ? maxDrivePower : 0, (gamepad1.right_bumper) ? maxDrivePower : 0 );
-*/
+        robot.mecanumDrive.setMotorPower( -gamepad1.left_trigger, -gamepad1.right_trigger, (gamepad1.left_bumper) ? -maxDrivePower : 0, (gamepad1.right_bumper) ? -maxDrivePower : 0 );
 
-        if(gamepad1.x)
+
+        if(gamepad1.b)
             robot.setClawPosition(robot.goalLift.getCurrentClawPosition() == GoalLiftWood.ClawPosition.OPEN ? GoalLiftWood.ClawPosition.CLOSED : GoalLiftWood.ClawPosition.OPEN);
 
         double maxLiftPower = 0.5;
         robot.setLiftPower( gamepad1.a ? maxLiftPower : 0 );
-        robot.setLiftPower( gamepad1.b ? -maxLiftPower : 0 );
+        robot.setLiftPower( gamepad1.y ? -maxLiftPower : 0 );
 
 
 
