@@ -50,11 +50,11 @@ public class TensorFlow {
      * @param labels labels of the entries in the .tflite file
      */
     private void initTfod(String tfodModelAssetName, float minResultConfidence, boolean monitorCamera, HardwareMap hw, String... labels){
-        TFObjectDetector.Parameters tfodParameters = monitorCamera == true ? new TFObjectDetector.Parameters(hw.appContext.getResources().getIdentifier(
+        TFObjectDetector.Parameters tfodParameters = monitorCamera ? new TFObjectDetector.Parameters(hw.appContext.getResources().getIdentifier(
                 "tfodMonitorViewId", "id", hw.appContext.getPackageName())) : new TFObjectDetector.Parameters();
         tfodParameters.minResultConfidence = minResultConfidence;
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia.getLocalizer());
-        tfod.loadModelFromAsset(tfodModelAssetName, labels);
+        tfod.loadModelFromAsset(tfodModelAssetName, labels); // causes an error
     }
 
     /**
@@ -85,8 +85,8 @@ public class TensorFlow {
      */
     public Recognition getRecognition(){
         updateRecognitions();
-        if(recognitions == null){
-            return  null;
+        if(recognitions == null || recognitions.isEmpty() ){
+            return null;
         }
         if(recognitions.size() > 1){
             Recognition mostConfidentRecognition = null;
@@ -97,7 +97,9 @@ public class TensorFlow {
             }
             return  mostConfidentRecognition;
         }
+
         return recognitions.get(0);
+
     }
 
     /**

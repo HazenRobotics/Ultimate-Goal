@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.utils.Vuforia;
 @TeleOp(name="TensorFlow Test")
 public class TensorFlowTest extends OpMode {
 
-    private final String TENSOR_FLOW_MODEL_NAME = "UltimateGoal";
+    private final String TENSOR_FLOW_MODEL_NAME = "UltimateGoal.tflite";
 
     private static final String LABEL_FIRST_ELEMENT = "Quad";
     private static final String LABEL_SECOND_ELEMENT = "Single";

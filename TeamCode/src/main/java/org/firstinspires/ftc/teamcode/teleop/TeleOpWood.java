@@ -35,8 +35,8 @@ public class TeleOpWood extends OpMode {
                 .addData("Rotate", "Gp1: right stick x (axis)");
         telemetry.addLine();
 
-        // moves the robot • left stick; moves forwards/backwards (y axis), strafing left/right (x axis) • right stick; rotating left/right ()x axis)
-        double powerChange = 1;
+        // moves the robot • left stick; moves forward/backward (y axis), strafing left/right (x axis) • right stick; rotating left/right (x axis)
+        double powerChange = 0.7;
         robot.mecanumDrive.drive( gamepad1.left_stick_y*powerChange, -gamepad1.left_stick_x*powerChange, -gamepad1.right_stick_x*powerChange );
 
         double maxDrivePower = 1.0;
@@ -47,8 +47,7 @@ public class TeleOpWood extends OpMode {
             robot.setClawPosition(robot.goalLift.getCurrentClawPosition() == GoalLiftWood.ClawPosition.OPEN ? GoalLiftWood.ClawPosition.CLOSED : GoalLiftWood.ClawPosition.OPEN);
 
         double maxLiftPower = 0.5;
-        robot.setLiftPower( gamepad1.a ? maxLiftPower : 0 );
-        robot.setLiftPower( gamepad1.y ? -maxLiftPower : 0 );
+        robot.setLiftPower( gamepad1.a ? maxLiftPower : ( gamepad1.y ? -maxLiftPower : 0 ) );
 
 
 
