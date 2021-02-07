@@ -85,20 +85,16 @@ public class TensorFlow {
      */
     public Recognition getRecognition(){
         updateRecognitions();
-        if(recognitions == null || recognitions.isEmpty() ){
+        if(recognitions == null || recognitions.isEmpty() )
             return null;
-        }
-        if(recognitions.size() > 1){
-            Recognition mostConfidentRecognition = null;
-            for(Recognition recognition : recognitions){
-                if(mostConfidentRecognition == null || recognition.getConfidence() > mostConfidentRecognition.getConfidence()){
-                    mostConfidentRecognition = recognition;
-                }
-            }
-            return  mostConfidentRecognition;
-        }
 
-        return recognitions.get(0);
+        Recognition mostConfidentRecognition = null;
+        for(Recognition recognition : recognitions){
+            if(mostConfidentRecognition == null || recognition.getConfidence() > mostConfidentRecognition.getConfidence()){
+                mostConfidentRecognition = recognition;
+            }
+        }
+        return  mostConfidentRecognition;
 
     }
 
