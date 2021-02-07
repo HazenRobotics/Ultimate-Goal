@@ -54,7 +54,7 @@ public class TensorFlow {
                 "tfodMonitorViewId", "id", hw.appContext.getPackageName())) : new TFObjectDetector.Parameters();
         tfodParameters.minResultConfidence = minResultConfidence;
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia.getLocalizer());
-        tfod.loadModelFromAsset(tfodModelAssetName, labels); // causes an error
+        tfod.loadModelFromAsset(tfodModelAssetName, labels);
     }
 
     /**
