@@ -66,7 +66,6 @@ public class TensorFlowUtil {
         }
     }
 
-
     /**
      *
      * @return the type of stack identified
@@ -88,15 +87,13 @@ public class TensorFlowUtil {
 
 
 
-    public static void runStackDetection( int loopsIfNotFound ){
+    public void runStackDetection( int loopsIfNotFound ){
 
+        startTFOD();
 
-        //startTFOD();
+        identifyObjects();
 
-
-        //identifyObjects();
-
-        //stopTFOD();
+        stopTFOD();
 
     }
 

@@ -16,6 +16,8 @@ public class RobotWood extends Robot {
 
     public Tracking tracker;
 
+    public TensorFlowUtil tensorFlowUtil;
+
     //
     public static double MIN_POWER = 0.1;
 
@@ -26,6 +28,7 @@ public class RobotWood extends Robot {
         mecanumDrive = (MecanumDrive) driveTrain;
         tracker = new Tracking(mecanumDrive, hw);
         goalLift = new GoalLiftWood(hw);
+        tensorFlowUtil = new TensorFlowUtil(hw);
 
     }
 

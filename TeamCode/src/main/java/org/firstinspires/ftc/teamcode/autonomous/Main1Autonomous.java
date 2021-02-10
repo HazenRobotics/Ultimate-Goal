@@ -47,8 +47,8 @@ public class Main1Autonomous extends LinearOpMode
 
 
         // recognition code
-        robot.getRingStack( TensorFlow.getStack() );
-
+        //robot.getRingStack( TensorFlow.getStack() );
+        robot.tensorFlowUtil.runStackDetection(5);
 
 
 
