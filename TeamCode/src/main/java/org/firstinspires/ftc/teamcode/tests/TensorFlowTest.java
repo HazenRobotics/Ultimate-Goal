@@ -38,9 +38,9 @@ public class TensorFlowTest extends OpMode {
     public void loop() {
         if(tensorFlow.getRecognition() != null) {
             Recognition recognition = tensorFlow.getRecognition();
-            telemetry.addData(String.format("label (%d)"), recognition.getLabel());
-            telemetry.addData(String.format("  left,top (%d)"), "%.03f , %.03f", recognition.getLeft(), recognition.getTop());
-            telemetry.addData(String.format("  right,bottom (%d)"), "%.03f , %.03f", recognition.getRight(), recognition.getBottom());
+            telemetry.addData(String.format("label"), recognition.getLabel());
+            telemetry.addData(String.format("\t  left,top"), "%.03f , %.03f", recognition.getLeft(), recognition.getTop());
+            telemetry.addData(String.format("  right,bottom"), "%.03f , %.03f", recognition.getRight(), recognition.getBottom());
         }
         else {
             telemetry.addData("No Recognitions", null);

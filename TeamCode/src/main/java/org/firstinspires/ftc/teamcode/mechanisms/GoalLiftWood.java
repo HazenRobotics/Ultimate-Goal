@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
  */
 public class GoalLiftWood {
 
-    Servo claw;
+    public Servo claw;
 
     private DcMotor motor;
 

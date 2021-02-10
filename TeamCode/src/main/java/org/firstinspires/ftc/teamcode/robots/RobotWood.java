@@ -16,6 +16,7 @@ public class RobotWood extends Robot {
 
     public Tracking tracker;
 
+    //
     public static double MIN_POWER = 0.1;
 
     public RobotWood(HardwareMap hw, OpMode op){
