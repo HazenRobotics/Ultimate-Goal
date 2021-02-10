@@ -20,13 +20,11 @@ public abstract class Robot {
     OpMode opMode;
     Telemetry telemetry;
 
-    //time
+    // time
     double previousTime;
 
-    //drive
+    // drive
     public Drive driveTrain;
-
-    //
 
     //mechanisms
     //RingShooter shooter;
@@ -73,6 +71,7 @@ public abstract class Robot {
 
 
     }
+
 
     public void sleep(long millis){
         long startTime = System.currentTimeMillis();

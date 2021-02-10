@@ -20,7 +20,7 @@ public class TeleOpWood extends OpMode {
     public void init() {
         robot = new RobotWood(hardwareMap, this);
 
-        robot.setClawPosition( GoalLiftWood.ClawPosition.OPEN );
+        //robot.setClawPosition( GoalLiftWood.ClawPosition.OPEN );
 
         telemetry.addLine("init finished");
         telemetry.update();
@@ -39,8 +39,9 @@ public class TeleOpWood extends OpMode {
         double powerChange = 0.7;
         robot.mecanumDrive.drive( gamepad1.left_stick_y*powerChange, -gamepad1.left_stick_x*powerChange, -gamepad1.right_stick_x*powerChange );
 
-        double maxDrivePower = 1.0;
-        robot.mecanumDrive.setMotorPower( -gamepad1.left_trigger, -gamepad1.right_trigger, (gamepad1.left_bumper) ? -maxDrivePower : 0, (gamepad1.right_bumper) ? -maxDrivePower : 0 );
+        // do this or the on above it - not both, if you do both one will be setting power to 0 while the other tries to drive
+        //double maxDrivePower = 1.0;
+        //robot.mecanumDrive.setMotorPower( -gamepad1.left_trigger, -gamepad1.right_trigger, (gamepad1.left_bumper) ? -maxDrivePower : 0, (gamepad1.right_bumper) ? -maxDrivePower : 0 );
 
 
         if(gamepad1.b)
