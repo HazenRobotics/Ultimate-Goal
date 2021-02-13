@@ -29,7 +29,6 @@ public class TensorFlowUtil {
     public TensorFlowUtil( HardwareMap hw ) {
 
         initTensorFlow(hw);
-
     }
 
 
@@ -49,14 +48,14 @@ public class TensorFlowUtil {
     }
 
 
-    void identifyObjects() {
+    void identifyObjects( ) {
         if(tensorFlow.getRecognition() != null) {
             Recognition recognition = tensorFlow.getRecognition();
             setStack( recognition );
         }
-        else {
+        else
             stack = Stack.NONE;
-        }
+
     }
 
     void stopTFOD() {
@@ -75,7 +74,7 @@ public class TensorFlowUtil {
     }
 
     public void setStack( Recognition tfodResult ) {
-        switch (tfodResult.getLabel()) {
+        switch ( tfodResult.getLabel() ) {
             case "Single":
                 stack = Stack.SINGLE;
                 break;
@@ -87,7 +86,7 @@ public class TensorFlowUtil {
 
 
 
-    public void runStackDetection( int loopsIfNotFound ){
+    public void runStackDetection( ){
 
         startTFOD();
 

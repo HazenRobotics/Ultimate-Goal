@@ -32,6 +32,52 @@ public class RobotWood extends Robot {
 
     }
 
+    public void dropOffGoalDecider() {
+
+        TensorFlowUtil.Stack stackPos = tensorFlowUtil.getStack();
+
+        switch( stackPos ) {
+            case NONE:
+                driveToZoneA();
+                break;
+            case SINGLE:
+                driveToZoneB();
+                break;
+            case QUAD:
+                driveToZoneC();
+                break;
+        }
+
+    }
+
+    public void driveToZoneA() { // 0 rings :: target zone A
+
+        // drive backwards a bit
+        // strafe right 4 feet
+        // drop goal
+
+    }
+
+    public void driveToZoneB() { // 1 ring :: target zone B
+
+        // strafe right 2 feet
+        // drive forward
+        // drop goal
+
+    }
+
+    public void driveToZoneC() { // 4 rings :: target zone C
+
+        // strafe right 4 feet
+        // drive forward 4 feet
+        // drop goal
+
+    }
+
+
+
+
+
     public void drive(double drivePower, double strafePower, double rotatePower) {
         mecanumDrive.drive(drivePower, strafePower, rotatePower);
     }

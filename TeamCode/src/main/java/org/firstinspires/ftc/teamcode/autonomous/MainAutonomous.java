@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.utils.TensorFlow;
 
 @Autonomous(name="Main1Autonomous", group="autonomous")
 //@disabled
-public class Main1Autonomous extends LinearOpMode
+public class MainAutonomous extends LinearOpMode
 {
 
     RobotWood robot;
@@ -48,7 +48,7 @@ public class Main1Autonomous extends LinearOpMode
 
         // recognition code
         //robot.getRingStack( TensorFlow.getStack() );
-        robot.tensorFlowUtil.runStackDetection(5);
+        robot.tensorFlowUtil.runStackDetection();
 
 
 
