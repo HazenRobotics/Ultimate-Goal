@@ -10,6 +10,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.utils.ShootingMath;
 
+import java.util.Timer;
+
 /**
  * This class sets up and holds methods for using the ring shooter mechanism
  * The ring shooter mechanism is the ______ that does _______
@@ -22,8 +24,8 @@ public class RingShooter {
     public DcMotor rightFlyWheelMotor;
 
     public Servo pusher;
-    public double pushedPosition = 0.0;
-    public double retractedPosition = 0.3;
+    public final double PUSHED_POSITION = 0.5;
+    public final double RETRACTED_POSITION = 0.25;
 
     private double flyWheelRadius;
     private static double launchAngle = 35; //degrees
@@ -32,41 +34,44 @@ public class RingShooter {
 
     /**
      * Creates a RingShooter with default names for the motors
+     *
      * @param hw robot's hardware map
      */
-    public RingShooter(HardwareMap hw, double flyWheelRadius){
-        this( hw, "intake", "leftFlyWheel", "rightFlyWheel", "pusher", flyWheelRadius );
+    public RingShooter(HardwareMap hw, double flyWheelRadius) {
+        this(hw, "intake", "leftFlyWheel", "rightFlyWheel", "pusher", flyWheelRadius);
     }
 
     /**
      * Creates a RingShooter with specified names for the motors
-     * @param hw robot's hardware map
-     * @param intakeMotorName name of intake motor in the hardware map
-     * @param leftFlyWheelName name of left flywheel motor in the hardware map
+     *
+     * @param hw                robot's hardware map
+     * @param intakeMotorName   name of intake motor in the hardware map
+     * @param leftFlyWheelName  name of left flywheel motor in the hardware map
      * @param rightFlyWheelName name of right flywheel motor in the hardware map
      */
-    public RingShooter( HardwareMap hw, String intakeMotorName, String leftFlyWheelName, String rightFlyWheelName, String pusherName, double flyWheelRadius) {
-        setUpHardware( hw, intakeMotorName, leftFlyWheelName, rightFlyWheelName, pusherName );
+    public RingShooter(HardwareMap hw, String intakeMotorName, String leftFlyWheelName, String rightFlyWheelName, String pusherName, double flyWheelRadius) {
+        setUpHardware(hw, intakeMotorName, leftFlyWheelName, rightFlyWheelName, pusherName);
         this.flyWheelRadius = flyWheelRadius;
     }
 
     /**
      * Sets up motors from the hardware map
-     * @param hw robot's hardware map
-     * @param intakeMotorName name of intake motor in the hardware map
-     * @param leftFlyWheelName name of left flywheel motor in the hardware map
+     *
+     * @param hw                robot's hardware map
+     * @param intakeMotorName   name of intake motor in the hardware map
+     * @param leftFlyWheelName  name of left flywheel motor in the hardware map
      * @param rightFlyWheelName name of right flywheel motor in the hardware map
      */
-    private void setUpHardware( HardwareMap hw, String intakeMotorName, String leftFlyWheelName, String rightFlyWheelName, String pusherName ) {
+    private void setUpHardware(HardwareMap hw, String intakeMotorName, String leftFlyWheelName, String rightFlyWheelName, String pusherName) {
 
-        intakeMotor = hw.dcMotor.get( intakeMotorName );
+        intakeMotor = hw.dcMotor.get(intakeMotorName);
 
-        leftFlyWheelMotor = hw.dcMotor.get( leftFlyWheelName );
-        rightFlyWheelMotor = hw.dcMotor.get( rightFlyWheelName );
+        leftFlyWheelMotor = hw.dcMotor.get(leftFlyWheelName);
+        rightFlyWheelMotor = hw.dcMotor.get(rightFlyWheelName);
 
         //change these based on motor direction
-        leftFlyWheelMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-        rightFlyWheelMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftFlyWheelMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightFlyWheelMotor.setDirection(DcMotorSimple.Direction.FORWARD);
 
         pusher = hw.servo.get(pusherName);
     }
@@ -76,9 +81,9 @@ public class RingShooter {
      *
      * @param power power at which to run the intake motor
      */
-    public void setIntakeMotorPower( double power ) {
+    public void setIntakeMotorPower(double power) {
 
-        intakeMotor.setPower( power );
+        intakeMotor.setPower(power);
         currentIntakePower = power;
     }
 
@@ -87,24 +92,26 @@ public class RingShooter {
      *
      * @param power power at which to run the flywheels
      */
-    public void setFlyWheelMotorPower( double power) {
-        leftFlyWheelMotor.setPower( power );
-        rightFlyWheelMotor.setPower( power );
+    public void setFlyWheelMotorPower(double power) {
+        leftFlyWheelMotor.setPower(power);
+        rightFlyWheelMotor.setPower(power);
     }
 
     /**
      * Sets velocity for the motor to run at
-     * @param velocity target velocity
-     * @param  angleUnit unit in which the input velocity is given, in units/second
+     *
+     * @param velocity  target velocity
+     * @param angleUnit unit in which the input velocity is given, in units/second
      */
-    public void setFlyWheelMotorVelocity(double velocity, AngleUnit angleUnit){
-        ((DcMotorEx)leftFlyWheelMotor).setVelocity(velocity, angleUnit);
-        ((DcMotorEx)rightFlyWheelMotor).setVelocity(velocity, angleUnit);
+    public void setFlyWheelMotorVelocity(double velocity, AngleUnit angleUnit) {
+        ((DcMotorEx) leftFlyWheelMotor).setVelocity(velocity, angleUnit);
+        ((DcMotorEx) rightFlyWheelMotor).setVelocity(velocity, angleUnit);
     }
 
     /**
      * Launches a ring stored in the magazine
-     * @param velocity velocity at which to launch the ring
+     *
+     * @param velocity  velocity at which to launch the ring
      * @param inputUnit unit used when inputting the velocity, in units/second
      */
     public void launchRingVelocity(double velocity, DistanceUnit inputUnit) {
@@ -115,6 +122,7 @@ public class RingShooter {
 
     /**
      * Launches a ring stored in the magazine
+     *
      * @param power power at which to run the motors when shooting the ring
      */
     public void launchRingPower(double power) {
@@ -124,9 +132,10 @@ public class RingShooter {
     }
 
     private void pushRing() {
-        pusher.setPosition(pushedPosition);
-        //Might need to put a pause here
-        pusher.setPosition(retractedPosition);
+        pusher.setPosition(PUSHED_POSITION);
+        long currentTime = System.currentTimeMillis();
+        while (System.currentTimeMillis() < currentTime + 2000)
+            pusher.setPosition(RETRACTED_POSITION);
     }
 
     public double getLaunchAngle() {
@@ -134,7 +143,6 @@ public class RingShooter {
     }
 
     public double getCurrentIntakePower() {
-        return  currentIntakePower;
+        return currentIntakePower;
     }
-
 }

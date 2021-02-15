@@ -19,10 +19,10 @@ import org.jetbrains.annotations.NotNull;
 
 public class ShooterBotRR {
 
-    RoadRunnerMecanumDrive drive;
+    public RoadRunnerMecanumDrive drive;
 
-    GoalLift goalLift;
-    RingShooter ringShooter;
+    public GoalLift goalLift;
+    public RingShooter ringShooter;
     private final double FLY_WHEEL_RADIUS = 4; //in inches
 
     public ShooterBotRR(HardwareMap hw) {

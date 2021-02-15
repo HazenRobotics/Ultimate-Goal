@@ -19,7 +19,7 @@ public class ShooterBot extends Robot {
     public GoalLift goalLift;
     public RingShooter ringShooter;
 
-    public Tracking tracker;
+    //public Tracking tracker;
 
     private final double FLY_WHEEL_RADIUS = 0;
     private final double tangentalVelocityMultiplier = 1; //calculated tangental velocity / actual velocity
@@ -35,7 +35,7 @@ public class ShooterBot extends Robot {
 
         super.driveTrain = new MecanumDrive(hw);
         mecanumDrive = (MecanumDrive) driveTrain;
-        tracker = new Tracking(mecanumDrive, hw);
+        //tracker = new Tracking(mecanumDrive, hw);
         goalLift = new GoalLift(hw);
         ringShooter = new RingShooter(hw, FLY_WHEEL_RADIUS);
     }
@@ -47,7 +47,7 @@ public class ShooterBot extends Robot {
      */
     public void shootAtTarget(OpenGLMatrix target, double turnPower) {
         //rotate towards target
-        rotateDegrees(ShootingMath.getAngleToTarget(FieldMap.RobotInfo.robotLocation.toVector(), target.toVector()), turnPower);
+        //rotateDegrees(ShootingMath.getAngleToTarget(FieldMap.RobotInfo.robotLocation.toVector(), target.toVector()), turnPower);
         //assuming we are now lined up for the shot
         //shoot using velocity required to hit the target
         ringShooter.launchRingVelocity(ShootingMath.getVelocityToTarget(FieldMap.RobotInfo.getRingLaunchPointPosition().toVector(), target.toVector(), ringShooter.getLaunchAngle()), DistanceUnit.MM);
@@ -79,7 +79,7 @@ public class ShooterBot extends Robot {
      * @param degrees forward is zero, turning right is positive, limit: 359 degrees
      * @param power positive will turn right, negative turns left
      */
-    public void rotateDegrees( double degrees, double power ) {
+    /*public void rotateDegrees( double degrees, double power ) {
 
         mecanumDrive.drive( 0, 0, power );
 
@@ -96,7 +96,7 @@ public class ShooterBot extends Robot {
         mecanumDrive.drive( 0, 0, 0 );
 
 
-    }
+    }*/
     public void drive(double forwardPower, double strafePower, double turnPower) {
         mecanumDrive.drive(-forwardPower, strafePower, turnPower);
     }

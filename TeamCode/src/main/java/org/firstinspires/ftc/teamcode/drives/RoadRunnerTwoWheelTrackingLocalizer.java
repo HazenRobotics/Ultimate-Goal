@@ -67,7 +67,6 @@ public class RoadRunnerTwoWheelTrackingLocalizer extends TwoTrackingWheelLocaliz
         perpendicularEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "goalLift"));
 
         // TODO: reverse any encoders using Encoder.setDirection(Encoder.Direction.REVERSE)
-        parallelEncoder.setDirection(Encoder.Direction.REVERSE);
 
         this.drive = drive;
     }
