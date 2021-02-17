@@ -16,6 +16,8 @@ public class TensorFlowTest extends OpMode {
     private static final String LABEL_FIRST_ELEMENT = "Quad";
     private static final String LABEL_SECOND_ELEMENT = "Single";
 
+    int loops = 0;
+
     private Vuforia vuforia = Vuforia.getInstance();
 
     TensorFlow tensorFlow;
@@ -36,6 +38,9 @@ public class TensorFlowTest extends OpMode {
 
     @Override
     public void loop() {
+        telemetry.addLine( "Loops: " + (++loops) );
+        telemetry.update();
+
         if(tensorFlow.getRecognition() != null) {
             Recognition recognition = tensorFlow.getRecognition();
             telemetry.addData(String.format("label"), recognition.getLabel());
@@ -50,9 +55,8 @@ public class TensorFlowTest extends OpMode {
     @Override
     public void stop() {
         tensorFlow.shutdown();
-        if(vuforia.isRunning()) {
+        if(vuforia.isRunning())
             vuforia.close();
-        }
     }
 
 }

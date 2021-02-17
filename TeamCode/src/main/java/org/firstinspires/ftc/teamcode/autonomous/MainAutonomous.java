@@ -5,13 +5,13 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.drives.MecanumDrive;
 import org.firstinspires.ftc.teamcode.robots.RobotWood;
-import org.firstinspires.ftc.teamcode.utils.TensorFlow;
+import org.firstinspires.ftc.teamcode.utils.TensorFlowUtil;
 
 // autonomous program that drives bot forward a set distance, stops then
 // backs up to the starting point using encoders to measure the distance.
 // This example assumes there is one encoder, attached to the left motor
 
-@Autonomous(name="Main1Autonomous", group="autonomous")
+@Autonomous(name="MainAutonomous", group="autonomous")
 //@disabled
 public class MainAutonomous extends LinearOpMode
 {
@@ -23,7 +23,9 @@ public class MainAutonomous extends LinearOpMode
     {
         robot = new RobotWood(hardwareMap, this);
         robot.driveTrain = new MecanumDrive(hardwareMap);
+        robot.tensorFlowUtil.initTensorFlow(hardwareMap);
 
+        //telemetry.setAutoClear( false );
 
         telemetry.addLine("init finished");
         telemetry.update();
@@ -37,7 +39,7 @@ public class MainAutonomous extends LinearOpMode
         // add ordered list of Main PLan here:
 
 
-         */
+        */
 
         /*
         //do all the driving methods here
@@ -45,15 +47,8 @@ public class MainAutonomous extends LinearOpMode
 
         */
 
-
-        // recognition code
-        //robot.getRingStack( TensorFlow.getStack() );
-        robot.tensorFlowUtil.runStackDetection();
-
-
-
-
-
+        robot.tensorFlowUtil.runStackDetection( 10000 );
+        robot.dropOffGoal();
 
     }
 

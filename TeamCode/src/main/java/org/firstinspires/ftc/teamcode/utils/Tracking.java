@@ -22,7 +22,6 @@ public class Tracking {
         mecanumDrive = mDrv;
 
         initGyro(hw);
-
     }
 
     /**

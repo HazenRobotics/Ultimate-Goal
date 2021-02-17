@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.robots;
 
+import android.util.Log;
+
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -28,11 +30,11 @@ public class RobotWood extends Robot {
         mecanumDrive = (MecanumDrive) driveTrain;
         tracker = new Tracking(mecanumDrive, hw);
         goalLift = new GoalLiftWood(hw);
-        tensorFlowUtil = new TensorFlowUtil(hw);
+        tensorFlowUtil = new TensorFlowUtil(hw, op);
 
     }
 
-    public void dropOffGoalDecider() {
+    public void dropOffGoal() { Log.e("|-|-|-| ", "dropOffGoal();");
 
         TensorFlowUtil.Stack stackPos = tensorFlowUtil.getStack();
 
@@ -49,8 +51,14 @@ public class RobotWood extends Robot {
         }
 
     }
+   public void driveToZoneA() { // 0 rings :: target zone A
 
-    public void driveToZoneA() { // 0 rings :: target zone A
+        Log.e("|-|-|-| ", "driveToZonA();");
+
+        telemetry.addLine( "driveToZoneA()" );
+        telemetry.update();
+
+        driveDistance(12, -0.75, true);
 
         // drive backwards a bit
         // strafe right 4 feet
@@ -60,6 +68,13 @@ public class RobotWood extends Robot {
 
     public void driveToZoneB() { // 1 ring :: target zone B
 
+        Log.e("|-|-|-| ", "driveToZoneB()");
+
+        telemetry.addLine( "driveToZoneB()" );
+        telemetry.update();
+
+        strafeDistance(12, -0.75, true);
+
         // strafe right 2 feet
         // drive forward
         // drop goal
@@ -67,6 +82,13 @@ public class RobotWood extends Robot {
     }
 
     public void driveToZoneC() { // 4 rings :: target zone C
+
+        Log.e("|-|-|-| ", "driveToZoneC();");
+
+        telemetry.addLine( "driveToZoneC()" );
+        telemetry.update();
+
+        driveDistance(12, 0.75, true);
 
         // strafe right 4 feet
         // drive forward 4 feet

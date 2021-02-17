@@ -107,6 +107,12 @@ public abstract class Robot {
         telemetry.update();
     }
 
+    public void sleepRobot2(long delay) {
+        double currTime = opMode.getRuntime();
+        double waitUntil = currTime + (double)(delay/1000);
+        while( opMode.getRuntime() < waitUntil ) {}
+    }
+
 
 
 }

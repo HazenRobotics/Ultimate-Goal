@@ -32,13 +32,10 @@ public class TensorFlow {
      * @param labels labels of the entries in the .tflite file
      */
     public TensorFlow(String tfodModelAssetName, float minResultConfidence, boolean monitorCamera, HardwareMap hw, String... labels){
-        if(!vuforia.isRunning()) {
+        if(!vuforia.isRunning())
             vuforia.start();
-        }
 
         initTfod(tfodModelAssetName, minResultConfidence, monitorCamera, hw, labels);
-
-
     }
 
     /**
