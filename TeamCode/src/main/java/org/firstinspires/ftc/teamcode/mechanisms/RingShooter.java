@@ -24,8 +24,8 @@ public class RingShooter {
     public DcMotor rightFlyWheelMotor;
 
     public Servo pusher;
-    public final double PUSHED_POSITION = 0.5;
-    public final double RETRACTED_POSITION = 0.25;
+    private double pushedPosition = 0.5;
+    private double retractedPosition = 0.25;
 
     private double flyWheelRadius;
     private static double launchAngle = 35; //degrees
@@ -37,8 +37,8 @@ public class RingShooter {
      *
      * @param hw robot's hardware map
      */
-    public RingShooter(HardwareMap hw, double flyWheelRadius) {
-        this(hw, "intake", "leftFlyWheel", "rightFlyWheel", "pusher", flyWheelRadius);
+    public RingShooter(HardwareMap hw, double flyWheelRadius, double pushedPosition, double retractedPosition) {
+        this(hw, "intake", "leftFlyWheel", "rightFlyWheel", "pusher", flyWheelRadius, pushedPosition, retractedPosition);
     }
 
     /**
@@ -49,9 +49,11 @@ public class RingShooter {
      * @param leftFlyWheelName  name of left flywheel motor in the hardware map
      * @param rightFlyWheelName name of right flywheel motor in the hardware map
      */
-    public RingShooter(HardwareMap hw, String intakeMotorName, String leftFlyWheelName, String rightFlyWheelName, String pusherName, double flyWheelRadius) {
+    public RingShooter(HardwareMap hw, String intakeMotorName, String leftFlyWheelName, String rightFlyWheelName, String pusherName, double flyWheelRadius, double pushedPosition, double retractedPosition) {
         setUpHardware(hw, intakeMotorName, leftFlyWheelName, rightFlyWheelName, pusherName);
         this.flyWheelRadius = flyWheelRadius;
+        this.pushedPosition = pushedPosition;
+        this.retractedPosition = retractedPosition;
     }
 
     /**
@@ -131,11 +133,11 @@ public class RingShooter {
         setFlyWheelMotorPower(0);
     }
 
-    private void pushRing() {
-        pusher.setPosition(PUSHED_POSITION);
+    public void pushRing() {
+        pusher.setPosition(pushedPosition);
         long currentTime = System.currentTimeMillis();
-        while (System.currentTimeMillis() < currentTime + 2000)
-            pusher.setPosition(RETRACTED_POSITION);
+        while (System.currentTimeMillis() < currentTime + 2000);
+        pusher.setPosition(retractedPosition);
     }
 
     public double getLaunchAngle() {

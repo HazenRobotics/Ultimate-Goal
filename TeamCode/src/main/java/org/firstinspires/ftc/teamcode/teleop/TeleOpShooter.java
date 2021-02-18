@@ -31,18 +31,18 @@ public class TeleOpShooter extends OpMode {
         if(gamepad1.x) {
             robot.setLiftPosition(robot.goalLift.getCurrentLiftPosition() == GoalLift.LiftPosition.LIFTED ? GoalLift.LiftPosition.LOWERED : GoalLift.LiftPosition.LIFTED, 0.5);
         }*/
-        if(gamepad1.y) {
-            robot.ringShooter.launchRingPower(0.8);
-        }
+        /*if(gamepad1.y) {
+            robot.ringShooter.launchRingPower(1.0);
+        }*/
         if(gamepad1.b) {
             robot.setIntakePower(robot.ringShooter.getCurrentIntakePower() == 0 ? 1 : 0);
         }
-        /*if(gamepad1.y) {
-            robot.ringShooter.setFlyWheelMotorPower(1);
+        if(gamepad1.y) {
+            robot.ringShooter.setFlyWheelMotorPower(robot.ringShooter.rightFlyWheelMotor.getPower() > 0 ? 0 : 1);
         }
         if(gamepad1.x) {
-            robot.ringShooter.setFlyWheelMotorPower(0);
-        }*/
+            robot.ringShooter.pushRing();
+        }
         robot.drive.update();
     }
 }

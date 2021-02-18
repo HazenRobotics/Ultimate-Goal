@@ -28,7 +28,7 @@ public class ShooterBotRR {
     public ShooterBotRR(HardwareMap hw) {
         drive = new RoadRunnerMecanumDrive(hw);
         goalLift = new GoalLift(hw);
-        ringShooter = new RingShooter(hw, FLY_WHEEL_RADIUS);
+        ringShooter = new RingShooter(hw, FLY_WHEEL_RADIUS, 0.45, 0.2);
     }
 
     /**

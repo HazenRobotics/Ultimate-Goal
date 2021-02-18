@@ -37,7 +37,7 @@ public class ShooterBot extends Robot {
         mecanumDrive = (MecanumDrive) driveTrain;
         //tracker = new Tracking(mecanumDrive, hw);
         goalLift = new GoalLift(hw);
-        ringShooter = new RingShooter(hw, FLY_WHEEL_RADIUS);
+        ringShooter = new RingShooter(hw, FLY_WHEEL_RADIUS, 0.5, 0.25);
     }
 
     /**
