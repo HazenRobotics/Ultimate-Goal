@@ -28,7 +28,8 @@ public class TeleOpServo extends OpMode {
         robot.goalLift.claw.setPosition(gamepad1.right_stick_y);
 
 
-        telemetry.addData("claw position", robot.goalLift.claw.getPosition());
+        telemetry.addData("right stick y position", gamepad1.right_stick_y );
+        telemetry.addData("claw position", robot.goalLift.claw.getPosition() );
         telemetry.update();
 
     }

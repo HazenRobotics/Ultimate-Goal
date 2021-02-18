@@ -14,15 +14,12 @@ import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE;
 
 public class FourWheelDrive implements Drive {
 
+    private Drive.State currentState = Drive.State.STOPPED;
+
     public DcMotorEx frontLeft;
     public DcMotorEx frontRight;
     public DcMotorEx backLeft;
     public DcMotorEx backRight;
-
-    final double PULSES_PER_REVOLUTION = 250;
-    final double GEAR_RATIO = 0.25;
-
-    private State currentState = State.STOPPED;
 
     public FourWheelDrive(HardwareMap hw){
         this(hw, "frontLeft","frontRight", "backLeft", "backRight" );
@@ -32,26 +29,6 @@ public class FourWheelDrive implements Drive {
         setUpMotors(hw, frontLeftName, frontRightName, backLeftName, backRightName);
     }
 
-    /**
-     *
-     * @param distanceToTravel the distance to move in inches
-     * @param circumference the circumference of the wheel that has the encoder
-     * @return totalTicks - the amount of ticks to move forward
-     */
-    public int convertDistTicks( double distanceToTravel, double circumference )
-    {
-        double revolutions = distanceToTravel / circumference;
-        int totalTicks = (int) Math.round( (revolutions * PULSES_PER_REVOLUTION) / GEAR_RATIO );
-
-        return totalTicks;
-    }
-    public int convertTicksDist( double ticksToTravel, double circumference )
-    {
-        double calculations = ticksToTravel * circumference * GEAR_RATIO;
-        int totalDistance = (int) Math.round( calculations / PULSES_PER_REVOLUTION );
-
-        return totalDistance;
-    }
 
     /**
      * Sets up motors from the hardware map

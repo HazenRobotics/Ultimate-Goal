@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.robots.RobotWood;
 import org.firstinspires.ftc.teamcode.mechanisms.GoalLiftWood;
 import org.firstinspires.ftc.teamcode.drives.MecanumDrive;
+import org.firstinspires.ftc.teamcode.utils.Tracking;
 
 // TeleOp class for the new wooden robot
 @TeleOp(name="teleopWood", group="teleop")
@@ -36,8 +37,8 @@ public class TeleOpWood extends OpMode {
         telemetry.addLine();
 
         // moves the robot • left stick; moves forward/backward (y axis), strafing left/right (x axis) • right stick; rotating left/right (x axis)
-        double powerChange = 0.7;
-        robot.mecanumDrive.drive( gamepad1.left_stick_y*powerChange, -gamepad1.left_stick_x*powerChange, -gamepad1.right_stick_x*powerChange );
+        double pC = 0.667; //powerChange
+        robot.mecanumDrive.drive( -gamepad1.left_stick_y*pC, gamepad1.left_stick_x*pC, gamepad1.right_stick_x*pC );
 
         // do this or the on above it - not both, if you do both one will be setting power to 0 while the other tries to drive
         //double maxDrivePower = 1.0;
@@ -65,8 +66,14 @@ public class TeleOpWood extends OpMode {
 
         telemetry.addLine();
 
-        telemetry.addLine("longitudinal position = " + robot.tracker.getLongitudinalPosition() );
-        telemetry.addLine("lateral position = " + robot.tracker.getLateralPosition() );
+        telemetry.addLine("longitudinal position = " + robot.tracker.getLongitudinalPosition() + " (ticks), "
+                + robot.mecanumDrive.convertTicksDist( robot.tracker.getLongitudinalPosition()) + " (in)" );
+        telemetry.addLine("lateral position = " + robot.tracker.getLateralPosition() + " (ticks), "
+                + robot.mecanumDrive.convertTicksDist( robot.tracker.getLateralPosition()) + " (in)" );
+
+        telemetry.addLine();
+
+        telemetry.addLine( "Servo Position = " + robot.goalLift.claw.getPosition() );
 
         telemetry.addLine();
 
@@ -85,10 +92,13 @@ public class TeleOpWood extends OpMode {
 
         //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 
+        /*
         telemetry.addData("getNewGyroHeading", robot.tracker.getNewGyroHeading() )
                 .addData("getGyroHeading", robot.tracker.getGyroHeading() );
         telemetry.addData("getGyroRoll", robot.tracker.getGyroRoll() )
                 .addData("getGyroPitch", robot.tracker.getGyroPitch() );
+
+         */
 
         //telemetry.addData("getGyroXVelocity", robot.tracker.getGyroXVelocity())
         //        .addData("getGyroYVelocity", robot.tracker.getGyroYVelocity() )

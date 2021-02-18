@@ -56,11 +56,11 @@ public class GoalLiftWood {
     public void setClawPosition( ClawPosition position) {
         switch (position) {
             case OPEN:
-                claw.setPosition(1.0);
+                claw.setPosition(0.5);
                 currentClawPosition = ClawPosition.OPEN;
                 break;
             case CLOSED:
-                claw.setPosition(0.0);
+                claw.setPosition(1.0);
                 currentClawPosition = ClawPosition.CLOSED;
                 break;
         }

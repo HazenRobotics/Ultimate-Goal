@@ -17,6 +17,9 @@ public class Tracking {
     Orientation angles;
     Acceleration gravity;
 
+    final static double PULSES_PER_REVOLUTION = 250;
+    final static double GEAR_RATIO = 0.25;
+
     public Tracking( MecanumDrive mDrv, HardwareMap hw ) {
 
         mecanumDrive = mDrv;
@@ -54,6 +57,29 @@ public class Tracking {
 
         angles = gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
+    }
+
+
+
+    /**
+     *
+     * @param distanceToTravel the distance to move in inches
+     * @param circumference the circumference of the wheel that has the encoder
+     * @return totalTicks - the amount of ticks to move forward
+     */
+    public static int convertDistTicks( double distanceToTravel, double circumference )
+    {
+        double revolutions = distanceToTravel / circumference;
+        int totalTicks = (int) Math.round( (revolutions * PULSES_PER_REVOLUTION) / GEAR_RATIO );
+
+        return totalTicks;
+    }
+    public static int convertTicksDist( double ticksToTravel, double circumference )
+    {
+        double calculations = ticksToTravel * circumference * GEAR_RATIO;
+        int totalDistance = (int) Math.round( calculations / PULSES_PER_REVOLUTION );
+
+        return totalDistance;
     }
 
     public double getGyroXVelocity() {

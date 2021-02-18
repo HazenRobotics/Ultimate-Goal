@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.robots;
 
-import com.qualcomm.hardware.bosch.BNO055IMU;
+import android.os.Environment;
+import android.util.Log;
+
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -11,6 +13,12 @@ import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.drives.Drive;
 import org.firstinspires.ftc.teamcode.utils.TensorFlow;
 import org.firstinspires.ftc.teamcode.utils.VuforiaLocalization;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * This class sets up and manages a robot
@@ -39,6 +47,8 @@ public abstract class Robot {
     TensorFlow tfod;
     private final String TFOD_MODEL_ASSET_NAME = "UltimateGoal.tflite";
     private final String[] TFOD_MODEL_LABELS = {"Quad", "Single"};
+
+    private static final String DEFAULT_LOG_FILE_NAME = "robotLog.txt";
 
 
     /**
@@ -69,6 +79,34 @@ public abstract class Robot {
         }
 
 
+    }
+
+    public static void writeToDefaultFile( String writeText, boolean isAppending, boolean includeTimeStamp ) {
+        writeAFile( DEFAULT_LOG_FILE_NAME, writeText, isAppending, includeTimeStamp );
+    }
+
+    public static void writeAFile(String fileName, String writeText, boolean isAppending, boolean includeTimeStamp ){
+
+        // "\n" = System.lineSeparator()
+
+        String time = "";
+        if( includeTimeStamp ) {
+            SimpleDateFormat formatter1 = new SimpleDateFormat("MM-dd HH:mm:ss");
+            Date date = new Date();
+            time = formatter1.format(date) + " :: ";
+        }
+
+        String path = Environment.getExternalStorageDirectory().getPath() + "/" + "FIRST" + "/";
+        //".../Internal Storage/";
+
+        try {
+            FileWriter writer = new FileWriter( new File( path + fileName ), isAppending );
+            writer.write( time + writeText + System.lineSeparator() );
+            writer.close();
+        } catch ( IOException e ) {
+            e.printStackTrace();
+            Log.e( "|-|-|-| ", e.getStackTrace().toString() );
+        }
 
     }
 

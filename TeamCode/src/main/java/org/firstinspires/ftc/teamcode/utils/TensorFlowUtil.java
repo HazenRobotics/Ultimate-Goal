@@ -2,13 +2,12 @@ package org.firstinspires.ftc.teamcode.utils;
 
 import android.util.Log;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.teamcode.R;
-import org.firstinspires.ftc.teamcode.autonomous.MainAutonomous;
+import org.firstinspires.ftc.teamcode.robots.Robot;
 
 import java.util.ArrayList;
 
@@ -180,7 +179,9 @@ public class TensorFlowUtil {
         stack = newStack;
     }
 
-    public void runStackDetection( int loops ) { Log.e("|-|-|-| ", "runStackDetection();");
+    public void runStackDetection( int loops ) { Robot.writeToDefaultFile( "******** Main Class Started ********", true, true );
+
+        //Log.e("|-|-|-| ", "runStackDetection();");
 
         startTF();
 
