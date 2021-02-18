@@ -97,10 +97,6 @@ public class RobotWood extends Robot {
 
     }
 
-
-
-
-
     public void drive(double drivePower, double strafePower, double rotatePower) {
         mecanumDrive.drive(drivePower, strafePower, rotatePower);
     }
@@ -123,12 +119,12 @@ public class RobotWood extends Robot {
         mecanumDrive.drive( power, 0, 0 );
 
         int ticksToTravel = mecanumDrive.convertDistTicks(distance);
-        int initialXPos = tracker.getLongitudinalPosition();
+        int initialXPos = tracker.getLateralPosition();
+        int initialYPos = tracker.getLongitudinalPosition();
         double percent = 0.5;
-        //int initialYPos = tracker.getLateralPosition();
 
         mecanumDrive.drive( power, 0, 0 );
-        while( tracker.getLongitudinalPosition() - initialXPos < ticksToTravel && opModeIsActive()) {
+        while( tracker.getLateralPosition() - initialXPos < ticksToTravel && opModeIsActive() ) {
 
             double m = (power-(Math.signum(power)*MIN_POWER))/(-distance*(1-distance));
             double x = mecanumDrive.convertDistTicks(tracker.getLateralPosition() - ticksToTravel);
@@ -138,15 +134,11 @@ public class RobotWood extends Robot {
                 power = m*x + b;
 
             mecanumDrive.drive( power, 0, 0 );
-
         }
 
         //sets all power to zero afterwords
-        if(setPowerZero) {
+        if(setPowerZero)
             mecanumDrive.drive( 0, 0, 0 );
-        }
-
-
     }
 
     public void strafeDistance( double distance, double power, boolean setPowerZero ) {
@@ -154,20 +146,26 @@ public class RobotWood extends Robot {
         mecanumDrive.drive( 0, power, 0 );
 
         int ticksToTravel = mecanumDrive.convertDistTicks(distance);
-        int initialPosition = tracker.getLateralPosition();
+        int initialXPos = tracker.getLateralPosition();
+        int initialYPos = tracker.getLongitudinalPosition();
+        double percent = 0.5;
 
-        mecanumDrive.drive( 0, 0, power );
-        while( tracker.getLateralPosition() - initialPosition < ticksToTravel && opModeIsActive()) {
+        mecanumDrive.drive( 0, power, 0 );
+        while( tracker.getLongitudinalPosition() - initialYPos < ticksToTravel && opModeIsActive()) {
 
+            double m = (power-(Math.signum(power)*MIN_POWER))/(-distance*(1-distance));
+            double x = mecanumDrive.convertDistTicks(tracker.getLateralPosition() - ticksToTravel);
+            double b = (Math.signum(power)*MIN_POWER)-m*distance;
 
+            if( tracker.getLongitudinalPosition() - initialXPos > ticksToTravel*percent )
+                power = m*x + b;
+
+            mecanumDrive.drive( 0, power, 0 );
         }
 
         //sets all power to zero afterwords
-        if(setPowerZero) {
+        if(setPowerZero)
             mecanumDrive.drive( 0, 0, 0 );
-        }
-
-
     }
 
     /**
@@ -262,105 +260,6 @@ public class RobotWood extends Robot {
 
 
     }
-
-
-    /**
-     *
-     * @param time - time to move the robot
-     * @param power - power the wheels to move the robot
-     * @param setPowerZero - (boolean) set power to zero after moving
-     */
-    public void driveTime( long time, double power, boolean setPowerZero ) {
-
-        mecanumDrive.drive( power, 0, 0 );
-
-        //wait for certain amount of time while motors are running
-        long setTime = System.currentTimeMillis();
-        previousTime = opMode.getRuntime();
-
-        while(System.currentTimeMillis() - setTime < (time) && opModeIsActive()) {
-            mecanumDrive.drive( power, 0, 0 );
-        }
-
-        //sets all power to zero afterwords
-        if(setPowerZero) {
-            mecanumDrive.drive( 0, 0, 0 );
-        }
-    }
-
-    /**
-     *
-     * @param time - time to strafe the robot
-     * @param power - power for the wheels to strafe the robot
-     * @param setPowerZero - (boolean) set power to zero after strafing
-     */
-    public void strafeTime( long time, double power, boolean setPowerZero ) {
-
-        mecanumDrive.drive( 0, power, 0 );
-
-        //wait for certain amount of time while motors are running
-        long setTime = System.currentTimeMillis();
-        previousTime = opMode.getRuntime();
-
-        while(System.currentTimeMillis() - setTime < (time) && opModeIsActive()) {
-            mecanumDrive.drive( 0, power, 0 );
-        }
-
-        //sets all power to zero afterwords
-        if(setPowerZero) {
-            mecanumDrive.drive( 0, 0, 0 );
-        }
-    }
-
-    /**
-     *
-     * @param time - time to strafe the robot
-     * @param power - power for the wheels to strafe the robot
-     * @param setPowerZero - (boolean) set power to zero after strafing
-     */
-    public void rotateTime( long time, double power, boolean setPowerZero ) {
-
-        mecanumDrive.drive( 0, 0, power );
-
-        //wait for certain amount of time while motors are running
-        long setTime = System.currentTimeMillis();
-        previousTime = opMode.getRuntime();
-
-        while(System.currentTimeMillis() - setTime < (time) && opModeIsActive()) {
-            mecanumDrive.drive( 0, 0, power );
-        }
-
-        //sets all power to zero afterwords
-        if(setPowerZero) {
-            mecanumDrive.drive( 0, 0, 0 );
-        }
-    }
-
-    /**
-     *
-     * @param time - time to rotate the robot in milliseconds
-     * @param power - power for the wheels to rotate the robot
-     * @param setPowerZero - (boolean) set power to zero after rotating
-     */
-    public void turnTime( long time, double power, boolean setPowerZero ) {
-
-        mecanumDrive.drive( 0, 0, power );
-
-        //wait for certain amount of time while motors are running
-        long setTime = System.currentTimeMillis();
-        previousTime = opMode.getRuntime();
-
-        while(System.currentTimeMillis() - setTime < (time) && opModeIsActive()) {
-            mecanumDrive.drive( 0, 0, power );
-        }
-
-        //sets all power to zero afterwords
-        if(setPowerZero) {
-            mecanumDrive.drive( 0, 0, 0 );
-        }
-
-    }
-
 
     /**
      * @param drivePower - sets power to drive - negative power is backwards

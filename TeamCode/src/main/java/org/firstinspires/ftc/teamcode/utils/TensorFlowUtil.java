@@ -94,12 +94,16 @@ public class TensorFlowUtil {
                 break;
         }
 
-        if( singles > quads )
-            setStack( Stack.SINGLE );
-        else if( quads > singles)
-            setStack( Stack.QUAD );
-        else
-            setStack( Stack.NONE );
+        if( singles > quads ) {
+            setStack(Stack.SINGLE);
+            Robot.writeToDefaultFile( stack + "stack found", true, true );
+        } else if( quads > singles) {
+            setStack(Stack.QUAD);
+            Robot.writeToDefaultFile( stack + "stack found", true, true );
+        } else {
+            setStack(Stack.NONE);
+            Robot.writeToDefaultFile( stack + "stack found", true, true );
+        }
 
         loopRunTime = opMode.getRuntime() - startTime;
 
@@ -162,8 +166,6 @@ public class TensorFlowUtil {
         tensorFlow.shutdown();
         if(vuforia.isRunning())
             vuforia.close();
-
-
 
     }
 

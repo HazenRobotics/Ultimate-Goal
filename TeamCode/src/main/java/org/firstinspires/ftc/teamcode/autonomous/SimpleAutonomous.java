@@ -22,7 +22,11 @@ public class SimpleAutonomous extends LinearOpMode
     {
         robot = new RobotWood(hardwareMap, this);
         robot.driveTrain = new MecanumDrive(hardwareMap);
+        //robot.tensorFlowUtil.initTensorFlow(hardwareMap);
 
+        //telemetry.setAutoClear( false );
+
+        robot.writeToDefaultFile( "******** Init Finished ********", false, true );
 
         telemetry.addLine("init finished");
         telemetry.update();
@@ -32,12 +36,15 @@ public class SimpleAutonomous extends LinearOpMode
         //==========================================================================================
         //Official Start
 
+        robot.writeToDefaultFile( "******** Main Class Started ********", true, true );
+
+        robot.driveDistance( 15, 0.75, true );
 
 
+        robot.sleepRobot2( 5*1000 );
 
 
-
-
+        robot.strafeDistance( 15, -0.75, true );
 
 
 
