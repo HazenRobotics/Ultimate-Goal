@@ -36,33 +36,20 @@ public class TeleOpWood extends OpMode {
                 .addData("Rotate", "Gp1: right stick x (axis)");
         telemetry.addLine();
 
-        // moves the robot • left stick; moves forward/backward (y axis), strafing left/right (x axis) • right stick; rotating left/right (x axis)
-        double pC = 0.667; //powerChange
+        double pC = ( gamepad1.left_stick_button ? 1.0 : 0.5 ); //powerChange
         robot.mecanumDrive.drive( -gamepad1.left_stick_y*pC, gamepad1.left_stick_x*pC, gamepad1.right_stick_x*pC );
 
-        // do this or the on above it - not both, if you do both one will be setting power to 0 while the other tries to drive
-        //double maxDrivePower = 1.0;
-        //robot.mecanumDrive.setMotorPower( -gamepad1.left_trigger, -gamepad1.right_trigger, (gamepad1.left_bumper) ? -maxDrivePower : 0, (gamepad1.right_bumper) ? -maxDrivePower : 0 );
-
-
         if(gamepad1.b)
-            robot.setClawPosition(robot.goalLift.getCurrentClawPosition() == GoalLiftWood.ClawPosition.OPEN ? GoalLiftWood.ClawPosition.CLOSED : GoalLiftWood.ClawPosition.OPEN);
+            robot.setClawPosition( GoalLiftWood.ClawPosition.CLOSED );
+        if(gamepad1.x)
+            robot.setClawPosition( GoalLiftWood.ClawPosition.OPEN);
 
         double maxLiftPower = 0.5;
         robot.setLiftPower( gamepad1.a ? maxLiftPower : ( gamepad1.y ? -maxLiftPower : 0 ) );
 
-
-
         telemetry.addData("left_stick_y", gamepad1.left_stick_y)
                 .addData("left_stick_x", gamepad1.left_stick_x)
                 .addData("right_stick_x", gamepad1.right_stick_x);
-
-        telemetry.addLine("--------------");
-
-        telemetry.addData("Front Left Power", robot.mecanumDrive.getFrontLeftPower() )
-                .addData("Front Right Power", robot.mecanumDrive.getFrontRightPower() )
-                .addData("Back Left Power", robot.mecanumDrive.getBackLeftPower() )
-                .addData("Back Right Power", robot.mecanumDrive.getBackRightPower() );
 
         telemetry.addLine();
 
@@ -73,22 +60,11 @@ public class TeleOpWood extends OpMode {
 
         telemetry.addLine();
 
-        telemetry.addLine( "Servo Position = " + robot.goalLift.claw.getPosition() );
+        telemetry.addLine( "Servo Position = " + robot.goalLift.claw.getPosition() + " :: "
+                + robot.goalLift.getCurrentClawPosition() + " " + robot.goalLift.getCurrentClawPosition().name());
+        telemetry.addLine( "Lift Position = " /*+ robot.goalLift.getCurrentLiftPosition()*/ );
 
         telemetry.addLine();
-
-        /*
-        for (int travelDistance = 0; travelDistance <= 20; travelDistance++) {
-            String data = "Move " + travelDistance + " inch" + (travelDistance == 1 ? "    " : "es") + (travelDistance <= 9 ? "   " : "");
-            telemetry.addData(data, robot.mecanumDrive.convertDistTicks(travelDistance) );
-        }
-
-        telemetry.addLine();
-
-        telemetry.addData("Move 20 inches", robot.mecanumDrive.convertDistTicks( 20) ); // 4255(.30058379) with 250 ppr, 3404(.24046704) with 200 ppr
-        String data = "Move " + robot.mecanumDrive.convertDistTicks( 20) + " ticks";
-        telemetry.addData(data, robot.mecanumDrive.convertTicksDist( mecanumDrive.convertDistTicks( 20) )  );
-        */
 
         //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 
@@ -98,11 +74,10 @@ public class TeleOpWood extends OpMode {
         telemetry.addData("getGyroRoll", robot.tracker.getGyroRoll() )
                 .addData("getGyroPitch", robot.tracker.getGyroPitch() );
 
+        telemetry.addData("getGyroXVelocity", robot.tracker.getGyroXVelocity())
+                .addData("getGyroYVelocity", robot.tracker.getGyroYVelocity() )
+                .addData("getGyroZVelocity", robot.tracker.getGyroZVelocity() );
          */
-
-        //telemetry.addData("getGyroXVelocity", robot.tracker.getGyroXVelocity())
-        //        .addData("getGyroYVelocity", robot.tracker.getGyroYVelocity() )
-        //        .addData("getGyroZVelocity", robot.tracker.getGyroZVelocity() );
 
         telemetry.update();
 

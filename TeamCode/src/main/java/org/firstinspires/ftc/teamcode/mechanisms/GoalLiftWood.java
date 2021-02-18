@@ -21,7 +21,7 @@ public class GoalLiftWood {
         CLOSED
     }
 
-    private ClawPosition currentClawPosition;
+    private ClawPosition currentClawPosition = ClawPosition.CLOSED;
 
     /**
      * Creates a GoalLift with the default name for the motor
@@ -60,7 +60,7 @@ public class GoalLiftWood {
                 currentClawPosition = ClawPosition.OPEN;
                 break;
             case CLOSED:
-                claw.setPosition(1.0);
+                claw.setPosition(0.0);
                 currentClawPosition = ClawPosition.CLOSED;
                 break;
         }

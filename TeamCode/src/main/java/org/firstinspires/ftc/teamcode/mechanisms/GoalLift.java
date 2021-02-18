@@ -32,7 +32,7 @@ public class GoalLift {
 
     private LiftPosition currentLiftPosition;
 
-    private  ClawPosition currentClawPosition;
+    private ClawPosition currentClawPosition;
 
     /**
      * Creates a GoalLift with the default name for the motor
