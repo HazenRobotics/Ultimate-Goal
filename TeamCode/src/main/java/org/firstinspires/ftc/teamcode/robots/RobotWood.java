@@ -101,19 +101,6 @@ public class RobotWood extends Robot {
         mecanumDrive.drive(drivePower, strafePower, rotatePower);
     }
 
-    /**
-     * Sets the position of the lift
-     * @param liftPower power at which to move the lift
-     */
-    public void setLiftPower(double liftPower) {
-        goalLift.setGoalLiftPower(liftPower);
-    }
-
-    public void setClawPosition(GoalLiftWood.ClawPosition clawPosition) {
-        goalLift.setClawPosition(clawPosition);
-    }
-
-
     public void driveDistance( double distance, double power, boolean setPowerZero ) {
 
         mecanumDrive.drive( power, 0, 0 );
@@ -134,6 +121,38 @@ public class RobotWood extends Robot {
                 power = m*x + b;
 
             mecanumDrive.drive( power, 0, 0 );
+        }
+
+        //sets all power to zero afterwords
+        if(setPowerZero)
+            mecanumDrive.drive( 0, 0, 0 );
+    }
+
+
+
+    public void driveDistancePID( double distance, double power, boolean setPowerZero ) {
+
+        mecanumDrive.drive( power, 0, 0 );
+
+        int ticksToTravel = mecanumDrive.convertDistTicks(distance);
+        int initialXPos = tracker.getLateralPosition();
+        int initialYPos = tracker.getLongitudinalPosition();
+        double initialGyroHeading = tracker.getNewGyroHeading();
+        double percent = 0.5;
+
+        mecanumDrive.drive( power, 0, 0 );
+        while( tracker.getLateralPosition() - initialXPos < ticksToTravel && opModeIsActive() ) {
+
+            double m = (power-(Math.signum(power)*MIN_POWER))/(-distance*(1-distance));
+            double x = mecanumDrive.convertDistTicks(tracker.getLateralPosition() - ticksToTravel);
+            double b = (Math.signum(power)*MIN_POWER)-m*distance;
+
+            if( tracker.getLateralPosition() - initialXPos > ticksToTravel*percent )
+                power = m*x + b;
+
+            mecanumDrive.drive( power, 0, tracker.gyroPID( initialGyroHeading, 0.3) );
+
+
         }
 
         //sets all power to zero afterwords

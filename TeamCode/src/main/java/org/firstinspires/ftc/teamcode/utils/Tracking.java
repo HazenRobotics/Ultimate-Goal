@@ -113,9 +113,9 @@ public class Tracking {
         return (-getGyroHeading() + 360) % 360;
     }
 
-    public double gyroPID( int targetAngle, double time )
+    public double gyroPID( double targetAngle, double time )
     {
-        int error = targetAngle - (int) getNewGyroHeading(); // Error = Target - Actual
+        double error = targetAngle - getNewGyroHeading(); // Error = Target - Actual
         this.integral += (error * time); // Integral is increased by the error*time
         double derivative = (error - this.previous_error) / time;
         return P * error + I * this.integral + D * derivative;

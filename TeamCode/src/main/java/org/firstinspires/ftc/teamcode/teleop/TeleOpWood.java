@@ -36,16 +36,19 @@ public class TeleOpWood extends OpMode {
                 .addData("Rotate", "Gp1: right stick x (axis)");
         telemetry.addLine();
 
-        double pC = ( gamepad1.left_stick_button ? 1.0 : 0.5 ); //powerChange
+        double pC = ( gamepad1.left_stick_button ? 1.0 : 0.4 ); //powerChange
         robot.mecanumDrive.drive( -gamepad1.left_stick_y*pC, gamepad1.left_stick_x*pC, gamepad1.right_stick_x*pC );
 
         if(gamepad1.b)
-            robot.setClawPosition( GoalLiftWood.ClawPosition.CLOSED );
+            robot.goalLift.setClawPosition( GoalLiftWood.ClawPosition.CLOSED );
         if(gamepad1.x)
-            robot.setClawPosition( GoalLiftWood.ClawPosition.OPEN);
+            robot.goalLift.setClawPosition( GoalLiftWood.ClawPosition.OPEN);
 
-        double maxLiftPower = 0.5;
-        robot.setLiftPower( gamepad1.a ? maxLiftPower : ( gamepad1.y ? -maxLiftPower : 0 ) );
+        double liftPower = 0.5;
+        if( gamepad1.y )
+            robot.goalLift.setGoalLiftPosition( GoalLiftWood.LiftPosition.LIFTED, liftPower );
+        if( gamepad1.a )
+            robot.goalLift.setGoalLiftPosition( GoalLiftWood.LiftPosition.LOWERED, liftPower );
 
         telemetry.addData("left_stick_y", gamepad1.left_stick_y)
                 .addData("left_stick_x", gamepad1.left_stick_x)
@@ -60,17 +63,18 @@ public class TeleOpWood extends OpMode {
 
         telemetry.addLine();
 
-        telemetry.addLine( "Servo Position = " + robot.goalLift.claw.getPosition() + " :: "
-                + robot.goalLift.getCurrentClawPosition() + " " + robot.goalLift.getCurrentClawPosition().name());
-        telemetry.addLine( "Lift Position = " /*+ robot.goalLift.getCurrentLiftPosition()*/ );
+        telemetry.addLine( "Servo Position = " + robot.goalLift.getCurrentClawPosition() + " :: "  + robot.goalLift.getClawPosition() );
+        telemetry.addLine( "Lift Position = " + robot.goalLift.getCurrentLiftPosition() + " :: " + robot.goalLift.getLiftPower() );
 
         telemetry.addLine();
 
         //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 
-        /*
+
         telemetry.addData("getNewGyroHeading", robot.tracker.getNewGyroHeading() )
                 .addData("getGyroHeading", robot.tracker.getGyroHeading() );
+
+        /*
         telemetry.addData("getGyroRoll", robot.tracker.getGyroRoll() )
                 .addData("getGyroPitch", robot.tracker.getGyroPitch() );
 
