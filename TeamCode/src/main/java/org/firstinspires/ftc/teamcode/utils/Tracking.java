@@ -17,13 +17,14 @@ public class Tracking {
     Orientation angles;
     Acceleration gravity;
 
+    double P = 0.0135, I = 0.02025, D = 0;
+    int integral, previous_error;
+
     final static double PULSES_PER_REVOLUTION = 250;
     final static double GEAR_RATIO = 0.25;
 
     public Tracking( MecanumDrive mDrv, HardwareMap hw ) {
-
         mecanumDrive = mDrv;
-
         initGyro(hw);
     }
 
@@ -56,7 +57,6 @@ public class Tracking {
         gyro.initialize(parameters);
 
         angles = gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-
     }
 
 
@@ -97,13 +97,11 @@ public class Tracking {
     public float getGyroHeading() {
         angles = gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         return angles.firstAngle;
-        //return formatAngle(angles.angleUnit, angles.firstAngle);
     }
 
     public float getGyroRoll() {
         angles = gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         return angles.secondAngle;
-        //return formatAngle(angles.angleUnit, angles.secondAngle);
     }
 
     public float getGyroPitch() {
@@ -111,10 +109,18 @@ public class Tracking {
         return angles.thirdAngle;
     }
 
-    public float getNewGyroHeading()
-    {
+    public float getNewGyroHeading() {
         return (-getGyroHeading() + 360) % 360;
     }
+
+    public double gyroPID( int targetAngle, double time )
+    {
+        int error = targetAngle - (int) getNewGyroHeading(); // Error = Target - Actual
+        this.integral += (error * time); // Integral is increased by the error*time
+        double derivative = (error - this.previous_error) / time;
+        return P * error + I * this.integral + D * derivative;
+    }
+
     /**
      * will sleep the robot for [millis] milliseconds
      * @param millis
