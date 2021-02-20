@@ -27,6 +27,14 @@ public class FourWheelDrive implements Drive {
 
     public FourWheelDrive(HardwareMap hw, String frontLeftName, String frontRightName, String backLeftName, String backRightName){
         setUpMotors(hw, frontLeftName, frontRightName, backLeftName, backRightName);
+        //setEncoderModes( STOP_AND_RESET_ENCODER );
+    }
+
+    public void setEncoderModes( RunMode mode ) {
+        frontLeft.setMode(mode);
+        frontRight.setMode(mode);
+        backLeft.setMode(mode);
+        backRight.setMode(mode);
     }
 
 

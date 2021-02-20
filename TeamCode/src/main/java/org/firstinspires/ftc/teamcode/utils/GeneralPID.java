@@ -1,6 +1,9 @@
 package org.firstinspires.ftc.teamcode.utils;
 
+import com.qualcomm.robotcore.eventloop.SyncdDevice;
 import com.qualcomm.robotcore.hardware.PIDCoefficients;
+
+import org.firstinspires.ftc.teamcode.robots.Robot;
 
 public class GeneralPID {
 
@@ -26,9 +29,23 @@ public class GeneralPID {
         double time = System.currentTimeMillis() - previousTime;
         double error = target - curInput; // Error = Target - Actual
         integral += (error * time); // Integral is increased by the error*time
-        double derivative = (error - previousError) / time; // just error / time
+        double derivative = time == 0 ? 0 : (error - previousError) / time; // just error / time
+
+        String info = "target, curInput :: " + target + ", " + curInput + System.lineSeparator();
+        info += "time :: " + time + System.lineSeparator();
+        info += "error :: " + error + System.lineSeparator();
+        info += "integral :: " + integral + System.lineSeparator();
+        info += "derivative :: " + derivative + System.lineSeparator();
+        info += "previousError :: " + previousError + System.lineSeparator();
+        info += "previousTime :: " + previousTime + System.lineSeparator();
+        info += "return :: " + (coefficients.p * error + coefficients.i * this.integral + coefficients.d * derivative) + System.lineSeparator();
+        info += "-----------------------------------------------" + System.lineSeparator();
+
+        Robot.writeToDefaultFile( info, true, false );
+
         previousError = error; // set previousError to current error
         previousTime = System.currentTimeMillis(); // set previousTime to current time
+
         return coefficients.p * error + coefficients.i * this.integral + coefficients.d * derivative;
     }
 

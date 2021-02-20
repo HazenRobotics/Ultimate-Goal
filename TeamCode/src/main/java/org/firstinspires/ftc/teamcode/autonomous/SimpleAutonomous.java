@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.drives.MecanumDrive;
+import org.firstinspires.ftc.teamcode.robots.Robot;
 import org.firstinspires.ftc.teamcode.robots.RobotWood;
 
 // autonomous program that drives bot forward a set distance, stops then
@@ -26,7 +27,7 @@ public class SimpleAutonomous extends LinearOpMode
 
         //telemetry.setAutoClear( false );
 
-        robot.writeToDefaultFile( "******** Init Finished ********", false, true );
+        Robot.writeToDefaultFile( "******** Init Finished ********", false, true );
 
         telemetry.addLine("init finished");
         telemetry.update();
@@ -36,17 +37,29 @@ public class SimpleAutonomous extends LinearOpMode
         //==========================================================================================
         //Official Start
 
-        robot.writeToDefaultFile( "******** Main Class Started ********", true, true );
+        Robot.writeToDefaultFile( "******** Main Class Started ********", true, true );
 
         robot.driveDistancePID( 15, 0.5, true );
+        //robot.driveDistance( 15, 1, true );
 
-        robot.sleepRobot2( 3*1000 );
+        robot.sleepRobot2( 5*1000 );
+
+/*
+
 
         robot.strafeDistancePID( 15, -0.5, true );
 
 
 
+        robot.sleepRobot2( 3*1000 );
 
+        robot.driveDistancePID( 10, -0.5, true );
+
+
+        robot.strafeDistancePID( 10, 0.5, true );
+
+
+ */
 
     }
 

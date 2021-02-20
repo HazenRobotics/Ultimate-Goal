@@ -48,7 +48,7 @@ public abstract class Robot {
     private final String TFOD_MODEL_ASSET_NAME = "UltimateGoal.tflite";
     private final String[] TFOD_MODEL_LABELS = {"Quad", "Single"};
 
-    private static final String DEFAULT_LOG_FILE_NAME = "robotLog.txt";
+    private static final String DEFAULT_LOG_FILE_NAME = "*robotLog.txt";
 
 
     /**

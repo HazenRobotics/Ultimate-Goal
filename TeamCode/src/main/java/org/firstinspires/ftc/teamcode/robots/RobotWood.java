@@ -111,12 +111,15 @@ public class RobotWood extends Robot {
         mecanumDrive.drive( power, 0, 0 );
         while( tracker.getLateralPosition() - initialXPos < ticksToTravel && opModeIsActive() ) {
 
+            /*
             double m = (power-(Math.signum(power)*MIN_POWER))/(-distance*(1-distance));
             double x = mecanumDrive.convertDistTicks(tracker.getLateralPosition() - ticksToTravel);
             double b = (Math.signum(power)*MIN_POWER)-m*distance;
 
             if( tracker.getLateralPosition() - initialXPos > ticksToTravel*percent )
                 power = m*x + b;
+
+             */
 
             mecanumDrive.drive( power, 0, 0 );
         }
@@ -155,20 +158,32 @@ public class RobotWood extends Robot {
 
     public void driveDistancePID( double distance, double power, boolean setPowerZero ) {
 
-        mecanumDrive.drive( power, 0, 0 );
+        //mecanumDrive.drive( power, 0, 0 );
 
-        int ticksToTravel = mecanumDrive.convertDistTicks(distance);
+        int ticksToTravel = (int) Math.signum(power) * mecanumDrive.convertDistTicks(distance);
         int initialXPos = tracker.getLateralPosition();
         int initialYPos = tracker.getLongitudinalPosition();
         double initialGyroHeading = -tracker.getGyroHeading();
-        double percent = 0.5;
+        double driveCorrections = power;
+        double gyroCorrections = 0;
 
-        mecanumDrive.drive( power, 0, 0 );
-        while( tracker.getLateralPosition() - initialXPos < ticksToTravel && opModeIsActive() ) {
+        while( (Math.abs(driveCorrections) > 0.01 || Math.abs(gyroCorrections) > 0.01 ) && opModeIsActive() ) {
 
-            double corrections = tracker.gyroPID( initialGyroHeading );
-            mecanumDrive.drive( power, 0, corrections );
-            telemetry.addLine( "PID Corrections :: " + corrections );
+            driveCorrections = tracker.drivePID( ticksToTravel + initialXPos );
+            if( Math.abs(driveCorrections) < 0.2 )
+                driveCorrections = Math.signum(driveCorrections)*0.2;
+            gyroCorrections = tracker.gyroPID( initialGyroHeading );
+            gyroCorrections = 0;
+
+            telemetry.addLine("driveCorrections = " + driveCorrections );
+            telemetry.addLine("gyroCorrections = " + gyroCorrections );
+
+            mecanumDrive.drive( driveCorrections, 0, gyroCorrections );
+
+            telemetry.addLine("longitudinal position = " + tracker.getLongitudinalPosition() + " (ticks), "
+                    + mecanumDrive.convertTicksDist( tracker.getLongitudinalPosition()) + " (in)" );
+            telemetry.addLine("lateral position = " + tracker.getLateralPosition() + " (ticks), "
+                    + mecanumDrive.convertTicksDist( tracker.getLateralPosition()) + " (in)" );
             telemetry.update();
         }
 
@@ -187,12 +202,13 @@ public class RobotWood extends Robot {
         double initialGyroHeading = -tracker.getGyroHeading();
         double percent = 0.5;
 
-        mecanumDrive.drive( 0, power, 0 );
         while( tracker.getLongitudinalPosition() - initialYPos < ticksToTravel && opModeIsActive()) {
 
-            double corrections = tracker.gyroPID( initialGyroHeading );
-            mecanumDrive.drive( 0, power, corrections );
-            telemetry.addLine( "PID Corrections :: " + corrections );
+            mecanumDrive.drive( 0, power, tracker.gyroPID( initialGyroHeading ) );
+            telemetry.addLine("longitudinal position = " + tracker.getLongitudinalPosition() + " (ticks), "
+                    + mecanumDrive.convertTicksDist( tracker.getLongitudinalPosition()) + " (in)" );
+            telemetry.addLine("lateral position = " + tracker.getLateralPosition() + " (ticks), "
+                    + mecanumDrive.convertTicksDist( tracker.getLateralPosition()) + " (in)" );
             telemetry.update();
         }
 

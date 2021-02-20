@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.PIDCoefficients;
 
 import org.firstinspires.ftc.robotcore.external.navigation.*;
 import org.firstinspires.ftc.teamcode.drives.*;
+import org.firstinspires.ftc.teamcode.robots.Robot;
 
 public class Tracking {
 
@@ -16,8 +17,10 @@ public class Tracking {
     Acceleration gravity;
 
     // double P = 0.0135, I = 0.02025, D = 0;
-    GeneralPID gyroPID = new GeneralPID( new PIDCoefficients( 0.1, 0, 0 ) );
-    GeneralPID drivePID = new GeneralPID( new PIDCoefficients( 0, 0, 0 ) );
+    GeneralPID gyroDrivePID = new GeneralPID( new PIDCoefficients( 0.025, 0.0, 0.0 ) );
+    GeneralPID drivePID = new GeneralPID( new PIDCoefficients( 0.05, 0.0, 0.0 ) );
+
+    GeneralPID gyroStrafePID = new GeneralPID( new PIDCoefficients( 0.07, 0.0, 0.0 ) );
     GeneralPID strafePID = new GeneralPID( new PIDCoefficients( 0, 0, 0 ) );
 
     final static double PULSES_PER_REVOLUTION = 250;
@@ -131,15 +134,20 @@ public class Tracking {
         return (-getGyroHeading() + 360) % 360;
     }
 
-    public double gyroPID( double targetAngle ) {
-        return gyroPID.getPID( targetAngle, -getGyroHeading() );
+    public double gyroPID( double targetAngle ) { Robot.writeToDefaultFile( "*** gyroPID ***", true, true );
+        return gyroDrivePID.getPID( targetAngle, -getGyroHeading() );
     }
 
-    public double drivePID( double targetDistance ) {
-        return drivePID.getPID( targetDistance, getLateralPosition() );
+    /**
+     *
+     * @param targetDistance distance to go in ticks
+     * @return power to run at
+     */
+    public double drivePID( double targetDistance ) { Robot.writeToDefaultFile( "*** drivePID ***", true, true );
+        return drivePID.getPID( mecanumDrive.convertTicksDist(targetDistance), mecanumDrive.convertTicksDist(getLateralPosition()) );
     }
 
-    public double strafePID( double targetDistance ) {
+    public double strafePID( double targetDistance ) { Robot.writeToDefaultFile( "*** strafePID ***", true, true );
         return strafePID.getPID( targetDistance, getLongitudinalPosition() );
     }
 
