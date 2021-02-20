@@ -128,38 +128,6 @@ public class RobotWood extends Robot {
             mecanumDrive.drive( 0, 0, 0 );
     }
 
-
-
-    public void driveDistancePID( double distance, double power, boolean setPowerZero ) {
-
-        mecanumDrive.drive( power, 0, 0 );
-
-        int ticksToTravel = mecanumDrive.convertDistTicks(distance);
-        int initialXPos = tracker.getLateralPosition();
-        int initialYPos = tracker.getLongitudinalPosition();
-        double initialGyroHeading = tracker.getNewGyroHeading();
-        double percent = 0.5;
-
-        mecanumDrive.drive( power, 0, 0 );
-        while( tracker.getLateralPosition() - initialXPos < ticksToTravel && opModeIsActive() ) {
-
-            double m = (power-(Math.signum(power)*MIN_POWER))/(-distance*(1-distance));
-            double x = mecanumDrive.convertDistTicks(tracker.getLateralPosition() - ticksToTravel);
-            double b = (Math.signum(power)*MIN_POWER)-m*distance;
-
-            if( tracker.getLateralPosition() - initialXPos > ticksToTravel*percent )
-                power = m*x + b;
-
-            mecanumDrive.drive( power, 0, tracker.gyroPID( initialGyroHeading, 0.3) );
-
-
-        }
-
-        //sets all power to zero afterwords
-        if(setPowerZero)
-            mecanumDrive.drive( 0, 0, 0 );
-    }
-
     public void strafeDistance( double distance, double power, boolean setPowerZero ) {
 
         mecanumDrive.drive( 0, power, 0 );
@@ -180,6 +148,36 @@ public class RobotWood extends Robot {
                 power = m*x + b;
 
             mecanumDrive.drive( 0, power, 0 );
+        }
+
+        //sets all power to zero afterwords
+        if(setPowerZero)
+            mecanumDrive.drive( 0, 0, 0 );
+    }
+
+    public void strafeDistancePID( double distance, double power, boolean setPowerZero ) {
+
+        mecanumDrive.drive( 0, power, 0 );
+
+        int ticksToTravel = mecanumDrive.convertDistTicks(distance);
+        int initialXPos = tracker.getLateralPosition();
+        int initialYPos = tracker.getLongitudinalPosition();
+        double initialGyroHeading = -tracker.getGyroHeading();
+        double percent = 0.5;
+        previousTime = opMode.getRuntime();
+
+        mecanumDrive.drive( 0, power, 0 );
+        while( tracker.getLongitudinalPosition() - initialYPos < ticksToTravel && opModeIsActive()) {
+
+            double m = (power-(Math.signum(power)*MIN_POWER))/(-distance*(1-distance));
+            double x = mecanumDrive.convertDistTicks(tracker.getLateralPosition() - ticksToTravel);
+            double b = (Math.signum(power)*MIN_POWER)-m*distance;
+
+            if( tracker.getLongitudinalPosition() - initialXPos > ticksToTravel*percent )
+                power = m*x + b;
+
+            mecanumDrive.drive( 0, power, tracker.gyroPID( initialGyroHeading, opMode.getRuntime() - previousTime ) );
+            previousTime = opMode.getRuntime();
         }
 
         //sets all power to zero afterwords

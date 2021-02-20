@@ -19,6 +19,7 @@ public class Tracking {
 
     double P = 0.0135, I = 0.02025, D = 0;
     int integral, previous_error;
+    double previousTime;
 
     final static double PULSES_PER_REVOLUTION = 250;
     final static double GEAR_RATIO = 0.25;
@@ -113,12 +114,11 @@ public class Tracking {
         return (-getGyroHeading() + 360) % 360;
     }
 
-    public double gyroPID( double targetAngle, double time )
-    {
-        double error = targetAngle - getNewGyroHeading(); // Error = Target - Actual
-        this.integral += (error * time); // Integral is increased by the error*time
-        double derivative = (error - this.previous_error) / time;
-        return P * error + I * this.integral + D * derivative;
+    public double gyroPID( double targetAngle, double time ) {
+        double errorDegrees = targetAngle - -getGyroHeading(); // Error = Target - Actual
+        this.integral += (errorDegrees * time); // Integral is increased by the errorDegrees*time
+        double derivative = (errorDegrees - this.previous_error) / time; // just errorDegrees / time
+        return P * errorDegrees + I * this.integral + D * derivative;
     }
 
     /**
