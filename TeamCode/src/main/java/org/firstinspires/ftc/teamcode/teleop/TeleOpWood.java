@@ -1,14 +1,10 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
-import android.util.Log;
-
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.robots.RobotWood;
 import org.firstinspires.ftc.teamcode.mechanisms.GoalLiftWood;
-import org.firstinspires.ftc.teamcode.drives.MecanumDrive;
-import org.firstinspires.ftc.teamcode.utils.Tracking;
 
 // TeleOp class for the new wooden robot
 @TeleOp(name="teleopWood", group="teleop")
@@ -71,7 +67,7 @@ public class TeleOpWood extends OpMode {
         //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 
 
-        telemetry.addData("getNewGyroHeading", robot.tracker.getNewGyroHeading() )
+        telemetry.addData("getNewGyroHeading", robot.tracker.get360GyroHeading() )
                 .addData("getGyroHeading", robot.tracker.getGyroHeading() );
 
         /*

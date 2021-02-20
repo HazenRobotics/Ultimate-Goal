@@ -38,13 +38,11 @@ public class SimpleAutonomous extends LinearOpMode
 
         robot.writeToDefaultFile( "******** Main Class Started ********", true, true );
 
-        //robot.driveDistance( 15, 0.75, true );
+        robot.driveDistancePID( 15, 0.5, true );
 
+        robot.sleepRobot2( 3*1000 );
 
-        //robot.sleepRobot2( 5*1000 );
-
-
-        robot.strafeDistance( 15, -0.5, true );
+        robot.strafeDistancePID( 15, -0.5, true );
 
 
 
