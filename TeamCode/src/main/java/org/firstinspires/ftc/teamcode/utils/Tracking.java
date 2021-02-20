@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.navigation.*;
 import org.firstinspires.ftc.teamcode.drives.*;
 import org.firstinspires.ftc.teamcode.*;
+import org.firstinspires.ftc.teamcode.robots.RobotWood;
 
 import java.util.Locale;
 
@@ -17,7 +18,7 @@ public class Tracking {
     Orientation angles;
     Acceleration gravity;
 
-    double P = 0.0135, I = 0.02025, D = 0;
+    double P = 0.0, I = 0, D = 0; // double P = 0.0135, I = 0.02025, D = 0;
     int integral, previous_error;
     double previousTime;
 
@@ -25,6 +26,7 @@ public class Tracking {
     final static double GEAR_RATIO = 0.25;
 
     public Tracking( MecanumDrive mDrv, HardwareMap hw ) {
+
         mecanumDrive = mDrv;
         initGyro(hw);
     }

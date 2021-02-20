@@ -169,15 +169,20 @@ public class RobotWood extends Robot {
         mecanumDrive.drive( 0, power, 0 );
         while( tracker.getLongitudinalPosition() - initialYPos < ticksToTravel && opModeIsActive()) {
 
-            double m = (power-(Math.signum(power)*MIN_POWER))/(-distance*(1-distance));
+            // first 25% of the distance, increase speed
+            // last 25% of distance decrease
+
+
+
+
             double x = mecanumDrive.convertDistTicks(tracker.getLateralPosition() - ticksToTravel);
-            double b = (Math.signum(power)*MIN_POWER)-m*distance;
 
-            if( tracker.getLongitudinalPosition() - initialXPos > ticksToTravel*percent )
-                power = m*x + b;
-
-            mecanumDrive.drive( 0, power, tracker.gyroPID( initialGyroHeading, opMode.getRuntime() - previousTime ) );
+            double corrections = tracker.gyroPID( initialGyroHeading, opMode.getRuntime() - previousTime );
+            mecanumDrive.drive( 0, power, corrections );
             previousTime = opMode.getRuntime();
+            telemetry.addLine( "RunTime :: " + previousTime );
+            telemetry.addLine( "PID Corrections :: " + corrections );
+            telemetry.update();
         }
 
         //sets all power to zero afterwords

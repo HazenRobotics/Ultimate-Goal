@@ -44,7 +44,7 @@ public class SimpleAutonomous extends LinearOpMode
         //robot.sleepRobot2( 5*1000 );
 
 
-        robot.strafeDistancePID( 15, -0.5, true );
+        robot.strafeDistance( 15, -0.5, true );
 
 
 
