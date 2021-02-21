@@ -18,7 +18,7 @@ public class Tracking {
 
     // double P = 0.0135, I = 0.02025, D = 0;
     GeneralPID gyroDrivePID = new GeneralPID( new PIDCoefficients( 0.025, 0.0, 0.0 ) );
-    GeneralPID drivePID = new GeneralPID( new PIDCoefficients( 0.05, 0.0, 0.0 ) );
+    GeneralPID drivePID = new GeneralPID( new PIDCoefficients( 0.05, 0.00, 0.001 ) );
 
     GeneralPID gyroStrafePID = new GeneralPID( new PIDCoefficients( 0.07, 0.0, 0.0 ) );
     GeneralPID strafePID = new GeneralPID( new PIDCoefficients( 0, 0, 0 ) );
@@ -134,7 +134,7 @@ public class Tracking {
         return (-getGyroHeading() + 360) % 360;
     }
 
-    public double gyroPID( double targetAngle ) { Robot.writeToDefaultFile( "*** gyroPID ***", true, true );
+    public double gyroDrivePID(double targetAngle ) { Robot.writeToDefaultFile( "*** gyroPID ***", true, true );
         return gyroDrivePID.getPID( targetAngle, -getGyroHeading() );
     }
 
@@ -145,6 +145,10 @@ public class Tracking {
      */
     public double drivePID( double targetDistance ) { Robot.writeToDefaultFile( "*** drivePID ***", true, true );
         return drivePID.getPID( mecanumDrive.convertTicksDist(targetDistance), mecanumDrive.convertTicksDist(getLateralPosition()) );
+    }
+
+    public double gyroStrafePID(double targetAngle ) { Robot.writeToDefaultFile( "*** gyroPID ***", true, true );
+        return gyroStrafePID.getPID( targetAngle, -getGyroHeading() );
     }
 
     public double strafePID( double targetDistance ) { Robot.writeToDefaultFile( "*** strafePID ***", true, true );

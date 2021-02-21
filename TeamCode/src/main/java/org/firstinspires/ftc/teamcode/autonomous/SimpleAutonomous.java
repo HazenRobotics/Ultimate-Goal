@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.drives.MecanumDrive;
 import org.firstinspires.ftc.teamcode.robots.Robot;
 import org.firstinspires.ftc.teamcode.robots.RobotWood;
+import org.firstinspires.ftc.teamcode.tests.PicturePIDTest;
 
 // autonomous program that drives bot forward a set distance, stops then
 // backs up to the starting point using encoders to measure the distance.
@@ -17,6 +18,7 @@ public class SimpleAutonomous extends LinearOpMode
 {
 
     RobotWood robot;
+    PicturePIDTest picTest;
 
     @Override
     public void runOpMode() throws InterruptedException
@@ -39,10 +41,20 @@ public class SimpleAutonomous extends LinearOpMode
 
         Robot.writeToDefaultFile( "******** Main Class Started ********", true, true );
 
-        robot.driveDistancePID( 15, 0.5, true );
+        robot.driveDistancePID( 24, 0.5, true );
         //robot.driveDistance( 15, 1, true );
 
+        if( false ) {
+            picTest = new PicturePIDTest();
+
+            telemetry.addLine("Height :: " + picTest.getHeight());
+            telemetry.addLine("Width :: " + picTest.getWidth());
+            telemetry.update();
+        }
+
         robot.sleepRobot2( 5*1000 );
+
+
 
 /*
 
