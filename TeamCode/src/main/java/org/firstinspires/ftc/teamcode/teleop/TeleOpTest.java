@@ -5,7 +5,10 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
+
+import org.firstinspires.ftc.teamcode.road_runner.util.Encoder;
 
 @TeleOp(name="TeleOpDriverTest", group="teleop")
 public class TeleOpTest extends OpMode
@@ -21,6 +24,9 @@ public class TeleOpTest extends OpMode
 
     BNO055IMU gyro;
 
+    Encoder parallelEncoder;
+    Encoder perpendicularEncoder;
+
     @Override
     public void init()
     {
@@ -29,6 +35,9 @@ public class TeleOpTest extends OpMode
         frontRightMotor = hardwareMap.dcMotor.get("frontRightWheel");
         backLeftMotor = hardwareMap.dcMotor.get("backLeftWheel");
         backRightMotor = hardwareMap.dcMotor.get("backRightWheel");
+
+        parallelEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "intake"));
+        perpendicularEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "goalLift"));
 
         gyro = hardwareMap.get( BNO055IMU.class, "imu" );
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
