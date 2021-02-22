@@ -41,6 +41,7 @@ import org.firstinspires.ftc.teamcode.road_runner.util.AxesSigns;
 import org.firstinspires.ftc.teamcode.road_runner.util.BNO055IMUUtil;
 import org.firstinspires.ftc.teamcode.road_runner.util.DashboardUtil;
 import org.firstinspires.ftc.teamcode.road_runner.util.LynxModuleUtil;
+import org.firstinspires.ftc.teamcode.utils.FieldMap;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -65,8 +66,8 @@ import static org.firstinspires.ftc.teamcode.drives.RoadRunnerDriveConstants.kV;
  */
 @Config
 public class RoadRunnerMecanumDrive extends MecanumDrive {
-    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(0, 0, 0);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(0, 0, 0);
+    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(4, 0, 0);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(3, 0, 0);
 
     public static double LATERAL_MULTIPLIER = 1.26;
 
@@ -177,7 +178,7 @@ public class RoadRunnerMecanumDrive extends MecanumDrive {
         // TODO: if desired, use setLocalizer() to change the localization method
         // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
 
-        setLocalizer(new RoadRunnerTwoWheelTrackingLocalizer(hardwareMap, this));
+        //setLocalizer(new RoadRunnerTwoWheelTrackingLocalizer(hardwareMap, this));
     }
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {

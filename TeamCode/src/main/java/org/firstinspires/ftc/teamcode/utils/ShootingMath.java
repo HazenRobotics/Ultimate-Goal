@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.utils;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 
@@ -19,6 +21,20 @@ public class ShootingMath {
     public static double getAngleToTarget(VectorF currentPos, VectorF targetPos){
         double changeInX = currentPos.get(0) - targetPos.get(0);
         double changeInY = currentPos.get(1) - targetPos.get(1);
+
+        double angle = Math.tan(changeInY/changeInX);
+        return  angle;
+    }
+
+    /**
+     * Calculates the angle that the robot must turn to face the target
+     * @param currentPos the robot's current position, in inches
+     * @param targetPos the position of the target that is to be hit, in meters
+     * @return angle at which the robot will be facing the target
+     */
+    public static double getAngleToTarget(Pose2d currentPos, VectorF targetPos){
+        double changeInX = currentPos.getX() - targetPos.get(0);
+        double changeInY = currentPos.getY() - targetPos.get(1);
 
         double angle = Math.tan(changeInY/changeInX);
         return  angle;

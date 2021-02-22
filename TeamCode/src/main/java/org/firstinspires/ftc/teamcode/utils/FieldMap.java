@@ -4,6 +4,7 @@ import android.graphics.Path;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.apache.commons.math3.linear.OpenMapRealMatrix;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
@@ -24,6 +25,7 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.
 public class FieldMap {
     //All measurements are in mm
     private static final float mmPerInch = (float)DistanceUnit.mmPerInch;
+    private static final float inchPerMM = (float) DistanceUnit.MM.toInches(1);
     //Field information
     private static final float fieldSize = 144 * mmPerInch;
     private static final float mmTargetHeight   = (6) * mmPerInch;
@@ -214,6 +216,10 @@ public class FieldMap {
 
     public static boolean isWithinLaunchZone(OpenGLMatrix position){
         return toVectorF(position).get(0) / mmPerInch < GroundLocations.LAUNCH_LINE_X;
+    }
+
+    public static VectorF toInches(VectorF vector) {
+        return vector.multiplied(inchPerMM);
     }
 
 

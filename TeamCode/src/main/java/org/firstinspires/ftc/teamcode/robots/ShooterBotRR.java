@@ -37,10 +37,11 @@ public class ShooterBotRR {
      */
     public void shootAtTarget(OpenGLMatrix target) {
         //rotate towards target
-        drive.turn(ShootingMath.getAngleToTarget(FieldMap.RobotInfo.robotLocation.toVector(), target.toVector()));
+        drive.turn(ShootingMath.getAngleToTarget(drive.getPoseEstimate(), FieldMap.toInches(target.toVector())));
         //assuming we are now lined up for the shot
         //shoot using velocity required to hit the target
-        ringShooter.launchRingVelocity(ShootingMath.getVelocityToTarget(FieldMap.RobotInfo.getRingLaunchPointPosition().toVector(), target.toVector(), ringShooter.getLaunchAngle()), DistanceUnit.MM);
+        ringShooter.launchRingPower(0.5);
+        //ringShooter.launchRingVelocity(ShootingMath.getVelocityToTarget(FieldMap.RobotInfo.getRingLaunchPointPosition().toVector(), target.toVector(), ringShooter.getLaunchAngle()), DistanceUnit.MM);
     }
 
     /**
