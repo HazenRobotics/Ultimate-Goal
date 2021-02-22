@@ -34,9 +34,8 @@ public class ShooterBotRR {
     /**
      * Shoots a ring at a specified target
      * @param target target at which to shoot a ring at
-     * @param turnPower power at which to turn
      */
-    public void shootAtTarget(OpenGLMatrix target, double turnPower) {
+    public void shootAtTarget(OpenGLMatrix target) {
         //rotate towards target
         drive.turn(ShootingMath.getAngleToTarget(FieldMap.RobotInfo.robotLocation.toVector(), target.toVector()));
         //assuming we are now lined up for the shot
@@ -76,6 +75,10 @@ public class ShooterBotRR {
 
     public void driveAsync(Trajectory trajectory) {
         drive.followTrajectoryAsync(trajectory);
+    }
+
+    public void setPosition(Pose2d currentPosition) {
+        drive.setPoseEstimate(currentPosition);
     }
 
 
