@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.utils.FieldMap;
 import org.firstinspires.ftc.teamcode.utils.ShootingMath;
 import org.jetbrains.annotations.NotNull;
 
-public class RobotTechnicolor {
+public class RobotTechnicolorRR {
 
     public RRMecanumDriveTechnicolor drive;
 
@@ -21,10 +21,10 @@ public class RobotTechnicolor {
     public RingShooter ringShooter;
     private final double FLY_WHEEL_RADIUS = 4; //in inches
 
-    public RobotTechnicolor(HardwareMap hw) {
+    public RobotTechnicolorRR(HardwareMap hw) {
         drive = new RRMecanumDriveTechnicolor(hw);
         goalLift = new GoalLift(hw);
-        ringShooter = new RingShooter(hw, FLY_WHEEL_RADIUS, 0.45, 0.2);
+        ringShooter = new RingShooter(hw, FLY_WHEEL_RADIUS, 0.3, 0.1);
     }
 
     /**

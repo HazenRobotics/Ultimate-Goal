@@ -4,16 +4,17 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.robots.RobotTechnicolor;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.robots.RobotTechnicolorRR;
 
 @TeleOp (name = "Shooter Bot")
 public class TeleOpShooter extends OpMode {
 
-    RobotTechnicolor robot;
+    RobotTechnicolorRR robot;
 
     @Override
     public void init() {
-        robot = new RobotTechnicolor(hardwareMap);
+        robot = new RobotTechnicolorRR(hardwareMap);
     }
 
     @Override
@@ -36,11 +37,14 @@ public class TeleOpShooter extends OpMode {
             robot.setIntakePower(robot.ringShooter.getCurrentIntakePower() == 0 ? 1 : 0);
         }
         if(gamepad1.y) {
-            robot.ringShooter.setFlyWheelMotorPower(robot.ringShooter.rightFlyWheelMotor.getPower() > 0 ? 0 : 1);
+            robot.ringShooter.setFlyWheelMotorVelocity(robot.ringShooter.rightFlyWheelMotor.getPower() > 0 ? 0 : 20, AngleUnit.DEGREES);
+            //robot.ringShooter.setFlyWheelMotorPower(robot.ringShooter.rightFlyWheelMotor.getPower() > 0 ? 0 : 1);
         }
         if(gamepad1.x) {
             robot.ringShooter.pushRing();
         }
         robot.drive.update();
+        telemetry.addData("Velocity", robot.ringShooter.rightFlyWheelMotor.getVelocity(AngleUnit.DEGREES));
+        telemetry.update();
     }
 }

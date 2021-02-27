@@ -6,16 +6,16 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.teamcode.road_runner.util.Encoder;
-import org.firstinspires.ftc.teamcode.robots.RobotTechnicolor;
+import org.firstinspires.ftc.teamcode.robots.RobotTechnicolorRR;
 
 @TeleOp
 public class EncoderTest extends OpMode {
-    RobotTechnicolor robot;
+    RobotTechnicolorRR robot;
     Encoder parallelEncoder;
     Encoder perpendicularEncoder;
     @Override
     public void init() {
-        robot = new RobotTechnicolor(hardwareMap);
+        robot = new RobotTechnicolorRR(hardwareMap);
         parallelEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "intake"));
         perpendicularEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "goalLift"));
     }
