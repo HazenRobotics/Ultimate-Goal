@@ -4,18 +4,16 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.mechanisms.GoalLift;
-import org.firstinspires.ftc.teamcode.robots.ShooterBot;
-import org.firstinspires.ftc.teamcode.robots.ShooterBotRR;
+import org.firstinspires.ftc.teamcode.robots.RobotTechnicolor;
 
 @TeleOp (name = "Shooter Bot")
 public class TeleOpShooter extends OpMode {
 
-    ShooterBotRR robot;
+    RobotTechnicolor robot;
 
     @Override
     public void init() {
-        robot = new ShooterBotRR(hardwareMap);
+        robot = new RobotTechnicolor(hardwareMap);
     }
 
     @Override

@@ -35,37 +35,31 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.teamcode.road_runner.drive.TwoWheelTrackingLocalizer;
-import org.firstinspires.ftc.teamcode.road_runner.util.AxesSigns;
-import org.firstinspires.ftc.teamcode.road_runner.util.BNO055IMUUtil;
 import org.firstinspires.ftc.teamcode.road_runner.util.DashboardUtil;
 import org.firstinspires.ftc.teamcode.road_runner.util.LynxModuleUtil;
-import org.firstinspires.ftc.teamcode.utils.FieldMap;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-import static org.firstinspires.ftc.teamcode.drives.RoadRunnerDriveConstants.MAX_ACCEL;
-import static org.firstinspires.ftc.teamcode.drives.RoadRunnerDriveConstants.MAX_ANG_ACCEL;
-import static org.firstinspires.ftc.teamcode.drives.RoadRunnerDriveConstants.MAX_ANG_VEL;
-import static org.firstinspires.ftc.teamcode.drives.RoadRunnerDriveConstants.MAX_VEL;
-import static org.firstinspires.ftc.teamcode.drives.RoadRunnerDriveConstants.MOTOR_VELO_PID;
-import static org.firstinspires.ftc.teamcode.drives.RoadRunnerDriveConstants.RUN_USING_ENCODER;
-import static org.firstinspires.ftc.teamcode.drives.RoadRunnerDriveConstants.TRACK_WIDTH;
-import static org.firstinspires.ftc.teamcode.drives.RoadRunnerDriveConstants.encoderTicksToInches;
-import static org.firstinspires.ftc.teamcode.drives.RoadRunnerDriveConstants.getMotorVelocityF;
-import static org.firstinspires.ftc.teamcode.drives.RoadRunnerDriveConstants.kA;
-import static org.firstinspires.ftc.teamcode.drives.RoadRunnerDriveConstants.kStatic;
-import static org.firstinspires.ftc.teamcode.drives.RoadRunnerDriveConstants.kV;
+import static org.firstinspires.ftc.teamcode.drives.RRDriveConstantsTechnicolor.MAX_ACCEL;
+import static org.firstinspires.ftc.teamcode.drives.RRDriveConstantsTechnicolor.MAX_ANG_ACCEL;
+import static org.firstinspires.ftc.teamcode.drives.RRDriveConstantsTechnicolor.MAX_ANG_VEL;
+import static org.firstinspires.ftc.teamcode.drives.RRDriveConstantsTechnicolor.MAX_VEL;
+import static org.firstinspires.ftc.teamcode.drives.RRDriveConstantsTechnicolor.MOTOR_VELO_PID;
+import static org.firstinspires.ftc.teamcode.drives.RRDriveConstantsTechnicolor.RUN_USING_ENCODER;
+import static org.firstinspires.ftc.teamcode.drives.RRDriveConstantsTechnicolor.TRACK_WIDTH;
+import static org.firstinspires.ftc.teamcode.drives.RRDriveConstantsTechnicolor.encoderTicksToInches;
+import static org.firstinspires.ftc.teamcode.drives.RRDriveConstantsTechnicolor.kA;
+import static org.firstinspires.ftc.teamcode.drives.RRDriveConstantsTechnicolor.kStatic;
+import static org.firstinspires.ftc.teamcode.drives.RRDriveConstantsTechnicolor.kV;
 
 /*
  * Simple mecanum drive hardware implementation for REV hardware.
  */
 @Config
-public class RoadRunnerMecanumDrive extends MecanumDrive {
+public class RRMecanumDriveTechnicolor extends MecanumDrive {
     public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(4, 0, 0);
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(3, 0, 0);
 
@@ -107,7 +101,7 @@ public class RoadRunnerMecanumDrive extends MecanumDrive {
     private Pose2d lastPoseOnTurn;
 
 
-    public RoadRunnerMecanumDrive(HardwareMap hardwareMap) {
+    public RRMecanumDriveTechnicolor(HardwareMap hardwareMap) {
         super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
 
         dashboard = FtcDashboard.getInstance();

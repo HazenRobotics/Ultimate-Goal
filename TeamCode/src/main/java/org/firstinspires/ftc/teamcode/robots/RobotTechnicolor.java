@@ -1,32 +1,28 @@
 package org.firstinspires.ftc.teamcode.robots;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.drives.MecanumDrive;
-import org.firstinspires.ftc.teamcode.drives.RoadRunnerMecanumDrive;
+import org.firstinspires.ftc.teamcode.drives.RRMecanumDriveTechnicolor;
 import org.firstinspires.ftc.teamcode.mechanisms.GoalLift;
 import org.firstinspires.ftc.teamcode.mechanisms.RingShooter;
 import org.firstinspires.ftc.teamcode.utils.FieldMap;
 import org.firstinspires.ftc.teamcode.utils.ShootingMath;
-import org.firstinspires.ftc.teamcode.utils.Tracking;
 import org.jetbrains.annotations.NotNull;
 
-public class ShooterBotRR {
+public class RobotTechnicolor {
 
-    public RoadRunnerMecanumDrive drive;
+    public RRMecanumDriveTechnicolor drive;
 
     public GoalLift goalLift;
     public RingShooter ringShooter;
     private final double FLY_WHEEL_RADIUS = 4; //in inches
 
-    public ShooterBotRR(HardwareMap hw) {
-        drive = new RoadRunnerMecanumDrive(hw);
+    public RobotTechnicolor(HardwareMap hw) {
+        drive = new RRMecanumDriveTechnicolor(hw);
         goalLift = new GoalLift(hw);
         ringShooter = new RingShooter(hw, FLY_WHEEL_RADIUS, 0.45, 0.2);
     }
@@ -37,7 +33,7 @@ public class ShooterBotRR {
      */
     public void shootAtTarget(OpenGLMatrix target) {
         //rotate towards target
-        drive.turn(ShootingMath.getAngleToTarget(drive.getPoseEstimate(), FieldMap.toInches(target.toVector())));
+        drive.turn(ShootingMath.getAngleToTarget(drive.getPoseEstimate(), FieldMap.toInches(FieldMap.toVectorF(target))));
         //assuming we are now lined up for the shot
         //shoot using velocity required to hit the target
         ringShooter.launchRingPower(0.5);

@@ -56,7 +56,6 @@ import static org.firstinspires.ftc.teamcode.road_runner.drive.DriveConstants.kV
 /*
  * Simple tank drive hardware implementation for REV hardware.
  */
-@Config
 public class SampleTankDrive extends TankDrive {
     public static PIDCoefficients AXIAL_PID = new PIDCoefficients(0, 0, 0);
     public static PIDCoefficients CROSS_TRACK_PID = new PIDCoefficients(0, 0, 0);

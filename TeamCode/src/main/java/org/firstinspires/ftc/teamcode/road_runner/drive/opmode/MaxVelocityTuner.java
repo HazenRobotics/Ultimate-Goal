@@ -8,8 +8,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.drives.RoadRunnerDriveConstants;
-import org.firstinspires.ftc.teamcode.drives.RoadRunnerMecanumDrive;
+import org.firstinspires.ftc.teamcode.drives.RRDriveConstantsTechnicolor;
+import org.firstinspires.ftc.teamcode.drives.RRMecanumDriveTechnicolor;
 
 import java.util.Objects;
 
@@ -33,7 +33,7 @@ public class MaxVelocityTuner extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        RoadRunnerMecanumDrive drive = new RoadRunnerMecanumDrive(hardwareMap);
+        RRMecanumDriveTechnicolor drive = new RRMecanumDriveTechnicolor(hardwareMap);
 
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
@@ -63,7 +63,7 @@ public class MaxVelocityTuner extends LinearOpMode {
 
         drive.setDrivePower(new Pose2d());
 
-        double effectiveKf = RoadRunnerDriveConstants.getMotorVelocityF(veloInchesToTicks(maxVelocity));
+        double effectiveKf = RRDriveConstantsTechnicolor.getMotorVelocityF(veloInchesToTicks(maxVelocity));
 
         telemetry.addData("Max Velocity", maxVelocity);
         telemetry.addData("Voltage Compensated kF", effectiveKf * batteryVoltageSensor.getVoltage() / 12);
@@ -73,6 +73,6 @@ public class MaxVelocityTuner extends LinearOpMode {
     }
 
     private double veloInchesToTicks(double inchesPerSec) {
-        return inchesPerSec / (2 * Math.PI * RoadRunnerDriveConstants.WHEEL_RADIUS) / RoadRunnerDriveConstants.GEAR_RATIO * RoadRunnerDriveConstants.TICKS_PER_REV;
+        return inchesPerSec / (2 * Math.PI * RRDriveConstantsTechnicolor.WHEEL_RADIUS) / RRDriveConstantsTechnicolor.GEAR_RATIO * RRDriveConstantsTechnicolor.TICKS_PER_REV;
     }
 }

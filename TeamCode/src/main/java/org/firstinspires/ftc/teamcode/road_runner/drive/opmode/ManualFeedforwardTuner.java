@@ -13,16 +13,16 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.RobotLog;
 
-import org.firstinspires.ftc.teamcode.drives.RoadRunnerMecanumDrive;
+import org.firstinspires.ftc.teamcode.drives.RRMecanumDriveTechnicolor;
 
 import java.util.Objects;
 
-import static org.firstinspires.ftc.teamcode.drives.RoadRunnerDriveConstants.MAX_ACCEL;
-import static org.firstinspires.ftc.teamcode.drives.RoadRunnerDriveConstants.MAX_VEL;
-import static org.firstinspires.ftc.teamcode.drives.RoadRunnerDriveConstants.RUN_USING_ENCODER;
-import static org.firstinspires.ftc.teamcode.drives.RoadRunnerDriveConstants.kA;
-import static org.firstinspires.ftc.teamcode.drives.RoadRunnerDriveConstants.kStatic;
-import static org.firstinspires.ftc.teamcode.drives.RoadRunnerDriveConstants.kV;
+import static org.firstinspires.ftc.teamcode.drives.RRDriveConstantsTechnicolor.MAX_ACCEL;
+import static org.firstinspires.ftc.teamcode.drives.RRDriveConstantsTechnicolor.MAX_VEL;
+import static org.firstinspires.ftc.teamcode.drives.RRDriveConstantsTechnicolor.RUN_USING_ENCODER;
+import static org.firstinspires.ftc.teamcode.drives.RRDriveConstantsTechnicolor.kA;
+import static org.firstinspires.ftc.teamcode.drives.RRDriveConstantsTechnicolor.kStatic;
+import static org.firstinspires.ftc.teamcode.drives.RRDriveConstantsTechnicolor.kV;
 
 /*
  * This routine is designed to tune the open-loop feedforward coefficients. Although it may seem unnecessary,
@@ -48,7 +48,7 @@ public class ManualFeedforwardTuner extends LinearOpMode {
 
     private FtcDashboard dashboard = FtcDashboard.getInstance();
 
-    private RoadRunnerMecanumDrive drive;
+    private RRMecanumDriveTechnicolor drive;
 
     enum Mode {
         DRIVER_MODE,
@@ -72,7 +72,7 @@ public class ManualFeedforwardTuner extends LinearOpMode {
 
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
 
-        drive = new RoadRunnerMecanumDrive(hardwareMap);
+        drive = new RRMecanumDriveTechnicolor(hardwareMap);
 
         mode = Mode.TUNING_MODE;
 

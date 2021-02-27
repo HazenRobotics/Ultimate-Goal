@@ -195,7 +195,8 @@ public class FieldMap {
     }
 
     public static VectorF toVectorF(OpenGLMatrix position){
-        return position.toVector();
+        float[] data = position.getData();
+        return new VectorF(data[14], data[13], data[15]);//position.toVector();
     }
 
     public static Orientation toOrientation(OpenGLMatrix position){

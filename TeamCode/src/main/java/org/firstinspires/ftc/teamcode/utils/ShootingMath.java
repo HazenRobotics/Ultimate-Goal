@@ -36,8 +36,8 @@ public class ShootingMath {
         double changeInX = currentPos.getX() - targetPos.get(0);
         double changeInY = currentPos.getY() - targetPos.get(1);
 
-        double angle = Math.tan(changeInY/changeInX);
-        return  angle;
+        double angle = -Math.signum(changeInY) * Math.abs(Math.atan(changeInY/changeInX));
+        return angle;
     }
 
     /**
