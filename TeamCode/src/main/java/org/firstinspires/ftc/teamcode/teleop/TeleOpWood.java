@@ -28,27 +28,47 @@ public class TeleOpWood extends OpMode {
     @Override
     public void loop() {
 
-        telemetry.addData("              Controls", "   ")
-                .addData("Drive", "Gp1: left stick y (axis)")
+        telemetry.addLine("            Controls:");
+        telemetry.addData("Drive ", "Gp1: left stick y (axis)")
                 .addData("Strafe", "Gp1: left stick x (axis)")
-                .addData("Rotate", "Gp1: right stick x (axis)");
+                .addData("Rotate", "Gp1: right stick x (axis)")
+                .addData("Open Claw ", "Gp1: x")
+                .addData("Close Claw", "Gp1: b")
+                .addData("Lift Goal Lift ", "Gp1: y")
+                .addData("Lower Goal Lift", "Gp1: x")
+                .addData("Ring Shooter", "Gp1: right trigger")
+                .addData("Ring Pusher ", "Gp1: left bumper")
+                .addData("Intake", "Gp1: left trigger");
         telemetry.addLine();
 
+        // drive, strafe, rotate = gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x
         double drivePower = ( gamepad1.left_stick_button ? 1.0 : 0.4 ); //powerChange
         robot.mecanumDrive.drive( -gamepad1.left_stick_y*drivePower, gamepad1.left_stick_x*drivePower, gamepad1.right_stick_x*drivePower );
 
+        // claw = gamepad1.b and gamepad1.x
         if(gamepad1.b)
             robot.goalLift.setClawPosition( GoalLift.ClawPosition.CLOSED );
         if(gamepad1.x)
             robot.goalLift.setClawPosition( GoalLift.ClawPosition.OPEN);
 
+        // goal lift = gamepad1.y and gamepad1.a
         double liftPower = 0.5;
         if( gamepad1.y )
             robot.goalLift.setGoalLiftPosition( GoalLift.LiftPosition.LIFTED, liftPower );
         if( gamepad1.a )
             robot.goalLift.setGoalLiftPosition( GoalLift.LiftPosition.LOWERED, liftPower );
 
+        // ring shooter = gamepad1.right_trigger
+        double ringShooterPower = 0.75;
+        robot.ringShooter.setFlyWheelMotorPower( gamepad1.right_trigger*ringShooterPower );
 
+        // ring pusher (servo) = gamepad1.left_bumper
+        if( gamepad1.left_bumper )
+            robot.ringShooter.pushRing();
+
+        // intake = gamepad1.left_trigger
+        //double intakePower = 0.75;
+        //robot.ringShooter.setIntakeMotorPower( gamepad1.left_trigger*intakePower );
 
 
         addTelemetry();
