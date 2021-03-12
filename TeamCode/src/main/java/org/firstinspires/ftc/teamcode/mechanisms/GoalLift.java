@@ -127,6 +127,14 @@ public class GoalLift {
 
     }
 
+    public double getClawPosition() {
+        return claw.getPosition();
+    }
+
+    public double getLiftPower() {
+        return motor.getPower();
+    }
+
     public ClawPosition getCurrentClawPosition() {
         return currentClawPosition;
     }

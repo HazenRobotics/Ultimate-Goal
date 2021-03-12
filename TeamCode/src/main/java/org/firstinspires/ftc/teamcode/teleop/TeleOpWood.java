@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.teleop;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.mechanisms.GoalLift;
 import org.firstinspires.ftc.teamcode.robots.RobotWood;
 import org.firstinspires.ftc.teamcode.mechanisms.GoalLiftWood;
 
@@ -38,15 +39,15 @@ public class TeleOpWood extends OpMode {
         robot.mecanumDrive.drive( -gamepad1.left_stick_y*drivePower, gamepad1.left_stick_x*drivePower, gamepad1.right_stick_x*drivePower );
 
         if(gamepad1.b)
-            robot.goalLift.setClawPosition( GoalLiftWood.ClawPosition.CLOSED );
+            robot.goalLift.setClawPosition( GoalLift.ClawPosition.CLOSED );
         if(gamepad1.x)
-            robot.goalLift.setClawPosition( GoalLiftWood.ClawPosition.OPEN);
+            robot.goalLift.setClawPosition( GoalLift.ClawPosition.OPEN);
 
         double liftPower = 0.5;
         if( gamepad1.y )
-            robot.goalLift.setGoalLiftPosition( GoalLiftWood.LiftPosition.LIFTED, liftPower );
+            robot.goalLift.setGoalLiftPosition( GoalLift.LiftPosition.LIFTED, liftPower );
         if( gamepad1.a )
-            robot.goalLift.setGoalLiftPosition( GoalLiftWood.LiftPosition.LOWERED, liftPower );
+            robot.goalLift.setGoalLiftPosition( GoalLift.LiftPosition.LOWERED, liftPower );
 
 
 

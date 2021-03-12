@@ -6,14 +6,18 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.drives.MecanumDrive;
+import org.firstinspires.ftc.teamcode.mechanisms.GoalLift;
 import org.firstinspires.ftc.teamcode.mechanisms.GoalLiftWood;
+import org.firstinspires.ftc.teamcode.mechanisms.RingShooterWood;
 import org.firstinspires.ftc.teamcode.utils.*;
 
 public class RobotWood extends Robot {
 
     public MecanumDrive mecanumDrive;
 
-    public GoalLiftWood goalLift;
+    public GoalLift goalLift;
+
+    public RingShooterWood ringShooter;
 
     public Tracking tracker;
 
@@ -27,13 +31,16 @@ public class RobotWood extends Robot {
     final static double DRIVE_POWER_PERCENT_INCREASE = 0.3;
     final static double DRIVE_POWER = 0.3;
 
+    final static int FLY_WHEEL_RADIUS = 0;
+
     public RobotWood(HardwareMap hw, OpMode op){
         super(hw, op);
 
         super.driveTrain = new MecanumDrive(hw);
         mecanumDrive = (MecanumDrive) driveTrain;
         tracker = new Tracking(mecanumDrive, hw);
-        goalLift = new GoalLiftWood(hw);
+        goalLift = new GoalLift(hw);
+        ringShooter = new RingShooterWood( hw, FLY_WHEEL_RADIUS, 0.5 /* test this */, 0.25 /* test this */ );
         tensorFlowUtil = new TensorFlowUtil(hw, op);
     }
 
