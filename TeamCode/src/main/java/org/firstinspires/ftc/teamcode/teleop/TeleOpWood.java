@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.robots.RobotWood;
 import org.firstinspires.ftc.teamcode.mechanisms.GoalLift;
 
 // TeleOp class for the new wooden robot
-@TeleOp(name="teleOpWood", group="teleop")
+@TeleOp(name="TeleOpWood", group="teleop")
 public class TeleOpWood extends OpMode {
 
     //Robot robot;
@@ -58,6 +58,7 @@ public class TeleOpWood extends OpMode {
         if( gamepad1.a )
             robot.goalLift.setGoalLiftPosition( GoalLift.LiftPosition.LOWERED, liftPower );
 
+        /*
         // ring shooter = gamepad1.right_trigger
         double ringShooterPower = 0.75;
         robot.ringShooter.setFlyWheelMotorPower( gamepad1.right_trigger*ringShooterPower );
@@ -65,6 +66,7 @@ public class TeleOpWood extends OpMode {
         // ring pusher (servo) = gamepad1.left_bumper
         if( gamepad1.left_bumper )
             robot.ringShooter.pushRing();
+         */
 
         // intake = gamepad1.left_trigger
         //double intakePower = 0.75;
