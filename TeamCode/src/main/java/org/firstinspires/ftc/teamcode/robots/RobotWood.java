@@ -19,8 +19,13 @@ public class RobotWood extends Robot {
 
     public TensorFlowUtil tensorFlowUtil;
 
-    //
-    public static double MIN_POWER = 0.1;
+    public static double MAX_POWER = 0.7;
+    public static double MIN_POWER = 0.2;
+
+    final static double DRIVE_START_PERCENT = 0.3;
+    final static double DRIVE_END_PERCENT = 0.6;
+    final static double DRIVE_POWER_PERCENT_INCREASE = 0.3;
+    final static double DRIVE_POWER = 0.3;
 
     public RobotWood(HardwareMap hw, OpMode op){
         super(hw, op);
@@ -30,7 +35,6 @@ public class RobotWood extends Robot {
         tracker = new Tracking(mecanumDrive, hw);
         goalLift = new GoalLiftWood(hw);
         tensorFlowUtil = new TensorFlowUtil(hw, op);
-
     }
 
     public void dropOffGoal() { Log.e("|-|-|-| ", "dropOffGoal();");
@@ -101,25 +105,57 @@ public class RobotWood extends Robot {
 
     public void driveDistance( double distance, double power, boolean setPowerZero ) {
 
-        mecanumDrive.drive( power, 0, 0 );
+        //mecanumDrive.drive( power, 0, 0 );
 
         int ticksToTravel = mecanumDrive.convertDistTicks(distance);
         int initialXPos = tracker.getLateralPosition();
         int initialYPos = tracker.getLongitudinalPosition();
-        double percent = 0.5;
+        //double percent = 0.5;
+        double initialPower;
+        power = 0.3;
+        double distanceTravelled = tracker.getLateralPosition() - initialXPos;
+        double dPower = MAX_POWER-MIN_POWER;
+        String textToWrite;
 
         mecanumDrive.drive( power, 0, 0 );
-        while( tracker.getLateralPosition() - initialXPos < ticksToTravel && opModeIsActive() ) {
+        while( distanceTravelled < ticksToTravel && opModeIsActive() ) {
 
             /*
             double m = (power-(Math.signum(power)*MIN_POWER))/(-distance*(1-distance));
-            double x = mecanumDrive.convertDistTicks(tracker.getLateralPosition() - ticksToTravel);
+            double x = mecanumDrive.convertTicksDist(tracker.getLateralPosition() - ticksToTravel);
             double b = (Math.signum(power)*MIN_POWER)-m*distance;
 
             if( tracker.getLateralPosition() - initialXPos > ticksToTravel*percent )
                 power = m*x + b;
 
              */
+
+            distanceTravelled = tracker.getLateralPosition() - initialXPos;
+            if (distanceTravelled < DRIVE_START_PERCENT * ticksToTravel) {
+                initialPower = MIN_POWER;
+                power = (dPower / (DRIVE_START_PERCENT * ticksToTravel)) * distanceTravelled + initialPower;
+            }
+
+            if( distanceTravelled >= DRIVE_END_PERCENT*ticksToTravel ) {
+                initialPower = MAX_POWER;
+                power = -(dPower / (ticksToTravel - DRIVE_END_PERCENT * ticksToTravel)) * distanceTravelled + initialPower;
+            }
+
+            textToWrite = "(" + distanceTravelled + " < " + DRIVE_START_PERCENT + "*" + ticksToTravel + ")" + System.lineSeparator();
+            textToWrite += "(" + distanceTravelled + " < " + DRIVE_START_PERCENT*ticksToTravel + "): " + (distanceTravelled < DRIVE_START_PERCENT*ticksToTravel) + System.lineSeparator();
+            textToWrite += dPower + "/(" + DRIVE_START_PERCENT + "*" + ticksToTravel + ")"          + System.lineSeparator();
+
+            Robot.writeToDefaultFile( textToWrite, true, false );
+
+            telemetry.addLine( "Power: " + power );
+            telemetry.update();
+
+
+            textToWrite = "Power: " + power + System.lineSeparator();
+            textToWrite += "Distance: " + distanceTravelled + System.lineSeparator();
+            textToWrite += "--------------------------------------------------";
+
+            Robot.writeToDefaultFile( textToWrite, true, false );
 
             mecanumDrive.drive( power, 0, 0 );
         }
@@ -169,6 +205,7 @@ public class RobotWood extends Robot {
 
         while( (Math.abs(driveCorrections) > 0.01 || Math.abs(gyroCorrections) > 0.01 ) && opModeIsActive() ) {
 
+
             driveCorrections = tracker.drivePID( ticksToTravel + initialXPos );
             if( Math.abs(driveCorrections) < 0.2 )
                 driveCorrections = Math.signum(driveCorrections)*0.2;
@@ -185,6 +222,7 @@ public class RobotWood extends Robot {
             telemetry.addLine("lateral position = " + tracker.getLateralPosition() + " (ticks), "
                     + mecanumDrive.convertTicksDist( tracker.getLateralPosition()) + " (in)" );
             telemetry.update();
+
         }
 
         //sets all power to zero afterwords

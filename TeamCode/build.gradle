@@ -19,6 +19,7 @@ dependencies {
     implementation project(':FtcRobotController')
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
     implementation 'org.jetbrains:annotations-java5:15.0'
+    implementation 'com.jjoe64:graphview:4.2.2'
 }
 
 /*task pushJavaFiles (type: Exec) {

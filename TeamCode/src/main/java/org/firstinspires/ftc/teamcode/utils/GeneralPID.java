@@ -15,6 +15,9 @@ public class GeneralPID {
 
     double integral;
 
+    final static double minPow = 0.3;
+    final static double maxPow = 1.0;
+
     public GeneralPID( PIDCoefficients PIDCoeff ) {
         coefficients = PIDCoeff;
     }
@@ -27,8 +30,6 @@ public class GeneralPID {
      */
     public double getPID( double target, double curInput ) {
 
-
-
         if( previousTime == 0 ) previousTime = System.currentTimeMillis();
         double time = System.currentTimeMillis() - previousTime;
         double error = target - curInput; // Error = Target - Actual
@@ -36,7 +37,7 @@ public class GeneralPID {
         double derivative = time == 0 ? 0 : (error - previousError) / time; // just error / time
 
         String info = "";
-        /*
+
         info += "getPID( target, curInput) :: getPID( " + target + ", " + curInput + " )" + System.lineSeparator();
         info += "time :: " + time + System.lineSeparator();
         info += "error :: " + error + System.lineSeparator();
@@ -46,13 +47,17 @@ public class GeneralPID {
         info += "previousTime :: " + previousTime + System.lineSeparator();
         info += "return :: " + (coefficients.p * error + coefficients.i * this.integral + coefficients.d * derivative) + System.lineSeparator();
         info += "-----------------------------------------------" + System.lineSeparator();
-         */
+
 
         if( target == 15 ) Robot.writeToDefaultFile( info, true, false );
 
         previousError = error; // set previousError to current error
         previousTime = System.currentTimeMillis(); // set previousTime to current time
 
+        /*
+        // NewValue = (((OldValue - OldMin) * (NewMax - NewMin)) / (OldMax - OldMin)) + NewMin
+        double power = (((OldValue - OldMin) * (maxPow - minPow)) / (OldMax - OldMin)) + minPow;
+        */
         return coefficients.p * error + coefficients.i * this.integral + coefficients.d * derivative;
     }
 

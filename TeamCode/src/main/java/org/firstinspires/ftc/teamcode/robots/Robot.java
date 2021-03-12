@@ -148,7 +148,7 @@ public abstract class Robot {
     public void sleepRobot2(long delay) {
         double currTime = opMode.getRuntime();
         double waitUntil = currTime + (double)(delay/1000);
-        while( opMode.getRuntime() < waitUntil ) {}
+        while( opMode.getRuntime() < waitUntil && opModeIsActive() ) {}
     }
 
 
