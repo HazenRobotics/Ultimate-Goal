@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.robots.RobotWood;
 import org.firstinspires.ftc.teamcode.mechanisms.GoalLift;
 
 // TeleOp class for the new wooden robot
-@TeleOp(name="teleopWood", group="teleop")
+@TeleOp(name="teleOpWood", group="teleop")
 public class TeleOpWood extends OpMode {
 
     //Robot robot;
@@ -28,7 +28,7 @@ public class TeleOpWood extends OpMode {
     @Override
     public void loop() {
 
-        telemetry.addLine("            Controls:");
+        telemetry.addLine("            -Controls:");
         telemetry.addData("Drive ", "Gp1: left stick y (axis)")
                 .addData("Strafe", "Gp1: left stick x (axis)")
                 .addData("Rotate", "Gp1: right stick x (axis)")
