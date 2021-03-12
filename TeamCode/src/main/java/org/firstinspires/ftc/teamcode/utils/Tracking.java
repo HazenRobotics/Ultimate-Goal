@@ -22,7 +22,6 @@ public class Tracking {
         mecanumDrive = mDrv;
 
         initGyro(hw);
-
     }
 
     /**
@@ -42,6 +41,7 @@ public class Tracking {
     }
 
     public void initGyro( HardwareMap hw ) {
+
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
         parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
@@ -54,7 +54,6 @@ public class Tracking {
         gyro.initialize(parameters);
 
         angles = gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-
     }
 
     public double getGyroXVelocity() {
@@ -67,10 +66,6 @@ public class Tracking {
 
     public double getGyroZVelocity() {
         return gyro.getVelocity().zVeloc;
-    }
-
-    public float get360GyroHeading() {
-        return getGyroHeading();
     }
 
     public float getGyroHeading() {
@@ -90,10 +85,10 @@ public class Tracking {
         return angles.thirdAngle;
     }
 
-    public float getNewGyroHeading()
-    {
+    public float get360GyroHeading() {
         return (-getGyroHeading() + 360) % 360;
     }
+
     /**
      * will sleep the robot for [millis] milliseconds
      * @param millis
