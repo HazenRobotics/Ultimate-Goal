@@ -57,7 +57,7 @@ public class GoalLift {
         loweredButton = hw.touchSensor.get(loweredButtonName);
 
         //change this based on needed motor direction
-        motor.setDirection(DcMotorSimple.Direction.FORWARD);
+        motor.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
     /**
@@ -115,17 +115,16 @@ public class GoalLift {
      * @param power power at which to move the lift
      */
     private void liftToPosition( LiftPosition position, double power ) {
+        long time = System.currentTimeMillis() + 1000;
         if(position == LiftPosition.LIFTED) {
             motor.setPower(power);
-            while (!liftedButton.isPressed());
-            motor.setPower(0);
+            while (!liftedButton.isPressed() && System.currentTimeMillis() < time);
         }
         else {
             motor.setPower(-power);
-            while (!loweredButton.isPressed());
-            motor.setPower(0);
+            while (!loweredButton.isPressed() && System.currentTimeMillis() < time);
         }
-
+        motor.setPower(0);
     }
 
     public double getClawPosition() {

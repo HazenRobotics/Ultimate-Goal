@@ -48,8 +48,8 @@ s
 
         boolean testTwice = false;
 
-        //robotWood.driveTime( 500, .5, true );
-        //robotWood.rotateTime( 500, .5, true );
+        /*robotWood.driveTime( 500, .5, true );
+        robotWood.rotateTime( 500, .5, true );*/
 
         //robotWood.driveDistance( 20, .5, true );
 

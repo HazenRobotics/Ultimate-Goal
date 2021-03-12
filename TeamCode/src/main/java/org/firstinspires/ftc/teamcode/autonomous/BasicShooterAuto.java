@@ -8,25 +8,25 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.robots.RobotTechnicolorRR;
 import org.firstinspires.ftc.teamcode.utils.FieldMap;
 
-@Autonomous
+@Autonomous(name="Basic Auto")
 public class BasicShooterAuto extends LinearOpMode {
 
     private RobotTechnicolorRR robot;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        robot = new RobotTechnicolorRR(hardwareMap);
+        robot = new RobotTechnicolorRR(hardwareMap, this);
         robot.setPosition(new Pose2d(-60, -48));
 
         waitForStart();
 
 
         //Shoot powershot targets
-        robot.drive(robot.trajectoryBuilder().splineToConstantHeading(new Vector2d(-10, -18.5), 0).build());
+        robot.drive(robot.trajectoryBuilder().splineToConstantHeading(new Vector2d(-10, -22.5), 0).build());
         robot.shootAtTarget(FieldMap.ScoringGoals.RED_RIGHT_POWERSHOT);
-        robot.drive(robot.trajectoryBuilder().lineTo(new Vector2d(-10, -11)).build());
+        robot.drive(robot.trajectoryBuilder().lineTo(new Vector2d(-10, -17)).build());
         robot.shootAtTarget(FieldMap.ScoringGoals.RED_MIDDLE_POWERSHOT);
-        robot.drive(robot.trajectoryBuilder().lineTo(new Vector2d(-10, -3.5)).build());
+        robot.drive(robot.trajectoryBuilder().lineTo(new Vector2d(-10, -9.5)).build());
         robot.shootAtTarget(FieldMap.ScoringGoals.RED_LEFT_POWERSHOT);
 
 

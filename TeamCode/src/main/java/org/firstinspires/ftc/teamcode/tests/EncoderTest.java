@@ -15,7 +15,7 @@ public class EncoderTest extends OpMode {
     Encoder perpendicularEncoder;
     @Override
     public void init() {
-        robot = new RobotTechnicolorRR(hardwareMap);
+        robot = new RobotTechnicolorRR(hardwareMap, this);
         parallelEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "intake"));
         perpendicularEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "goalLift"));
     }

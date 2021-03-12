@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.robots;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
@@ -24,10 +25,11 @@ public class RobotTechnicolorRR {
     public TensorFlowUtil tfod;
     private final double FLY_WHEEL_RADIUS = 4; //in inches
 
-    public RobotTechnicolorRR(HardwareMap hw) {
+    public RobotTechnicolorRR(HardwareMap hw, OpMode op) {
         drive = new RRMecanumDriveTechnicolor(hw);
         goalLift = new GoalLift(hw);
-        ringShooter = new RingShooter(hw, FLY_WHEEL_RADIUS, 0.3, 0.1);
+        ringShooter = new RingShooter(hw, FLY_WHEEL_RADIUS, 0.3, 0.07);
+        tfod = new TensorFlowUtil(hw, op);
     }
 
     /**
@@ -36,10 +38,10 @@ public class RobotTechnicolorRR {
      */
     public void shootAtTarget(OpenGLMatrix target) {
         //rotate towards target
-        drive.turn(ShootingMath.getAngleToTarget(drive.getPoseEstimate(), FieldMap.toInches(FieldMap.toVectorF(target))));
+        //drive.turn(ShootingMath.getAngleToTarget(drive.getPoseEstimate(), FieldMap.toInches(FieldMap.toVectorF(target))));
         //assuming we are now lined up for the shot
         //shoot using velocity required to hit the target
-        ringShooter.launchRingPower(0.8);
+        ringShooter.launchRingPower(0.85);
         //ringShooter.launchRingVelocity(ShootingMath.getVelocityToTarget(FieldMap.RobotInfo.getRingLaunchPointPosition().toVector(), target.toVector(), ringShooter.getLaunchAngle()), DistanceUnit.MM);
     }
 

@@ -32,6 +32,7 @@ public class TensorFlowUtil {
 
     int tempLoop = 0;
     OpMode opMode;
+    HardwareMap hardwareMap;
 
     public enum Stack {
         NONE,
@@ -41,15 +42,16 @@ public class TensorFlowUtil {
 
     public TensorFlowUtil( HardwareMap hw, OpMode op ) {
         opMode = op;
+        hardwareMap = hw;
     }
 
-    public void initTensorFlow( HardwareMap hw ) {
+    public void initTensorFlow() {
 
-        final String VUFORIA_KEY = hw.appContext.getResources().getString(R.string.vuforiakey);
-        vuforia.setParameters(VUFORIA_KEY, "webcam", true, hw);
+        final String VUFORIA_KEY = hardwareMap.appContext.getResources().getString(R.string.vuforiakey);
+        vuforia.setParameters(VUFORIA_KEY, "webcam", true, hardwareMap);
         vuforia.start();
 
-        tensorFlow = new TensorFlow(TENSOR_FLOW_MODEL_NAME, 0.8f, true, hw, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);
+        tensorFlow = new TensorFlow(TENSOR_FLOW_MODEL_NAME, 0.8f, true, hardwareMap, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);
 
     }
 
@@ -70,7 +72,7 @@ public class TensorFlowUtil {
         return Stack.NONE;
     }
 
-    void objectDeterminationLoop(int loop ) { Log.e( "|-|-|-| ", "objectDeterminationLoop" );
+    void objectDeterminationLoop(int loop ) { Robot.writeToDefaultFile( "|-|-|-| objectDeterminationLoop", true, true );
 
         stackRecognitions = new Stack[loop];
         int singles = 0, quads = 0;
@@ -167,6 +169,10 @@ public class TensorFlowUtil {
         if(vuforia.isRunning())
             vuforia.close();
 
+    }
+
+    public void deactivateTensorFlow() {
+        stopTF();
     }
 
     /**

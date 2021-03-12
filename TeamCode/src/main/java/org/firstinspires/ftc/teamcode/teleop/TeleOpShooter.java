@@ -14,7 +14,7 @@ public class TeleOpShooter extends OpMode {
 
     @Override
     public void init() {
-        robot = new RobotTechnicolorRR(hardwareMap);
+        robot = new RobotTechnicolorRR(hardwareMap, this);
     }
 
     @Override
