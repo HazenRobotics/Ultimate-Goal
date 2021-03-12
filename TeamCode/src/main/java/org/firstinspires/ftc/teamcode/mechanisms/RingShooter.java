@@ -57,14 +57,8 @@ public class RingShooter {
         this.flyWheelRadius = flyWheelRadius;
         this.pushedPosition = pushedPosition;
         this.retractedPosition = retractedPosition;
-        MotorConfigurationType motorConfigurationType = leftFlyWheelMotor.getMotorType().clone();
-        motorConfigurationType.setAchieveableMaxRPMFraction(1.0);
-        leftFlyWheelMotor.setMotorType(motorConfigurationType);
-        motorConfigurationType = rightFlyWheelMotor.getMotorType().clone();
-        motorConfigurationType.setAchieveableMaxRPMFraction(1.0);
-        rightFlyWheelMotor.setMotorType(motorConfigurationType);
-        leftFlyWheelMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightFlyWheelMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftFlyWheelMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightFlyWheelMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     /**
@@ -147,7 +141,7 @@ public class RingShooter {
     public void pushRing() {
         pusher.setPosition(pushedPosition);
         long currentTime = System.currentTimeMillis();
-        while (System.currentTimeMillis() < currentTime + 2000);
+        while (System.currentTimeMillis() < currentTime + 1000);
         pusher.setPosition(retractedPosition);
     }
 

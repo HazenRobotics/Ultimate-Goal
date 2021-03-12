@@ -37,14 +37,13 @@ public class TeleOpShooter extends OpMode {
             robot.setIntakePower(robot.ringShooter.getCurrentIntakePower() == 0 ? 1 : 0);
         }
         if(gamepad1.y) {
-            robot.ringShooter.setFlyWheelMotorVelocity(robot.ringShooter.rightFlyWheelMotor.getPower() > 0 ? 0 : 20, AngleUnit.DEGREES);
-            //robot.ringShooter.setFlyWheelMotorPower(robot.ringShooter.rightFlyWheelMotor.getPower() > 0 ? 0 : 1);
+            //robot.ringShooter.setFlyWheelMotorVelocity(robot.ringShooter.rightFlyWheelMotor.getPower() > 0 ? 0 : 20, AngleUnit.DEGREES);
+            robot.ringShooter.setFlyWheelMotorPower(robot.ringShooter.rightFlyWheelMotor.getPower() > 0 ? 0 : 0.8);
         }
         if(gamepad1.x) {
             robot.ringShooter.pushRing();
         }
         robot.drive.update();
-        telemetry.addData("Velocity", robot.ringShooter.rightFlyWheelMotor.getVelocity(AngleUnit.DEGREES));
         telemetry.update();
     }
 }

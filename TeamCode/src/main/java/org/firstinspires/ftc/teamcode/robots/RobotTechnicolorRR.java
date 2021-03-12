@@ -11,6 +11,8 @@ import org.firstinspires.ftc.teamcode.mechanisms.GoalLift;
 import org.firstinspires.ftc.teamcode.mechanisms.RingShooter;
 import org.firstinspires.ftc.teamcode.utils.FieldMap;
 import org.firstinspires.ftc.teamcode.utils.ShootingMath;
+import org.firstinspires.ftc.teamcode.utils.TensorFlow;
+import org.firstinspires.ftc.teamcode.utils.TensorFlowUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class RobotTechnicolorRR {
@@ -19,6 +21,7 @@ public class RobotTechnicolorRR {
 
     public GoalLift goalLift;
     public RingShooter ringShooter;
+    public TensorFlowUtil tfod;
     private final double FLY_WHEEL_RADIUS = 4; //in inches
 
     public RobotTechnicolorRR(HardwareMap hw) {
@@ -36,7 +39,7 @@ public class RobotTechnicolorRR {
         drive.turn(ShootingMath.getAngleToTarget(drive.getPoseEstimate(), FieldMap.toInches(FieldMap.toVectorF(target))));
         //assuming we are now lined up for the shot
         //shoot using velocity required to hit the target
-        ringShooter.launchRingPower(0.5);
+        ringShooter.launchRingPower(0.8);
         //ringShooter.launchRingVelocity(ShootingMath.getVelocityToTarget(FieldMap.RobotInfo.getRingLaunchPointPosition().toVector(), target.toVector(), ringShooter.getLaunchAngle()), DistanceUnit.MM);
     }
 
