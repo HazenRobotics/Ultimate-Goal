@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode.teleop;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.mechanisms.GoalLiftWood;
+import org.firstinspires.ftc.teamcode.robots.Robot;
 import org.firstinspires.ftc.teamcode.robots.RobotWood;
 import org.firstinspires.ftc.teamcode.mechanisms.GoalLift;
 
@@ -23,6 +25,8 @@ public class TeleOpWood extends OpMode {
 
         telemetry.addLine("init finished");
         telemetry.update();
+
+        Robot.writeToDefaultFile( "*******INIT FINISHED********", false, true );
     }
 
     @Override
@@ -45,18 +49,20 @@ public class TeleOpWood extends OpMode {
         double drivePower = ( gamepad1.left_stick_button ? 1.0 : 0.4 ); //powerChange
         robot.mecanumDrive.drive( -gamepad1.left_stick_y*drivePower, gamepad1.left_stick_x*drivePower, gamepad1.right_stick_x*drivePower );
 
+        Robot.writeToDefaultFile( "made it to robot.mecanumDrive.drive()", true, true );
+
         // claw = gamepad1.b and gamepad1.x
         if(gamepad1.b)
-            robot.goalLift.setClawPosition( GoalLift.ClawPosition.CLOSED );
+            robot.goalLift.setClawPosition( GoalLiftWood.ClawPosition.CLOSED );
         if(gamepad1.x)
-            robot.goalLift.setClawPosition( GoalLift.ClawPosition.OPEN);
+            robot.goalLift.setClawPosition( GoalLiftWood.ClawPosition.OPEN);
 
         // goal lift = gamepad1.y and gamepad1.a
         double liftPower = 0.5;
         if( gamepad1.y )
-            robot.goalLift.setGoalLiftPosition( GoalLift.LiftPosition.LIFTED, liftPower );
+            robot.goalLift.setGoalLiftPosition( GoalLiftWood.LiftPosition.LIFTED, liftPower );
         if( gamepad1.a )
-            robot.goalLift.setGoalLiftPosition( GoalLift.LiftPosition.LOWERED, liftPower );
+            robot.goalLift.setGoalLiftPosition( GoalLiftWood.LiftPosition.LOWERED, liftPower );
 
         /*
         // ring shooter = gamepad1.right_trigger

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.teleop;
+/*package org.firstinspires.ftc.teamcode.teleop;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -31,10 +31,10 @@ public class TeleOpTest extends OpMode
     public void init()
     {
         //Wheels
-        frontLeftMotor = hardwareMap.dcMotor.get("frontLeftWheel");
-        frontRightMotor = hardwareMap.dcMotor.get("frontRightWheel");
-        backLeftMotor = hardwareMap.dcMotor.get("backLeftWheel");
-        backRightMotor = hardwareMap.dcMotor.get("backRightWheel");
+        frontLeftMotor = hardwareMap.dcMotor.get("frontLeft");
+        frontRightMotor = hardwareMap.dcMotor.get("frontRight");
+        backLeftMotor = hardwareMap.dcMotor.get("backLeft");
+        backRightMotor = hardwareMap.dcMotor.get("backRight");
 
         parallelEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "intake"));
         perpendicularEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "goalLift"));
@@ -44,10 +44,9 @@ public class TeleOpTest extends OpMode
         gyro.initialize( parameters );
 
         // make sure the imu gyro is calibrated before continuing.
-        while ( !gyro.isGyroCalibrated() )
-        {
+        while ( !gyro.isGyroCalibrated() ) {
             long startTime = System.currentTimeMillis();
-            while( System.currentTimeMillis() < startTime + 50 /* milliseconds to wait */ );
+            while( System.currentTimeMillis() < startTime + 50 ); // milliseconds to wait
         }
 
         telemetry.addData("Mode", "waiting for start");
@@ -121,4 +120,4 @@ public class TeleOpTest extends OpMode
         telemetry.update();
 
     }
-}
+}*/

@@ -50,7 +50,7 @@ public class MecanumDrive extends FourWheelDrive {
      * @param backLeftPower power at which to run the back left motor.
      */
     public void setMotorPower(double frontLeftPower, double frontRightPower, double backLeftPower, double backRightPower){
-        setMotorPower( frontLeftPower, frontRightPower, backLeftPower, backRightPower );
+        super.setMotorPower( frontLeftPower, frontRightPower, backLeftPower, backRightPower );
     }
 
     /**
