@@ -32,13 +32,10 @@ public class TensorFlow {
      * @param labels labels of the entries in the .tflite file
      */
     public TensorFlow(String tfodModelAssetName, float minResultConfidence, boolean monitorCamera, HardwareMap hw, String... labels){
-        if(!vuforia.isRunning()) {
+        if(!vuforia.isRunning())
             vuforia.start();
-        }
 
         initTfod(tfodModelAssetName, minResultConfidence, monitorCamera, hw, labels);
-
-
     }
 
     /**
@@ -50,7 +47,7 @@ public class TensorFlow {
      * @param labels labels of the entries in the .tflite file
      */
     private void initTfod(String tfodModelAssetName, float minResultConfidence, boolean monitorCamera, HardwareMap hw, String... labels){
-        TFObjectDetector.Parameters tfodParameters = monitorCamera == true ? new TFObjectDetector.Parameters(hw.appContext.getResources().getIdentifier(
+        TFObjectDetector.Parameters tfodParameters = monitorCamera ? new TFObjectDetector.Parameters(hw.appContext.getResources().getIdentifier(
                 "tfodMonitorViewId", "id", hw.appContext.getPackageName())) : new TFObjectDetector.Parameters();
         tfodParameters.minResultConfidence = minResultConfidence;
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia.getLocalizer());
@@ -85,19 +82,17 @@ public class TensorFlow {
      */
     public Recognition getRecognition(){
         updateRecognitions();
-        if(recognitions == null){
-            return  null;
-        }
-        if(recognitions.size() > 1){
-            Recognition mostConfidentRecognition = null;
-            for(Recognition recognition : recognitions){
-                if(mostConfidentRecognition == null || recognition.getConfidence() > mostConfidentRecognition.getConfidence()){
-                    mostConfidentRecognition = recognition;
-                }
+        if(recognitions == null || recognitions.isEmpty() )
+            return null;
+
+        Recognition mostConfidentRecognition = null;
+        for(Recognition recognition : recognitions){
+            if(mostConfidentRecognition == null || recognition.getConfidence() > mostConfidentRecognition.getConfidence()){
+                mostConfidentRecognition = recognition;
             }
-            return  mostConfidentRecognition;
         }
-        return recognitions.get(0);
+        return  mostConfidentRecognition;
+
     }
 
     /**
@@ -106,4 +101,8 @@ public class TensorFlow {
     public void updateRecognitions(){
         recognitions = tfod.getRecognitions();
     }
+
+
+
+
 }
