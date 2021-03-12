@@ -34,7 +34,7 @@ public class RobotWood extends Robot {
         mecanumDrive = (MecanumDrive) driveTrain;
         tracker = new Tracking(mecanumDrive, hw);
         goalLift = new GoalLift(hw);
-        ringShooter = new RingShooterWood(hw, FLY_WHEEL_RADIUS, 0.5 /*test this */ , 0.25 /* test this */ );
+        //ringShooter = new RingShooterWood(hw, FLY_WHEEL_RADIUS, 0.5 /*test this */ , 0.25 /* test this */ );
         tensorFlowUtil = new TensorFlowUtil(hw, op);
     }
 
