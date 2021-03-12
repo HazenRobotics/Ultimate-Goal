@@ -48,9 +48,10 @@ public class GoalLift {
      * @param motorName name of the lift motor in the hardware map
      */
     public GoalLift( HardwareMap hw, String motorName, String clawName, String liftedButtonName, String loweredButtonName ) {
-        claw = hw.servo.get(clawName);
 
         motor = hw.dcMotor.get( motorName );
+
+        claw = hw.servo.get(clawName);
 
         liftedButton = hw.touchSensor.get(liftedButtonName);
         loweredButton = hw.touchSensor.get(loweredButtonName);
@@ -125,6 +126,14 @@ public class GoalLift {
             motor.setPower(0);
         }
 
+    }
+
+    public double getClawPosition() {
+        return claw.getPosition();
+    }
+
+    public double getLiftPower() {
+        return motor.getPower();
     }
 
     public ClawPosition getCurrentClawPosition() {

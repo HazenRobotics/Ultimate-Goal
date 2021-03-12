@@ -69,6 +69,10 @@ public class Tracking {
         return gyro.getVelocity().zVeloc;
     }
 
+    public float get360GyroHeading() {
+        return getGyroHeading();
+    }
+
     public float getGyroHeading() {
         angles = gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         return angles.firstAngle;
