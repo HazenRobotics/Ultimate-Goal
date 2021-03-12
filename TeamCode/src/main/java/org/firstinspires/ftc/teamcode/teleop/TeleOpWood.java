@@ -13,6 +13,8 @@ public class TeleOpWood extends OpMode {
     //Robot robot;
     RobotWood robot;
 
+    public static boolean doTelemetry = true;
+
     @Override
     public void init() {
         robot = new RobotWood(hardwareMap, this);
@@ -32,8 +34,8 @@ public class TeleOpWood extends OpMode {
                 .addData("Rotate", "Gp1: right stick x (axis)");
         telemetry.addLine();
 
-        double pC = ( gamepad1.left_stick_button ? 1.0 : 0.4 ); //powerChange
-        robot.mecanumDrive.drive( -gamepad1.left_stick_y*pC, gamepad1.left_stick_x*pC, gamepad1.right_stick_x*pC );
+        double drivePower = ( gamepad1.left_stick_button ? 1.0 : 0.4 ); //powerChange
+        robot.mecanumDrive.drive( -gamepad1.left_stick_y*drivePower, gamepad1.left_stick_x*drivePower, gamepad1.right_stick_x*drivePower );
 
         if(gamepad1.b)
             robot.goalLift.setClawPosition( GoalLiftWood.ClawPosition.CLOSED );
@@ -46,6 +48,16 @@ public class TeleOpWood extends OpMode {
         if( gamepad1.a )
             robot.goalLift.setGoalLiftPosition( GoalLiftWood.LiftPosition.LOWERED, liftPower );
 
+
+
+
+        addTelemetry();
+
+        telemetry.update();
+
+    }
+
+    public void addTelemetry() {
         telemetry.addData("left_stick_y", gamepad1.left_stick_y)
                 .addData("left_stick_x", gamepad1.left_stick_x)
                 .addData("right_stick_x", gamepad1.right_stick_x);
@@ -78,8 +90,6 @@ public class TeleOpWood extends OpMode {
                 .addData("getGyroYVelocity", robot.tracker.getGyroYVelocity() )
                 .addData("getGyroZVelocity", robot.tracker.getGyroZVelocity() );
          */
-
-        telemetry.update();
-
     }
+
 }
