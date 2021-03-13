@@ -11,8 +11,6 @@ import org.firstinspires.ftc.teamcode.drives.RRMecanumDriveTechnicolor;
 import org.firstinspires.ftc.teamcode.mechanisms.GoalLift;
 import org.firstinspires.ftc.teamcode.mechanisms.RingShooter;
 import org.firstinspires.ftc.teamcode.utils.FieldMap;
-import org.firstinspires.ftc.teamcode.utils.ShootingMath;
-import org.firstinspires.ftc.teamcode.utils.TensorFlow;
 import org.firstinspires.ftc.teamcode.utils.TensorFlowUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -23,12 +21,19 @@ public class RobotTechnicolorRR {
     public GoalLift goalLift;
     public RingShooter ringShooter;
     public TensorFlowUtil tfod;
+
     private final double FLY_WHEEL_RADIUS = 4; //in inches
+
+    public static double PUSHED_POSTITION = 0.3;
+    public static double RETRACTED_POSTITION = 0.07;
+
+    public static double OPEN_POSTITION = 1.0;
+    public static double CLOSED_POSTITION = 0.0;
 
     public RobotTechnicolorRR(HardwareMap hw, OpMode op) {
         drive = new RRMecanumDriveTechnicolor(hw);
-        goalLift = new GoalLift(hw);
-        ringShooter = new RingShooter(hw, FLY_WHEEL_RADIUS, 0.3, 0.07);
+        goalLift = new GoalLift(hw, OPEN_POSTITION, CLOSED_POSTITION);
+        ringShooter = new RingShooter(hw, FLY_WHEEL_RADIUS, PUSHED_POSTITION, RETRACTED_POSTITION);
         tfod = new TensorFlowUtil(hw, op);
     }
 

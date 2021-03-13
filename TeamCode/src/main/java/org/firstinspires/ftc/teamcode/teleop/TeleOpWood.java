@@ -3,11 +3,10 @@ package org.firstinspires.ftc.teamcode.teleop;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.mechanisms.GoalLiftWood;
-import org.firstinspires.ftc.teamcode.mechanisms.RingShooterWood;
+import org.firstinspires.ftc.teamcode.mechanisms.GoalLift;
+import org.firstinspires.ftc.teamcode.mechanisms.RingShooter;
 import org.firstinspires.ftc.teamcode.robots.Robot;
 import org.firstinspires.ftc.teamcode.robots.RobotWood;
-import org.firstinspires.ftc.teamcode.mechanisms.GoalLift;
 
 // TeleOp class for the new wooden robot
 @TeleOp(name="TeleOpWood", group="teleop")
@@ -22,8 +21,8 @@ public class TeleOpWood extends OpMode {
     public void init() {
         robot = new RobotWood(hardwareMap, this);
 
-        robot.goalLift.setClawPosition( GoalLiftWood.ClawPosition.OPEN );
-        robot.ringShooter.setPusherPosition( RingShooterWood.PusherPosition.RETRACTED );
+        robot.goalLift.setClawPosition( GoalLift.ClawPosition.OPEN );
+        robot.ringShooter.setPusherPosition( RingShooter.PusherPosition.RETRACTED );
 
         telemetry.addLine("init finished");
         telemetry.update();
@@ -45,24 +44,24 @@ public class TeleOpWood extends OpMode {
                 .addData("Ring Shooter", "Gp1: right trigger")
                 .addData("Ring Pusher ", "Gp1: left bumper")
                 .addData("Intake", "Gp1: left trigger");
-        telemetry.addLine();
+        addLine();
 
         // drive, strafe, rotate = gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x
-        double drivePower = ( gamepad1.left_stick_button ? 1.0 : 0.4 ); //powerChange
+        double drivePower = ( gamepad1.left_stick_button ? 1.0 : 0.4 );
         robot.mecanumDrive.drive( -gamepad1.left_stick_y*drivePower, gamepad1.left_stick_x*drivePower, gamepad1.right_stick_x*drivePower );
 
         // claw = gamepad1.b and gamepad1.x
         if(gamepad1.b)
-            robot.goalLift.setClawPosition( GoalLiftWood.ClawPosition.CLOSED );
+            robot.goalLift.setClawPosition( GoalLift.ClawPosition.CLOSED );
         if(gamepad1.x)
-            robot.goalLift.setClawPosition( GoalLiftWood.ClawPosition.OPEN);
+            robot.goalLift.setClawPosition( GoalLift.ClawPosition.OPEN);
 
         // goal lift = gamepad1.y and gamepad1.a
         double liftPower = 0.5;
         if( gamepad1.y )
-            robot.goalLift.setGoalLiftPosition( GoalLiftWood.LiftPosition.LIFTED, liftPower );
+            robot.goalLift.setGoalLiftPosition( GoalLift.LiftPosition.LIFTED, liftPower );
         if( gamepad1.a )
-            robot.goalLift.setGoalLiftPosition( GoalLiftWood.LiftPosition.LOWERED, liftPower );
+            robot.goalLift.setGoalLiftPosition( GoalLift.LiftPosition.LOWERED, liftPower );
 
 
         // ring shooter = gamepad1.right_trigger
@@ -73,11 +72,9 @@ public class TeleOpWood extends OpMode {
         if( gamepad1.left_bumper )
             robot.ringShooter.pushRing();
 
-
         // intake = gamepad1.left_trigger
-        //double intakePower = 0.75;
-        //robot.ringShooter.setIntakeMotorPower( gamepad1.left_trigger*intakePower );
-
+        double intakePower = 0.75;
+        robot.ringShooter.setIntakeMotorPower( gamepad1.left_trigger*intakePower );
 
         addTelemetry();
 
@@ -87,43 +84,37 @@ public class TeleOpWood extends OpMode {
 
     public void addTelemetry() {
 
-        telemetry.addData("left_stick_y", gamepad1.left_stick_y)
-                .addData("left_stick_x", gamepad1.left_stick_x)
-                .addData("right_stick_x", gamepad1.right_stick_x);
-
-        telemetry.addLine();
+        telemetry.addLine("left_stick_y  = " + gamepad1.left_stick_y);
+        telemetry.addLine("left_stick_x  = " + gamepad1.left_stick_x);
+        telemetry.addLine("right_stick_x = " + gamepad1.right_stick_x);
+        addLine();
 
         telemetry.addLine("longitudinal position = " + robot.tracker.getLongitudinalPosition() + " (ticks), "
                 + robot.mecanumDrive.convertTicksDist( robot.tracker.getLongitudinalPosition()) + " (in)" );
         telemetry.addLine("lateral position = " + robot.tracker.getLateralPosition() + " (ticks), "
                 + robot.mecanumDrive.convertTicksDist( robot.tracker.getLateralPosition()) + " (in)" );
-
-        telemetry.addLine();
+        addLine();
 
         telemetry.addLine( "Claw Position = " + robot.goalLift.getCurrentClawPosition() + " :: "  + robot.goalLift.getClawPosition() );
         telemetry.addLine( "Lift Position = " + robot.goalLift.getCurrentLiftPosition() + " :: " + robot.goalLift.getLiftPower() );
+        addLine();
 
+        telemetry.addLine( "Shooter Power = " + robot.ringShooter.getFlyWheelPower() );
+        addLine();
+
+        telemetry.addLine( "Pusher Position = " + robot.ringShooter.getPusherPosition() + " :: " + robot.ringShooter.getPusherLocation() );
+        addLine();
+
+        telemetry.addLine( "Intake Power = " + robot.ringShooter.getIntakePower() );
+        addLine();
+
+        telemetry.addLine("get360GyroHeading = " + robot.tracker.get360GyroHeading() );
+        telemetry.addLine("getGyroHeading    = " + robot.tracker.getGyroHeading() );
+
+    }
+
+    public void addLine() {
         telemetry.addLine();
-
-        telemetry.addLine( "Pusher Position = " + robot.ringShooter.getPusherPosition() );
-
-        telemetry.addLine();
-
-        //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
-
-
-        telemetry.addData("getNewGyroHeading", robot.tracker.get360GyroHeading() )
-                .addData("getGyroHeading", robot.tracker.getGyroHeading() );
-
-        /*
-        telemetry.addData("getGyroRoll", robot.tracker.getGyroRoll() )
-                .addData("getGyroPitch", robot.tracker.getGyroPitch() );
-
-        telemetry.addData("getGyroXVelocity", robot.tracker.getGyroXVelocity())
-                .addData("getGyroYVelocity", robot.tracker.getGyroYVelocity() )
-                .addData("getGyroZVelocity", robot.tracker.getGyroZVelocity() );
-         */
-
     }
 
 }

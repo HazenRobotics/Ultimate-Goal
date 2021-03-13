@@ -1,22 +1,20 @@
 package org.firstinspires.ftc.teamcode.robots;
 
-import android.util.Log;
-
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.drives.MecanumDrive;
-import org.firstinspires.ftc.teamcode.mechanisms.GoalLiftWood;
-import org.firstinspires.ftc.teamcode.mechanisms.RingShooterWood;
+import org.firstinspires.ftc.teamcode.mechanisms.GoalLift;
+import org.firstinspires.ftc.teamcode.mechanisms.RingShooter;
 import org.firstinspires.ftc.teamcode.utils.*;
 
 public class RobotWood extends Robot {
 
     public MecanumDrive mecanumDrive;
 
-    public GoalLiftWood goalLift;
+    public GoalLift goalLift;
 
-    public RingShooterWood ringShooter;
+    public RingShooter ringShooter;
 
     public Tracking tracker;
 
@@ -38,12 +36,12 @@ public class RobotWood extends Robot {
         super.driveTrain = new MecanumDrive(hw);
         mecanumDrive = (MecanumDrive) driveTrain;
         tracker = new Tracking(mecanumDrive, hw);
-        goalLift = new GoalLiftWood(hw, OPEN_POSTITION, CLOSED_POSTITION );
-        ringShooter = new RingShooterWood(hw, FLY_WHEEL_RADIUS, PUSHED_POSTITION, RETRACTED_POSTITION );
+        goalLift = new GoalLift(hw, OPEN_POSTITION, CLOSED_POSTITION );
+        ringShooter = new RingShooter(hw, FLY_WHEEL_RADIUS, PUSHED_POSTITION, RETRACTED_POSTITION );
         tensorFlowUtil = new TensorFlowUtil(hw, op);
     }
 
-    public void dropOffGoal() { Log.e("|-|-|-| ", "dropOffGoal();");
+    public void dropOffGoal() { Robot.writeToDefaultFile("dropOffGOal()", true, true );
 
         TensorFlowUtil.Stack stackPos = tensorFlowUtil.getStack();
 
@@ -62,7 +60,7 @@ public class RobotWood extends Robot {
 
     public void driveToZoneA() { // 0 rings :: target zone A
 
-        Log.e("|-|-|-| ", "driveToZonA();");
+        Robot.writeToDefaultFile( "driveToZoneA()", true, true);
 
         telemetry.addLine( "driveToZoneA()" );
         telemetry.update();
@@ -77,7 +75,7 @@ public class RobotWood extends Robot {
 
     public void driveToZoneB() { // 1 ring :: target zone B
 
-        Log.e("|-|-|-| ", "driveToZoneB()");
+        Robot.writeToDefaultFile( "driveToZoneB()", true, true);
 
         telemetry.addLine( "driveToZoneB()" );
         telemetry.update();
@@ -92,7 +90,7 @@ public class RobotWood extends Robot {
 
     public void driveToZoneC() { // 4 rings :: target zone C
 
-        Log.e("|-|-|-| ", "driveToZoneC();");
+        Robot.writeToDefaultFile( "driveToZoneC()", true, true);
 
         telemetry.addLine( "driveToZoneC()" );
         telemetry.update();

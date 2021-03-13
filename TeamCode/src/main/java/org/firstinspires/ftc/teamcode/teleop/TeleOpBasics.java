@@ -10,8 +10,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.road_runner.util.Encoder;
 
-@TeleOp(name="TeleOpDriverTest", group="teleop")
-public class TeleOpTest extends OpMode
+@TeleOp(name="TeleOpBasics", group="teleop")
+public class TeleOpBasics extends OpMode
 {
     DcMotor frontLeftMotor;
     DcMotor frontRightMotor;

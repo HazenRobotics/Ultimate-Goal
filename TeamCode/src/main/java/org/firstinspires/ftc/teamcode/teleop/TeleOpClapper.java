@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.robots.Robot;
 import org.firstinspires.ftc.teamcode.robots.RobotClapper;
 
 // TeleOp class for the old clapper robot
-@TeleOp(name="teleopClapper", group="teleop")
+@TeleOp(name="TeleOpClapper", group="teleop")
 public class TeleOpClapper extends OpMode {
 
     Robot robot;

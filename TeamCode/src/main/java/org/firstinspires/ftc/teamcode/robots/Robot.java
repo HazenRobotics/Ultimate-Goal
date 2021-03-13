@@ -24,6 +24,7 @@ import java.util.Date;
  * This class sets up and manages a robot
  */
 public abstract class Robot {
+
     HardwareMap hardwareMap;
     OpMode opMode;
     Telemetry telemetry;
@@ -34,22 +35,7 @@ public abstract class Robot {
     // drive
     public Drive driveTrain;
 
-    //mechanisms
-    //RingShooter shooter;
-    //GoalLift lift;
-
-    //Vuforia
-    VuforiaLocalization vuforiaLocalization;
-    private final String VUFORIA_TRACKABLES_ASSET_NAME = "Ultimate Goal";
-    String vuforiaKey;
-
-    //Tensor Flow
-    TensorFlow tfod;
-    private final String TFOD_MODEL_ASSET_NAME = "UltimateGoal.tflite";
-    private final String[] TFOD_MODEL_LABELS = {"Quad", "Single"};
-
     private static final String DEFAULT_LOG_FILE_NAME = "*robotLog.txt";
-
 
     /**
      * Creates a Robot
@@ -60,44 +46,45 @@ public abstract class Robot {
         this.opMode = op;
         telemetry = opMode.telemetry;
 
-        vuforiaKey = hardwareMap.appContext.getResources().getString(R.string.vuforiakey);
-
-        //drive type
-
-        //mechanisms
-        //shooter = new RingShooter(hw);
-        //lift = new GoalLift(hw);
-
-        //Vuforia.startVuforiaEngine(VUFORIA_KEY, "webcam", true, hw);
-        //vuforiaNavigation = new VuforiaNavigation(VUFORIA_TRACKABLES_ASSET_NAME);
-        //tfod = new TensorFlow(TFOD_MODEL_ASSET_NAME, 0.8f, true, hardwareMap, TFOD_MODEL_LABELS);
-
+        //vuforiaKey = hardwareMap.appContext.getResources().getString(R.string.vuforiakey);
 
         //Bulk Caching to decrease cycle times
         for (LynxModule module : hw.getAll(LynxModule.class)) {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
-
-
     }
 
+    /**
+     * writes to the default file *robotLog.txt
+     * @param writeText what the method will write to the fill (plus the timeStamp if includeTimeStamp is true)
+     * @param isAppending true: will append to the file if it exists, false: will create a new file
+     * @param includeTimeStamp will include the timeStamp for when the method is called
+     */
     public static void writeToDefaultFile( String writeText, boolean isAppending, boolean includeTimeStamp ) {
+        Log.e( "|-|-|-|", writeText );
         writeAFile( DEFAULT_LOG_FILE_NAME, writeText, isAppending, includeTimeStamp );
     }
 
+    /**
+     *
+     * @param fileName the name of the file to write to
+     * @param writeText what the method will write to the fill (plus the timeStamp if includeTimeStamp is true)
+     * @param isAppending true: will append to the file if it exists, false: will create a new file
+     * @param includeTimeStamp will include the timeStamp for when the method is called
+     */
     public static void writeAFile(String fileName, String writeText, boolean isAppending, boolean includeTimeStamp ){
 
         // "\n" = System.lineSeparator()
 
         String time = "";
         if( includeTimeStamp ) {
-            SimpleDateFormat formatter1 = new SimpleDateFormat("MM-dd HH:mm:ss");
+            SimpleDateFormat dateFormatter = new SimpleDateFormat("MM-dd HH:mm:ss");
             Date date = new Date();
-            time = formatter1.format(date) + " :: ";
+            time = dateFormatter.format(date) + " :: ";
         }
 
-        String path = Environment.getExternalStorageDirectory().getPath() + "/" + "FIRST" + "/";
         //".../Internal Storage/";
+        String path = Environment.getExternalStorageDirectory().getPath() + "/" + "FIRST" + "/";
 
         try {
             FileWriter writer = new FileWriter( new File( path + fileName ), isAppending );
@@ -105,7 +92,7 @@ public abstract class Robot {
             writer.close();
         } catch ( IOException e ) {
             e.printStackTrace();
-            Log.e( "|-|-|-| ", e.getStackTrace().toString() );
+            Robot.writeToDefaultFile( e.getStackTrace().toString(), true, true);
         }
 
     }

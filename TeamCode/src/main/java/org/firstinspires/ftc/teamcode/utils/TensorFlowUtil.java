@@ -90,7 +90,7 @@ public class TensorFlowUtil {
 
             opMode.telemetry.addLine( "stackRecognition #" + tempLoop + " : " + stackRecognitions[tempLoop] );
             opMode.telemetry.update();
-            Log.e( "|-|-|-| ", "stackRecognition #" + tempLoop + " : " + stackRecognitions[tempLoop++] );
+            Robot.writeToDefaultFile( "stackRecognition #" + tempLoop + " : " + stackRecognitions[tempLoop++], true, true);
 
             if( singles + quads >= 5 )
                 break;
@@ -109,7 +109,7 @@ public class TensorFlowUtil {
 
         loopRunTime = opMode.getRuntime() - startTime;
 
-        Log.e( "|-|-|-| ", "finished objectDeterminationLoop [in " + loopRunTime + "  seconds]" );
+        Robot.writeToDefaultFile( "finished objectDeterminationLoop [in " + loopRunTime + "  seconds]", true, true);
     }
 
     void objectDeterminationLoop() { Log.e( "|-|-|-| ", "objectDeterminationLoop2" );
@@ -119,22 +119,19 @@ public class TensorFlowUtil {
         while( stackRecognitions2.get(tempLoop) == Stack.NONE ) {
             opMode.telemetry.addLine( "stackRecognition #" + tempLoop + " : " + stackRecognitions2.get(tempLoop));
             opMode.telemetry.update();
-            Log.e( "|-|-|-| ", "stackRecognition #" + tempLoop + " : " + stackRecognitions2.get(tempLoop++) );
+            Robot.writeToDefaultFile( "stackRecognition #" + tempLoop + " : " + stackRecognitions2.get(tempLoop++), true, true);
             stackRecognitions2.add(identifyObjects() );
-            //Log.e( "|-|-|-| ", "stackRecognition #" + i + " : " + ( stackRecognitions[i] != Stack.NONE ? "" + stackRecognitions[i] : "") );
+            //Robot.writeToDefaultFile( "stackRecognition #" + i + " : " + ( stackRecognitions[i] != Stack.NONE ? "" + stackRecognitions[i] : ""), true, true);
         }
         opMode.telemetry.addLine( "stackRecognition #" + tempLoop + " : " + stackRecognitions2.get(tempLoop));
         opMode.telemetry.update();
-        Log.e( "|-|-|-| ", "stackRecognition #" + tempLoop + " : " + stackRecognitions2.get(tempLoop++) );
+        Robot.writeToDefaultFile( "stackRecognition #" + tempLoop + " : " + stackRecognitions2.get(tempLoop++), true, true);
         stackRecognitions2.add(identifyObjects() );
 
         int nones = 0, singles = 0, quads = 0;
 
         for( int i = 0; i < tempLoop; i++ ) {
             switch( stackRecognitions2.get(i) ) {
-                /*case NONE:
-                    nones++;
-                    break;*/
                 case SINGLE:
                     singles++;
                     break;
@@ -144,13 +141,6 @@ public class TensorFlowUtil {
             }
         }
 
-        /*
-        String loggedArray = "";
-        for( int i = 0; i < loop; i++ )
-            loggedArray += ( "| Loop " + i + " :: " + stackRecognitions[i] + " |  -  " );
-        Log.e( "|-|-|-| ", "here:" + loggedArray );
-         */
-
         if( nones > singles && nones > quads )
             setStack( Stack.NONE );
         else if( singles > nones && singles > quads )
@@ -158,17 +148,14 @@ public class TensorFlowUtil {
         else if( quads > singles && quads > nones )
             setStack( Stack.QUAD );
         else
-            setStack( Stack.NONE ); //Log.e( "|-|-|-| ", "didn't set the stack to anything" );
-        Log.e( "|-|-|-| ", "finished objectDeterminationLoop2" );
-
-
+            setStack( Stack.NONE );
+        Robot.writeToDefaultFile( "finished objectDeterminationLoop2", true, true);
     }
 
     void stopTF() {
         tensorFlow.shutdown();
         if(vuforia.isRunning())
             vuforia.close();
-
     }
 
     public void deactivateTensorFlow() {
@@ -187,15 +174,13 @@ public class TensorFlowUtil {
         stack = newStack;
     }
 
-    public void runStackDetection( int loops ) { Robot.writeToDefaultFile( "******** Main Class Started ********", true, true );
-
-        //Log.e("|-|-|-| ", "runStackDetection();");
+    public void runStackDetection( int loops ) { Robot.writeToDefaultFile( "runStackDetection()", true, true );
 
         startTF();
 
         objectDeterminationLoop(loops);
 
-        Log.e( "|-|-|-| ", "finished objectDeterminationLoop [in " + loopRunTime + "  seconds]" );
+        Robot.writeToDefaultFile( "finished objectDeterminationLoop [in " + loopRunTime + "  seconds]", true, true);
 
         stopTF();
     }

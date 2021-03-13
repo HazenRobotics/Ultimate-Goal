@@ -10,7 +10,6 @@ import org.firstinspires.ftc.teamcode.mechanisms.GoalLift;
 import org.firstinspires.ftc.teamcode.mechanisms.RingShooter;
 import org.firstinspires.ftc.teamcode.utils.FieldMap;
 import org.firstinspires.ftc.teamcode.utils.ShootingMath;
-import org.firstinspires.ftc.teamcode.utils.Tracking;
 
 public class ShooterBot extends Robot {
 
@@ -18,6 +17,12 @@ public class ShooterBot extends Robot {
 
     public GoalLift goalLift;
     public RingShooter ringShooter;
+
+    public static double PUSHED_POSTITION = 0.5;
+    public static double RETRACTED_POSTITION = 0.25;
+
+    public static double OPEN_POSTITION = 1.0;
+    public static double CLOSED_POSTITION = 0.0;
 
     //public Tracking tracker;
 
@@ -36,8 +41,8 @@ public class ShooterBot extends Robot {
         super.driveTrain = new MecanumDrive(hw);
         mecanumDrive = (MecanumDrive) driveTrain;
         //tracker = new Tracking(mecanumDrive, hw);
-        goalLift = new GoalLift(hw);
-        ringShooter = new RingShooter(hw, FLY_WHEEL_RADIUS, 0.5, 0.25);
+        goalLift = new GoalLift(hw, OPEN_POSTITION, CLOSED_POSTITION);
+        ringShooter = new RingShooter(hw, FLY_WHEEL_RADIUS, PUSHED_POSTITION, RETRACTED_POSTITION);
     }
 
     /**

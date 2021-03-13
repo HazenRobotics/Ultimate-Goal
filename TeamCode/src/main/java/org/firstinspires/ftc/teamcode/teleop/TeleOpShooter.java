@@ -34,7 +34,7 @@ public class TeleOpShooter extends OpMode {
             robot.ringShooter.launchRingPower(1.0);
         }*/
         if(gamepad1.b) {
-            robot.setIntakePower(robot.ringShooter.getCurrentIntakePower() == 0 ? 1 : 0);
+            robot.setIntakePower(robot.ringShooter.getIntakePower() == 0 ? 1 : 0);
         }
         if(gamepad1.y) {
             //robot.ringShooter.setFlyWheelMotorVelocity(robot.ringShooter.rightFlyWheelMotor.getPower() > 0 ? 0 : 20, AngleUnit.DEGREES);
