@@ -16,6 +16,12 @@ public class TeleOpWood extends OpMode {
     RobotWood robot;
 
     public static boolean doTelemetry = true;
+    
+    public static GoalLift.ClawPosition CLAW_CLOSED = GoalLift.ClawPosition.CLOSED;
+    public static GoalLift.ClawPosition CLAW_OPEN = GoalLift.ClawPosition.OPEN;
+
+    public static GoalLift.LiftPosition LIFT_LIFTED = GoalLift.LiftPosition.LIFTED;
+    public static GoalLift.LiftPosition LIFT_LOWERED = GoalLift.LiftPosition.LOWERED;
 
     @Override
     public void init() {
@@ -52,17 +58,16 @@ public class TeleOpWood extends OpMode {
 
         // claw = gamepad1.b and gamepad1.x
         if(gamepad1.b)
-            robot.goalLift.setClawPosition( GoalLift.ClawPosition.CLOSED );
+            robot.goalLift.setClawPosition( CLAW_CLOSED );
         if(gamepad1.x)
-            robot.goalLift.setClawPosition( GoalLift.ClawPosition.OPEN);
+            robot.goalLift.setClawPosition( CLAW_OPEN );
 
         // goal lift = gamepad1.y and gamepad1.a
         double liftPower = 0.5;
         if( gamepad1.y )
-            robot.goalLift.setGoalLiftPosition( GoalLift.LiftPosition.LIFTED, liftPower );
+            robot.goalLift.setGoalLiftPosition( LIFT_LIFTED, liftPower );
         if( gamepad1.a )
-            robot.goalLift.setGoalLiftPosition( GoalLift.LiftPosition.LOWERED, liftPower );
-
+            robot.goalLift.setGoalLiftPosition( LIFT_LOWERED, liftPower );
 
         // ring shooter = gamepad1.right_trigger
         double ringShooterPower = 0.75;

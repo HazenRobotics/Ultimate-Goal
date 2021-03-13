@@ -89,8 +89,8 @@ public class RingShooter {
         rightFlyWheelMotor = hw.get(DcMotorEx.class, rightFlyWheelName);
 
         //change these based on motor direction
-        leftFlyWheelMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightFlyWheelMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        leftFlyWheelMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        rightFlyWheelMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         pusher = hw.servo.get(pusherName);
     }

@@ -25,7 +25,7 @@ public class RobotWood extends Robot {
     public static double FLY_WHEEL_RADIUS = 0;
 
     public static double PUSHED_POSTITION = 0.4;
-    public static double RETRACTED_POSTITION = 0.0;
+    public static double RETRACTED_POSTITION = 0.05;
 
     public static double OPEN_POSTITION = 0.5;
     public static double CLOSED_POSTITION = 0.1;
