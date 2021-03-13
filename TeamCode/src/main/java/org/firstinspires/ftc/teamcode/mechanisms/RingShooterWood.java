@@ -22,12 +22,20 @@ public class RingShooterWood {
     public DcMotorEx rightFlyWheelMotor;
 
     public Servo pusher;
-    private double pushedPosition = 0.5;
-    private double retractedPosition = 0.25;
+    private double pushedPosition;
+    private double retractedPosition;
 
     private double flyWheelRadius;
     private static double launchAngle = 35; //degrees
     private double currentIntakePower;
+
+
+    public enum PusherPosition {
+        PUSHED,
+        RETRACTED
+    }
+
+    private PusherPosition currentPusherPosition;
 
 
     /**
@@ -51,7 +59,8 @@ public class RingShooterWood {
         this.flyWheelRadius = flyWheelRadius;
         this.pushedPosition = pushedPosition;
         this.retractedPosition = retractedPosition;
-        MotorConfigurationType motorConfigurationType = leftFlyWheelMotor.getMotorType().clone();
+        MotorConfigurationType motorConfigurationType;
+        motorConfigurationType = leftFlyWheelMotor.getMotorType().clone();
         motorConfigurationType.setAchieveableMaxRPMFraction(1.0);
         leftFlyWheelMotor.setMotorType(motorConfigurationType);
         motorConfigurationType = rightFlyWheelMotor.getMotorType().clone();
@@ -74,8 +83,8 @@ public class RingShooterWood {
         rightFlyWheelMotor = hw.get(DcMotorEx.class, rightFlyWheelName);
 
         //change these based on motor direction
-        leftFlyWheelMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightFlyWheelMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        leftFlyWheelMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        rightFlyWheelMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         pusher = hw.servo.get(pusherName);
     }
@@ -124,11 +133,32 @@ public class RingShooterWood {
         setFlyWheelMotorPower(0);
     }
 
+    public void setPusherPosition( PusherPosition position) {
+        switch (position) {
+            case PUSHED:
+                pusher.setPosition(pushedPosition);
+                currentPusherPosition = PusherPosition.PUSHED;
+                break;
+            case RETRACTED:
+                pusher.setPosition(retractedPosition);
+                currentPusherPosition = PusherPosition.RETRACTED;
+                break;
+        }
+    }
+
     public void pushRing() {
-        pusher.setPosition(pushedPosition);
+        setPusherPosition(PusherPosition.PUSHED);
         long currentTime = System.currentTimeMillis();
-        while (System.currentTimeMillis() < currentTime + 2000);
-        pusher.setPosition(retractedPosition);
+        while (System.currentTimeMillis() < currentTime + 1500);
+        setPusherPosition(PusherPosition.RETRACTED);
+    }
+
+    public double getPusherPosition() {
+        return pusher.getPosition();
+    }
+
+    public PusherPosition getCurrentPusherPosition() {
+        return currentPusherPosition;
     }
 
     public double getLaunchAngle() {

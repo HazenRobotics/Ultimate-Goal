@@ -17,7 +17,10 @@ public class GoalLiftWood {
 
     Servo claw;
 
-    private DcMotor motor;
+    private static double openClawPosition;
+    private static double closedClawPosition;
+
+    private DcMotor lift;
 
     private final int TICKS_TO_LIFTED_POSITION = 1440;
 
@@ -38,8 +41,8 @@ public class GoalLiftWood {
      * Creates a GoalLift with the default name for the motor
      * @param hw robot's hardware map
      */
-    public GoalLiftWood(HardwareMap hw ){
-        this(hw, "goalLift", "claw", "liftedButton", "loweredButton");
+    public GoalLiftWood(HardwareMap hw, double openPosition, double closedPosition ){
+        this(hw, "goalLift", "claw", "liftedButton", "loweredButton", openPosition, closedPosition );
     }
 
     /**
@@ -47,17 +50,20 @@ public class GoalLiftWood {
      * @param hw robot's hardware map
      * @param motorName name of the lift motor in the hardware map
      */
-    public GoalLiftWood(HardwareMap hw, String motorName, String clawName, String liftedButtonName, String loweredButtonName ) {
+    public GoalLiftWood(HardwareMap hw, String motorName, String clawName, String liftedButtonName, String loweredButtonName, double openPosition, double closedPosition ) {
 
-        motor = hw.dcMotor.get( motorName );
+        lift = hw.dcMotor.get( motorName );
 
         claw = hw.servo.get(clawName);
+
+        this.openClawPosition = openPosition;
+        this.closedClawPosition = closedPosition;
 
         liftedButton = hw.touchSensor.get(liftedButtonName);
         loweredButton = hw.touchSensor.get(loweredButtonName);
 
         //change this based on needed motor direction
-        motor.setDirection(DcMotorSimple.Direction.REVERSE);
+        lift.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
     /**
@@ -66,7 +72,7 @@ public class GoalLiftWood {
      */
     public void setGoalLiftPower( double power ) {
 
-        motor.setPower( power );
+        lift.setPower( power );
     }
 
     /**
@@ -99,11 +105,11 @@ public class GoalLiftWood {
     public void setClawPosition( ClawPosition position) {
         switch (position) {
             case OPEN:
-                claw.setPosition(1.0);
+                claw.setPosition(openClawPosition);
                 currentClawPosition = ClawPosition.OPEN;
                 break;
             case CLOSED:
-                claw.setPosition(0.5);
+                claw.setPosition(closedClawPosition);
                 currentClawPosition = ClawPosition.CLOSED;
                 break;
         }
@@ -117,14 +123,14 @@ public class GoalLiftWood {
     private void liftToPosition( LiftPosition position, double power ) {
         long time = System.currentTimeMillis() + 1000;
         if(position == LiftPosition.LIFTED) {
-            motor.setPower(power);
+            lift.setPower(power);
             while (!liftedButton.isPressed() && System.currentTimeMillis() < time);
         }
         else {
-            motor.setPower(-power);
+            lift.setPower(-power);
             while (!loweredButton.isPressed() && System.currentTimeMillis() < time);
         }
-        motor.setPower(0);
+        lift.setPower(0);
     }
 
     public double getClawPosition() {
@@ -132,7 +138,7 @@ public class GoalLiftWood {
     }
 
     public double getLiftPower() {
-        return motor.getPower();
+        return lift.getPower();
     }
 
     public ClawPosition getCurrentClawPosition() {

@@ -26,14 +26,20 @@ public class RobotWood extends Robot {
 
     public static double FLY_WHEEL_RADIUS = 0;
 
+    public static double PUSHED_POSTITION = 0.4;
+    public static double RETRACTED_POSTITION = 0.0;
+
+    public static double OPEN_POSTITION = 0.5;
+    public static double CLOSED_POSTITION = 0.1;
+
     public RobotWood(HardwareMap hw, OpMode op){
         super(hw, op);
 
         super.driveTrain = new MecanumDrive(hw);
         mecanumDrive = (MecanumDrive) driveTrain;
         tracker = new Tracking(mecanumDrive, hw);
-        goalLift = new GoalLiftWood(hw);
-        ringShooter = new RingShooterWood(hw, FLY_WHEEL_RADIUS, 0.5 /*test this */ , 0.25 /* test this */ );
+        goalLift = new GoalLiftWood(hw, OPEN_POSTITION, CLOSED_POSTITION );
+        ringShooter = new RingShooterWood(hw, FLY_WHEEL_RADIUS, PUSHED_POSTITION, RETRACTED_POSTITION );
         tensorFlowUtil = new TensorFlowUtil(hw, op);
     }
 

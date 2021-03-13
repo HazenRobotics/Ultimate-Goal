@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.mechanisms.GoalLiftWood;
+import org.firstinspires.ftc.teamcode.mechanisms.RingShooterWood;
 import org.firstinspires.ftc.teamcode.robots.Robot;
 import org.firstinspires.ftc.teamcode.robots.RobotWood;
 import org.firstinspires.ftc.teamcode.mechanisms.GoalLift;
@@ -21,7 +22,8 @@ public class TeleOpWood extends OpMode {
     public void init() {
         robot = new RobotWood(hardwareMap, this);
 
-        //robot.setClawPosition( GoalLiftWood.ClawPosition.OPEN );
+        robot.goalLift.setClawPosition( GoalLiftWood.ClawPosition.OPEN );
+        robot.ringShooter.setPusherPosition( RingShooterWood.PusherPosition.RETRACTED );
 
         telemetry.addLine("init finished");
         telemetry.update();
@@ -32,7 +34,7 @@ public class TeleOpWood extends OpMode {
     @Override
     public void loop() {
 
-        telemetry.addLine("            -Controls:");
+        telemetry.addLine("            Controls:");
         telemetry.addData("Drive ", "Gp1: left stick y (axis)")
                 .addData("Strafe", "Gp1: left stick x (axis)")
                 .addData("Rotate", "Gp1: right stick x (axis)")
@@ -49,8 +51,6 @@ public class TeleOpWood extends OpMode {
         double drivePower = ( gamepad1.left_stick_button ? 1.0 : 0.4 ); //powerChange
         robot.mecanumDrive.drive( -gamepad1.left_stick_y*drivePower, gamepad1.left_stick_x*drivePower, gamepad1.right_stick_x*drivePower );
 
-        Robot.writeToDefaultFile( "made it to robot.mecanumDrive.drive()", true, true );
-
         // claw = gamepad1.b and gamepad1.x
         if(gamepad1.b)
             robot.goalLift.setClawPosition( GoalLiftWood.ClawPosition.CLOSED );
@@ -64,7 +64,7 @@ public class TeleOpWood extends OpMode {
         if( gamepad1.a )
             robot.goalLift.setGoalLiftPosition( GoalLiftWood.LiftPosition.LOWERED, liftPower );
 
-        /*
+
         // ring shooter = gamepad1.right_trigger
         double ringShooterPower = 0.75;
         robot.ringShooter.setFlyWheelMotorPower( gamepad1.right_trigger*ringShooterPower );
@@ -72,7 +72,7 @@ public class TeleOpWood extends OpMode {
         // ring pusher (servo) = gamepad1.left_bumper
         if( gamepad1.left_bumper )
             robot.ringShooter.pushRing();
-         */
+
 
         // intake = gamepad1.left_trigger
         //double intakePower = 0.75;
@@ -100,8 +100,12 @@ public class TeleOpWood extends OpMode {
 
         telemetry.addLine();
 
-        telemetry.addLine( "Servo Position = " + robot.goalLift.getCurrentClawPosition() + " :: "  + robot.goalLift.getClawPosition() );
+        telemetry.addLine( "Claw Position = " + robot.goalLift.getCurrentClawPosition() + " :: "  + robot.goalLift.getClawPosition() );
         telemetry.addLine( "Lift Position = " + robot.goalLift.getCurrentLiftPosition() + " :: " + robot.goalLift.getLiftPower() );
+
+        telemetry.addLine();
+
+        telemetry.addLine( "Pusher Position = " + robot.ringShooter.getPusherPosition() );
 
         telemetry.addLine();
 
