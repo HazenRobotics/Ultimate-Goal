@@ -16,12 +16,6 @@ public class TeleOpWood extends OpMode {
     RobotWood robot;
 
     public static boolean doTelemetry = true;
-    
-    public static GoalLift.ClawPosition CLAW_CLOSED = GoalLift.ClawPosition.CLOSED;
-    public static GoalLift.ClawPosition CLAW_OPEN = GoalLift.ClawPosition.OPEN;
-
-    public static GoalLift.LiftPosition LIFT_LIFTED = GoalLift.LiftPosition.LIFTED;
-    public static GoalLift.LiftPosition LIFT_LOWERED = GoalLift.LiftPosition.LOWERED;
 
     @Override
     public void init() {
@@ -39,18 +33,7 @@ public class TeleOpWood extends OpMode {
     @Override
     public void loop() {
 
-        telemetry.addLine("            Controls:");
-        telemetry.addData("Drive ", "Gp1: left stick y (axis)")
-                .addData("Strafe", "Gp1: left stick x (axis)")
-                .addData("Rotate", "Gp1: right stick x (axis)")
-                .addData("Open Claw ", "Gp1: x")
-                .addData("Close Claw", "Gp1: b")
-                .addData("Lift Goal Lift ", "Gp1: y")
-                .addData("Lower Goal Lift", "Gp1: x")
-                .addData("Ring Shooter", "Gp1: right trigger")
-                .addData("Ring Pusher ", "Gp1: left bumper")
-                .addData("Intake", "Gp1: left trigger");
-        addLine();
+        addControlTelemtry();
 
         // drive, strafe, rotate = gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x
         double drivePower = ( gamepad1.left_stick_button ? 1.0 : 0.4 );
@@ -58,16 +41,16 @@ public class TeleOpWood extends OpMode {
 
         // claw = gamepad1.b and gamepad1.x
         if(gamepad1.b)
-            robot.goalLift.setClawPosition( CLAW_CLOSED );
+            robot.goalLift.setClawPosition( robot.CLAW_CLOSED );
         if(gamepad1.x)
-            robot.goalLift.setClawPosition( CLAW_OPEN );
+            robot.goalLift.setClawPosition( robot.CLAW_OPEN );
 
         // goal lift = gamepad1.y and gamepad1.a
         double liftPower = 0.5;
         if( gamepad1.y )
-            robot.goalLift.setGoalLiftPosition( LIFT_LIFTED, liftPower );
+            robot.goalLift.setGoalLiftPosition( robot.LIFT_LIFTED, liftPower );
         if( gamepad1.a )
-            robot.goalLift.setGoalLiftPosition( LIFT_LOWERED, liftPower );
+            robot.goalLift.setGoalLiftPosition( robot.LIFT_LOWERED, liftPower );
 
         // ring shooter = gamepad1.right_trigger
         double ringShooterPower = 0.75;
@@ -81,22 +64,33 @@ public class TeleOpWood extends OpMode {
         double intakePower = 0.75;
         robot.ringShooter.setIntakeMotorPower( gamepad1.left_trigger*intakePower );
 
-        if( gamepad1.dpad_up )
-            robot.goalLift.setCurrentLiftPosition( LIFT_LIFTED );
-        if( gamepad1.dpad_down )
-            robot.goalLift.setCurrentLiftPosition( LIFT_LOWERED );
-
-        addTelemetry();
+        addInfoTelemetry();
 
         telemetry.update();
 
     }
 
-    public void addTelemetry() {
+    public void addControlTelemtry() {
 
-        telemetry.addLine("left_stick_y  = " + gamepad1.left_stick_y);
-        telemetry.addLine("left_stick_x  = " + gamepad1.left_stick_x);
-        telemetry.addLine("right_stick_x = " + gamepad1.right_stick_x);
+        telemetry.addLine("            Controls:");
+        telemetry.addData("Drive ", "Gp1: left stick y (axis)")
+                .addData("Strafe", "Gp1: left stick x (axis)")
+                .addData("Rotate", "Gp1: right stick x (axis)")
+                .addData("Open Claw ", "Gp1: x")
+                .addData("Close Claw", "Gp1: b")
+                .addData("Lift Goal Lift ", "Gp1: y")
+                .addData("Lower Goal Lift", "Gp1: x")
+                .addData("Ring Shooter", "Gp1: right trigger")
+                .addData("Ring Pusher ", "Gp1: left bumper")
+                .addData("Intake", "Gp1: left trigger");
+        addLine();
+    }
+
+    public void addInfoTelemetry() {
+
+        telemetry.addLine("left_stick_y  = " + gamepad1.left_stick_y );
+        telemetry.addLine("left_stick_x  = " + gamepad1.left_stick_x );
+        telemetry.addLine("right_stick_x = " + gamepad1.right_stick_x );
         addLine();
 
         telemetry.addLine("longitudinal position = " + robot.tracker.getLongitudinalPosition() + " (ticks), "
@@ -118,8 +112,8 @@ public class TeleOpWood extends OpMode {
         telemetry.addLine( "Intake Power = " + robot.ringShooter.getIntakePower() );
         addLine();
 
-        telemetry.addLine("get360GyroHeading = " + robot.tracker.get360GyroHeading() );
         telemetry.addLine("getGyroHeading    = " + robot.tracker.getGyroHeading() );
+        telemetry.addLine("get360GyroHeading = " + robot.tracker.get360GyroHeading() );
 
     }
 

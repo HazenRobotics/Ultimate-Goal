@@ -30,6 +30,12 @@ public class RobotWood extends Robot {
     public static double OPEN_POSTITION = 0.5;
     public static double CLOSED_POSTITION = 0.1;
 
+    public static final GoalLift.ClawPosition CLAW_CLOSED = GoalLift.ClawPosition.CLOSED;
+    public static final GoalLift.ClawPosition CLAW_OPEN = GoalLift.ClawPosition.OPEN;
+
+    public static final GoalLift.LiftPosition LIFT_LIFTED = GoalLift.LiftPosition.LIFTED;
+    public static final GoalLift.LiftPosition LIFT_LOWERED = GoalLift.LiftPosition.LOWERED;
+
     public RobotWood(HardwareMap hw, OpMode op){
         super(hw, op);
 
