@@ -153,12 +153,12 @@ public class RingShooter {
     public void setPusherPosition( PusherPosition position) {
         switch (position) {
             case PUSHED:
-                pusher.setPosition(pushedPosition);
                 pusherPosition = PusherPosition.PUSHED;
+                pusher.setPosition(pushedPosition);
                 break;
             case RETRACTED:
-                pusher.setPosition(retractedPosition);
                 pusherPosition = PusherPosition.RETRACTED;
+                pusher.setPosition(retractedPosition);
                 break;
         }
     }

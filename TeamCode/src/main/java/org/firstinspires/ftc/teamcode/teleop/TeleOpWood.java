@@ -81,6 +81,11 @@ public class TeleOpWood extends OpMode {
         double intakePower = 0.75;
         robot.ringShooter.setIntakeMotorPower( gamepad1.left_trigger*intakePower );
 
+        if( gamepad1.dpad_up )
+            robot.goalLift.setCurrentLiftPosition( LIFT_LIFTED );
+        if( gamepad1.dpad_down )
+            robot.goalLift.setCurrentLiftPosition( LIFT_LOWERED );
+
         addTelemetry();
 
         telemetry.update();
@@ -100,14 +105,14 @@ public class TeleOpWood extends OpMode {
                 + robot.mecanumDrive.convertTicksDist( robot.tracker.getLateralPosition()) + " (in)" );
         addLine();
 
-        telemetry.addLine( "Claw Position = " + robot.goalLift.getCurrentClawPosition() + " :: "  + robot.goalLift.getClawPosition() );
+        telemetry.addLine( "Claw Position = " + robot.goalLift.getClawLocation() + " :: "  + robot.goalLift.getClawPosition() );
         telemetry.addLine( "Lift Position = " + robot.goalLift.getCurrentLiftPosition() + " :: " + robot.goalLift.getLiftPower() );
         addLine();
 
         telemetry.addLine( "Shooter Power = " + robot.ringShooter.getFlyWheelPower() );
         addLine();
 
-        telemetry.addLine( "Pusher Position = " + robot.ringShooter.getPusherPosition() + " :: " + robot.ringShooter.getPusherLocation() );
+        telemetry.addLine( "Pusher Position = " + robot.ringShooter.getPusherLocation() + " :: " + robot.ringShooter.getPusherPosition() );
         addLine();
 
         telemetry.addLine( "Intake Power = " + robot.ringShooter.getIntakePower() );

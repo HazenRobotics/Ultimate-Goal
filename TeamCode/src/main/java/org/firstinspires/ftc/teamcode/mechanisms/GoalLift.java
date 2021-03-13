@@ -35,7 +35,7 @@ public class GoalLift {
 
     private LiftPosition currentLiftPosition;
 
-    private  ClawPosition currentClawPosition;
+    private ClawPosition currentClawPosition;
 
     /**
      * Creates a GoalLift with the default name for the motor
@@ -63,7 +63,7 @@ public class GoalLift {
         loweredButton = hw.touchSensor.get(loweredButtonName);
 
         //change this based on needed motor direction
-        lift.setDirection(DcMotorSimple.Direction.REVERSE);
+        lift.setDirection(DcMotorSimple.Direction.FORWARD);
     }
 
     /**
@@ -86,16 +86,16 @@ public class GoalLift {
                 if ( currentLiftPosition == LiftPosition.LIFTED)
                     break;
 
-                liftToPosition( LiftPosition.LIFTED, power );
                 currentLiftPosition = LiftPosition.LIFTED;
+                liftToPosition( LiftPosition.LIFTED, power );
                 break;
             }
             case LOWERED:{
-                if( currentLiftPosition == LiftPosition.LOWERED)
+                if( currentLiftPosition == LiftPosition.LOWERED )
                     break;
 
-                liftToPosition( LiftPosition.LOWERED, power );
                 currentLiftPosition = LiftPosition.LOWERED;
+                liftToPosition( LiftPosition.LOWERED, power );
                 break;
             }
         }
@@ -108,8 +108,8 @@ public class GoalLift {
                 currentClawPosition = ClawPosition.OPEN;
                 break;
             case CLOSED:
-                claw.setPosition(closedClawPosition);
                 currentClawPosition = ClawPosition.CLOSED;
+                claw.setPosition(closedClawPosition);
                 break;
         }
     }
@@ -132,18 +132,38 @@ public class GoalLift {
         lift.setPower(0);
     }
 
+    public void setCurrentLiftPosition( LiftPosition liftPosition ) {
+        currentLiftPosition = liftPosition;
+    }
+
+    /**
+     *
+     * @return the claw's position as a variable of double
+     */
     public double getClawPosition() {
         return claw.getPosition();
     }
 
+    /**
+     *
+     * @return the lift's power
+     */
     public double getLiftPower() {
         return lift.getPower();
     }
 
-    public ClawPosition getCurrentClawPosition() {
+    /**
+     *
+     * @return the claw's location as a variable of ClawPosition
+     */
+    public ClawPosition getClawLocation() {
         return currentClawPosition;
     }
 
+    /**
+     *
+     * @return the lift's location as a variable of LiftPosition
+     */
     public LiftPosition getCurrentLiftPosition() {
         return currentLiftPosition;
     }
