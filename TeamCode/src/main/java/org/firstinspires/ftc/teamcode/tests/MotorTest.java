@@ -8,7 +8,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.robots.ShooterBot;
 
 @TeleOp(name = "Motor test")
-@Disabled
 public class MotorTest extends OpMode {
 
     ShooterBot robot;
@@ -22,7 +21,9 @@ public class MotorTest extends OpMode {
     @Override
     public void loop() {
 
-        robot.ringShooter.setIntakeMotorPower(0.5);
+        robot.ringShooter.pusher.setPosition(gamepad1.right_stick_x);
+        telemetry.addData("Servo position", robot.ringShooter.pusher.getPosition());
+        telemetry.update();
 
     }
 }

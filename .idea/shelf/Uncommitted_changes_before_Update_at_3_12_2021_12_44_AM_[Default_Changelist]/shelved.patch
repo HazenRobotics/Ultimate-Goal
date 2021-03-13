@@ -1,0 +1,269 @@
+Index: TeamCode/src/main/java/org/firstinspires/ftc/teamcode/utils/GeneralPID.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package org.firstinspires.ftc.teamcode.utils;\r\n\r\nimport com.qualcomm.robotcore.eventloop.SyncdDevice;\r\nimport com.qualcomm.robotcore.hardware.PIDCoefficients;\r\nimport com.qualcomm.robotcore.hardware.PIDFCoefficients;\r\n\r\nimport org.firstinspires.ftc.teamcode.robots.Robot;\r\n\r\npublic class GeneralPID {\r\n\r\n    PIDCoefficients coefficients;\r\n\r\n    double previousTime;\r\n    double previousError;\r\n\r\n    double integral;\r\n\r\n    public GeneralPID( PIDCoefficients PIDCoeff ) {\r\n        coefficients = PIDCoeff;\r\n    }\r\n\r\n    /**\r\n     * target & curInput should be in the same unit\r\n     * @param target target variable\r\n     * @param curInput current input variable\r\n     * @return PID correction values\r\n     */\r\n    public double getPID( double target, double curInput ) {\r\n\r\n\r\n\r\n        if( previousTime == 0 ) previousTime = System.currentTimeMillis();\r\n        double time = System.currentTimeMillis() - previousTime;\r\n        double error = target - curInput; // Error = Target - Actual\r\n        integral += (error * time); // Integral is increased by the error*time\r\n        double derivative = time == 0 ? 0 : (error - previousError) / time; // just error / time\r\n\r\n        String info = \"\";\r\n        /*\r\n        info += \"getPID( target, curInput) :: getPID( \" + target + \", \" + curInput + \" )\" + System.lineSeparator();\r\n        info += \"time :: \" + time + System.lineSeparator();\r\n        info += \"error :: \" + error + System.lineSeparator();\r\n        info += \"integral :: \" + integral + System.lineSeparator();\r\n        info += \"derivative :: \" + derivative + System.lineSeparator();\r\n        info += \"previousError :: \" + previousError + System.lineSeparator();\r\n        info += \"previousTime :: \" + previousTime + System.lineSeparator();\r\n        info += \"return :: \" + (coefficients.p * error + coefficients.i * this.integral + coefficients.d * derivative) + System.lineSeparator();\r\n        info += \"-----------------------------------------------\" + System.lineSeparator();\r\n         */\r\n\r\n        if( target == 15 ) Robot.writeToDefaultFile( info, true, false );\r\n\r\n        previousError = error; // set previousError to current error\r\n        previousTime = System.currentTimeMillis(); // set previousTime to current time\r\n\r\n        return coefficients.p * error + coefficients.i * this.integral + coefficients.d * derivative;\r\n    }\r\n\r\n    public void reset() {\r\n        integral = 0;\r\n        previousTime =0;\r\n        previousError = 0;\r\n    }\r\n\r\n\r\n\r\n\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- TeamCode/src/main/java/org/firstinspires/ftc/teamcode/utils/GeneralPID.java	(revision d0b8fbeaab2a05a9353039fbad523e23040aea30)
++++ TeamCode/src/main/java/org/firstinspires/ftc/teamcode/utils/GeneralPID.java	(date 1614381081719)
+@@ -15,6 +15,9 @@
+ 
+     double integral;
+ 
++    final static double minPow = 0.3;
++    final static double maxPow = 1.0;
++
+     public GeneralPID( PIDCoefficients PIDCoeff ) {
+         coefficients = PIDCoeff;
+     }
+@@ -27,8 +30,6 @@
+      */
+     public double getPID( double target, double curInput ) {
+ 
+-
+-
+         if( previousTime == 0 ) previousTime = System.currentTimeMillis();
+         double time = System.currentTimeMillis() - previousTime;
+         double error = target - curInput; // Error = Target - Actual
+@@ -36,7 +37,7 @@
+         double derivative = time == 0 ? 0 : (error - previousError) / time; // just error / time
+ 
+         String info = "";
+-        /*
++
+         info += "getPID( target, curInput) :: getPID( " + target + ", " + curInput + " )" + System.lineSeparator();
+         info += "time :: " + time + System.lineSeparator();
+         info += "error :: " + error + System.lineSeparator();
+@@ -46,13 +47,17 @@
+         info += "previousTime :: " + previousTime + System.lineSeparator();
+         info += "return :: " + (coefficients.p * error + coefficients.i * this.integral + coefficients.d * derivative) + System.lineSeparator();
+         info += "-----------------------------------------------" + System.lineSeparator();
+-         */
++
+ 
+         if( target == 15 ) Robot.writeToDefaultFile( info, true, false );
+ 
+         previousError = error; // set previousError to current error
+         previousTime = System.currentTimeMillis(); // set previousTime to current time
+ 
++        /*
++        // NewValue = (((OldValue - OldMin) * (NewMax - NewMin)) / (OldMax - OldMin)) + NewMin
++        double power = (((OldValue - OldMin) * (maxPow - minPow)) / (OldMax - OldMin)) + minPow;
++        */
+         return coefficients.p * error + coefficients.i * this.integral + coefficients.d * derivative;
+     }
+ 
+Index: FtcRobotController/src/main/res/layout/activity_ftc_controller.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><!--\r\nCopyright (c) 2014, 2015 Qualcomm Technologies Inc\r\n\r\nAll rights reserved.\r\n\r\nRedistribution and use in source and binary forms, with or without modification,\r\nare permitted (subject to the limitations in the disclaimer below) provided that\r\nthe following conditions are met:\r\n\r\nRedistributions of source code must retain the above copyright notice, this list\r\nof conditions and the following disclaimer.\r\n\r\nRedistributions in binary form must reproduce the above copyright notice, this\r\nlist of conditions and the following disclaimer in the documentation and/or\r\nother materials provided with the distribution.\r\n\r\nNeither the name of Qualcomm Technologies Inc nor the names of its contributors\r\nmay be used to endorse or promote products derived from this software without\r\nspecific prior written permission.\r\n\r\nNO EXPRESS OR IMPLIED LICENSES TO ANY PARTY'S PATENT RIGHTS ARE GRANTED BY THIS\r\nLICENSE. THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS\r\n\"AS IS\" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,\r\nTHE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE\r\nARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE\r\nFOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL\r\nDAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR\r\nSERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER\r\nCAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,\r\nOR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE\r\nOF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.\r\n-->\r\n\r\n<LinearLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n              xmlns:tools=\"http://schemas.android.com/tools\"\r\n              android:layout_width=\"match_parent\"\r\n              android:layout_height=\"match_parent\"\r\n              xmlns:style=\"http://schemas.android.com/apk/res-auto\"\r\n              tools:context=\"org.firstinspires.ftc.robotcontroller.internal.FtcRobotControllerActivity\"\r\n              android:focusable=\"true\"\r\n              android:id=\"@+id/entire_screen\"\r\n              android:orientation=\"vertical\">\r\n\r\n  <!-- black bar on top -->\r\n  <RelativeLayout\r\n    android:id=\"@+id/top_bar\"\r\n    android:layout_width=\"fill_parent\"\r\n    android:layout_height=\"80dp\"\r\n    android:background=\"@color/background_black\">\r\n\r\n    <ImageView\r\n      android:id=\"@+id/robotIcon\"\r\n      android:src=\"@drawable/icon_robotcontroller\"\r\n      android:layout_width=\"wrap_content\"\r\n      android:layout_height=\"fill_parent\"\r\n      android:adjustViewBounds=\"true\"\r\n      android:layout_margin=\"1dp\"/>\r\n\r\n    <TextView\r\n      android:id=\"@+id/textDeviceName\"\r\n      android:layout_toEndOf=\"@id/robotIcon\"\r\n      android:layout_width=\"wrap_content\"\r\n      android:layout_height=\"wrap_content\"\r\n      android:textColor=\"?attr/textWhite\"\r\n      android:textAppearance=\"?android:attr/textAppearanceMedium\"\r\n      android:padding=\"8dp\"\r\n      android:textStyle=\"bold\"/>\r\n\r\n    <ImageButton\r\n      android:id=\"@+id/menu_buttons\"\r\n      android:scaleType=\"fitXY\"\r\n      android:layout_width=\"wrap_content\"\r\n      android:layout_height=\"wrap_content\"\r\n      android:src=\"@drawable/icon_menu\"\r\n      android:background=\"@android:color/transparent\"\r\n      android:padding=\"15dp\"\r\n      android:adjustViewBounds=\"true\"\r\n      android:layout_alignParentEnd=\"true\"\r\n      android:layout_centerInParent=\"true\"\r\n      android:layout_centerHorizontal=\"true\"\r\n      android:layout_margin=\"10dp\"/>\r\n\r\n  </RelativeLayout>\r\n  <!-- end of black bar -->\r\n\r\n  <include layout=\"@layout/header\"\r\n           android:id=\"@+id/included_header\"/>\r\n\r\n  <RelativeLayout\r\n    android:background=\"@color/background_very_light_grey\"\r\n    android:id=\"@+id/RelativeLayout\"\r\n    android:layout_width=\"match_parent\"\r\n    android:layout_height=\"match_parent\"\r\n    android:keepScreenOn=\"true\"\r\n    android:paddingBottom=\"@dimen/activity_vertical_margin\"\r\n    android:paddingLeft=\"@dimen/activity_horizontal_margin\"\r\n    android:paddingRight=\"@dimen/activity_horizontal_margin\"\r\n    android:paddingTop=\"@dimen/activity_vertical_margin\" >\r\n\r\n    <TextView\r\n      android:id=\"@+id/textNetworkConnectionStatus\"\r\n      android:layout_width=\"match_parent\"\r\n      android:layout_height=\"wrap_content\"\r\n      android:visibility=\"invisible\"\r\n      android:text=\"\" />\r\n\r\n    <TextView\r\n      android:id=\"@+id/textRobotStatus\"\r\n      android:layout_width=\"match_parent\"\r\n      android:layout_height=\"wrap_content\"\r\n      android:layout_below=\"@+id/textNetworkConnectionStatus\"\r\n      android:visibility=\"invisible\"\r\n      android:text=\"\" />\r\n\r\n    <TextView\r\n      android:id=\"@+id/textOpMode\"\r\n      android:layout_width=\"match_parent\"\r\n      android:layout_height=\"wrap_content\"\r\n      android:layout_below=\"@+id/textRobotStatus\"\r\n      android:visibility=\"invisible\"\r\n      android:text=\"\" />\r\n\r\n    <FrameLayout\r\n      android:layout_width=\"match_parent\"\r\n      android:layout_height=\"wrap_content\"\r\n      android:layout_below=\"@+id/textOpMode\"\r\n      android:layout_above=\"@+id/textGamepad1\">\r\n\r\n      <LinearLayout\r\n          android:id=\"@+id/monitorContainer\"\r\n          android:layout_width=\"match_parent\"\r\n          android:layout_height=\"match_parent\"\r\n          android:orientation=\"vertical\">\r\n\r\n        <LinearLayout\r\n            android:id=\"@+id/cameraMonitorViewId\"\r\n            android:visibility=\"gone\"\r\n            android:layout_width=\"match_parent\"\r\n            android:layout_height=\"0dp\"\r\n            android:layout_weight=\"1\"\r\n            android:orientation=\"vertical\"\r\n            />\r\n        <FrameLayout\r\n            android:id=\"@+id/tfodMonitorViewId\"\r\n            android:visibility=\"gone\"\r\n            android:layout_width=\"match_parent\"\r\n            android:layout_height=\"0dp\"\r\n            android:layout_weight=\"1\"\r\n            />\r\n\r\n        </LinearLayout>\r\n\r\n      <!-- When visible, the error message will overlay and thus partially\r\n           obscure part of the camera monitor. We make this trade off so as to\r\n           allow for a bigger camera monitor view in the common case when the\r\n           error is not in fact present\r\n        -->\r\n        <TextView style=\"@style/FtcTextViewStyleBold\"\r\n            android:id=\"@+id/textErrorMessage\"\r\n            android:layout_width=\"match_parent\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:text=\"\"\r\n            android:visibility=\"invisible\"\r\n            android:textColor=\"?attr/textMediumDark\" />\r\n\r\n    </FrameLayout>\r\n\r\n    <TextView\r\n      android:id=\"@+id/textGamepad1\"\r\n      android:layout_width=\"match_parent\"\r\n      android:layout_height=\"wrap_content\"\r\n      android:layout_above=\"@+id/textGamepad2\"\r\n      android:visibility=\"invisible\"\r\n      android:text=\"\" />\r\n\r\n    <TextView\r\n      android:id=\"@+id/textGamepad2\"\r\n      android:layout_width=\"match_parent\"\r\n      android:layout_height=\"wrap_content\"\r\n      android:layout_alignParentBottom=\"true\"\r\n      android:visibility=\"invisible\"\r\n      android:text=\"\" />\r\n\r\n  </RelativeLayout>\r\n\r\n  <WebView\r\n    android:id=\"@+id/webViewBlocksRuntime\"\r\n    android:layout_width=\"1dp\"\r\n    android:layout_height=\"1dp\" />\r\n\r\n</LinearLayout>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- FtcRobotController/src/main/res/layout/activity_ftc_controller.xml	(revision d0b8fbeaab2a05a9353039fbad523e23040aea30)
++++ FtcRobotController/src/main/res/layout/activity_ftc_controller.xml	(date 1614374824676)
+@@ -83,8 +83,10 @@
+   </RelativeLayout>
+   <!-- end of black bar -->
+ 
+-  <include layout="@layout/header"
+-           android:id="@+id/included_header"/>
++  <include
++      android:id="@+id/included_header"
++      layout="@layout/header"
++      android:layout_height="49dp" />
+ 
+   <RelativeLayout
+     android:background="@color/background_very_light_grey"
+Index: TeamCode/src/main/java/org/firstinspires/ftc/teamcode/utils/Tracking.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package org.firstinspires.ftc.teamcode.utils;\r\n\r\nimport com.qualcomm.hardware.bosch.BNO055IMU;\r\nimport com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;\r\nimport com.qualcomm.robotcore.hardware.HardwareMap;\r\nimport com.qualcomm.robotcore.hardware.PIDCoefficients;\r\n\r\nimport org.firstinspires.ftc.robotcore.external.navigation.*;\r\nimport org.firstinspires.ftc.teamcode.drives.*;\r\nimport org.firstinspires.ftc.teamcode.robots.Robot;\r\n\r\npublic class Tracking {\r\n\r\n    BNO055IMU gyro;\r\n    MecanumDrive mecanumDrive;\r\n    Orientation angles;\r\n    Acceleration gravity;\r\n\r\n    // double P = 0.0135, I = 0.02025, D = 0;\r\n    GeneralPID gyroDrivePID = new GeneralPID( new PIDCoefficients( 0.025, 0.0, 0.0 ) );\r\n    GeneralPID drivePID = new GeneralPID( new PIDCoefficients( 0.05, 0.00, 0.001 ) );\r\n\r\n    GeneralPID gyroStrafePID = new GeneralPID( new PIDCoefficients( 0.07, 0.0, 0.0 ) );\r\n    GeneralPID strafePID = new GeneralPID( new PIDCoefficients( 0, 0, 0 ) );\r\n\r\n    final static double PULSES_PER_REVOLUTION = 250;\r\n    final static double GEAR_RATIO = 0.25;\r\n\r\n    public Tracking( MecanumDrive mDrv, HardwareMap hw ) {\r\n\r\n        mecanumDrive = mDrv;\r\n        initGyro(hw);\r\n    }\r\n\r\n    /**\r\n     * returns the Longitudinal (forward/backward) distance on the encoders from where it started\r\n     * @return mecanumDrive.getBackLeftPosition();\r\n     */\r\n    public int getLongitudinalPosition() {\r\n        return mecanumDrive.getBackLeftPosition();\r\n    }\r\n\r\n    /**\r\n     * returns the Lateral (left/right) distance on the encoders from where it started\r\n     * @return mecanumDrive.getBackLeftPosition();\r\n     */\r\n    public int getLateralPosition() {\r\n        return mecanumDrive.getFrontLeftPosition();\r\n    }\r\n\r\n\r\n    /**\r\n     * returns the Longitudinal (forward/backward) distance on the encoders from where it started\r\n     * @return mecanumDrive.getBackLeftPosition();\r\n     */\r\n    public float getXPosition() {\r\n        return getLateralPosition();\r\n    }\r\n\r\n    /**\r\n     * returns the Lateral (left/right) distance on the encoders from where it started\r\n     * @return mecanumDrive.getBackLeftPosition();\r\n     */\r\n    public float getYPosition() {\r\n        return getLongitudinalPosition();\r\n    }\r\n\r\n    public void initGyro( HardwareMap hw ) {\r\n        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();\r\n        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;\r\n        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;\r\n        parameters.calibrationDataFile = \"BNO055IMUCalibration.json\"; // see the calibration sample opmode\r\n        parameters.loggingEnabled      = true;\r\n        parameters.loggingTag          = \"IMU\";\r\n        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();\r\n\r\n        gyro = hw.get( BNO055IMU.class, \"imu\" );\r\n        gyro.initialize(parameters);\r\n\r\n        angles = gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);\r\n    }\r\n\r\n\r\n\r\n    /**\r\n     *\r\n     * @param distanceToTravel the distance to move in inches\r\n     * @param circumference the circumference of the wheel that has the encoder\r\n     * @return totalTicks - the amount of ticks to move forward\r\n     */\r\n    public static int convertDistTicks( double distanceToTravel, double circumference )\r\n    {\r\n        double revolutions = distanceToTravel / circumference;\r\n        int totalTicks = (int) Math.round( (revolutions * PULSES_PER_REVOLUTION) / GEAR_RATIO );\r\n\r\n        return totalTicks;\r\n    }\r\n    public static int convertTicksDist( double ticksToTravel, double circumference )\r\n    {\r\n        double calculations = ticksToTravel * circumference * GEAR_RATIO;\r\n        int totalDistance = (int) Math.round( calculations / PULSES_PER_REVOLUTION );\r\n\r\n        return totalDistance;\r\n    }\r\n\r\n    public double getGyroXVelocity() {\r\n        return gyro.getVelocity().xVeloc;\r\n    }\r\n\r\n    public double getGyroYVelocity() {\r\n        return gyro.getVelocity().yVeloc;\r\n    }\r\n\r\n    public double getGyroZVelocity() {\r\n        return gyro.getVelocity().zVeloc;\r\n    }\r\n\r\n    public float getGyroHeading() {\r\n        angles = gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);\r\n        return angles.firstAngle;\r\n    }\r\n\r\n    public float getGyroRoll() {\r\n        angles = gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);\r\n        return angles.secondAngle;\r\n    }\r\n\r\n    public float getGyroPitch() {\r\n        angles = gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);\r\n        return angles.thirdAngle;\r\n    }\r\n\r\n    public float get360GyroHeading() {\r\n        return (-getGyroHeading() + 360) % 360;\r\n    }\r\n\r\n    public double gyroDrivePID(double targetAngle ) { Robot.writeToDefaultFile( \"*** gyroPID ***\", true, true );\r\n        return gyroDrivePID.getPID( targetAngle, -getGyroHeading() );\r\n    }\r\n\r\n    /**\r\n     *\r\n     * @param targetDistance distance to go in ticks\r\n     * @return power to run at\r\n     */\r\n    public double drivePID( double targetDistance ) { Robot.writeToDefaultFile( \"*** drivePID ***\", true, true );\r\n        return drivePID.getPID( mecanumDrive.convertTicksDist(targetDistance), mecanumDrive.convertTicksDist(getLateralPosition()) );\r\n    }\r\n\r\n    public double gyroStrafePID(double targetAngle ) { Robot.writeToDefaultFile( \"*** gyroPID ***\", true, true );\r\n        return gyroStrafePID.getPID( targetAngle, -getGyroHeading() );\r\n    }\r\n\r\n    public double strafePID( double targetDistance ) { Robot.writeToDefaultFile( \"*** strafePID ***\", true, true );\r\n        return strafePID.getPID( targetDistance, getLongitudinalPosition() );\r\n    }\r\n\r\n    /**\r\n     * will sleep the robot for [millis] milliseconds\r\n     * @param millis\r\n     */\r\n    public void sleep( long millis ) {\r\n        long startTime = System.currentTimeMillis();\r\n        while( System.currentTimeMillis() < startTime + millis );\r\n    }\r\n\r\n\r\n\r\n\r\n\r\n\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- TeamCode/src/main/java/org/firstinspires/ftc/teamcode/utils/Tracking.java	(revision d0b8fbeaab2a05a9353039fbad523e23040aea30)
++++ TeamCode/src/main/java/org/firstinspires/ftc/teamcode/utils/Tracking.java	(date 1614385501023)
+@@ -134,7 +134,7 @@
+         return (-getGyroHeading() + 360) % 360;
+     }
+ 
+-    public double gyroDrivePID(double targetAngle ) { Robot.writeToDefaultFile( "*** gyroPID ***", true, true );
++    public double gyroDrivePID( double targetAngle ) { Robot.writeToDefaultFile( "*** gyroPID ***", true, true );
+         return gyroDrivePID.getPID( targetAngle, -getGyroHeading() );
+     }
+ 
+Index: TeamCode/src/main/java/org/firstinspires/ftc/teamcode/autonomous/SimpleAutonomous.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package org.firstinspires.ftc.teamcode.autonomous;\r\n\r\nimport com.qualcomm.robotcore.eventloop.opmode.Autonomous;\r\nimport com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;\r\n\r\nimport org.firstinspires.ftc.teamcode.drives.MecanumDrive;\r\nimport org.firstinspires.ftc.teamcode.robots.Robot;\r\nimport org.firstinspires.ftc.teamcode.robots.RobotWood;\r\nimport org.firstinspires.ftc.teamcode.tests.PicturePIDTest;\r\n\r\n// autonomous program that drives bot forward a set distance, stops then\r\n// backs up to the starting point using encoders to measure the distance.\r\n// This example assumes there is one encoder, attached to the left motor\r\n\r\n@Autonomous(name=\"SimpleAutonomous\", group=\"autonomous\")\r\n//@disabled\r\npublic class SimpleAutonomous extends LinearOpMode\r\n{\r\n\r\n    RobotWood robot;\r\n    PicturePIDTest picTest;\r\n\r\n    @Override\r\n    public void runOpMode() throws InterruptedException\r\n    {\r\n        robot = new RobotWood(hardwareMap, this);\r\n        robot.driveTrain = new MecanumDrive(hardwareMap);\r\n        //robot.tensorFlowUtil.initTensorFlow(hardwareMap);\r\n\r\n        //telemetry.setAutoClear( false );\r\n\r\n        Robot.writeToDefaultFile( \"******** Init Finished ********\", false, true );\r\n\r\n        telemetry.addLine(\"init finished\");\r\n        telemetry.update();\r\n\r\n        waitForStart();\r\n\r\n        //==========================================================================================\r\n        //Official Start\r\n\r\n        Robot.writeToDefaultFile( \"******** Main Class Started ********\", true, true );\r\n\r\n        robot.driveDistancePID( 24, 0.5, true );\r\n        //robot.driveDistance( 15, 1, true );\r\n\r\n        if( false ) {\r\n            picTest = new PicturePIDTest();\r\n\r\n            telemetry.addLine(\"Height :: \" + picTest.getHeight());\r\n            telemetry.addLine(\"Width :: \" + picTest.getWidth());\r\n            telemetry.update();\r\n        }\r\n\r\n        robot.sleepRobot2( 5*1000 );\r\n\r\n\r\n\r\n/*\r\n\r\n\r\n        robot.strafeDistancePID( 15, -0.5, true );\r\n\r\n\r\n\r\n        robot.sleepRobot2( 3*1000 );\r\n\r\n        robot.driveDistancePID( 10, -0.5, true );\r\n\r\n\r\n        robot.strafeDistancePID( 10, 0.5, true );\r\n\r\n\r\n */\r\n\r\n    }\r\n\r\n\r\n}\r\n\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- TeamCode/src/main/java/org/firstinspires/ftc/teamcode/autonomous/SimpleAutonomous.java	(revision d0b8fbeaab2a05a9353039fbad523e23040aea30)
++++ TeamCode/src/main/java/org/firstinspires/ftc/teamcode/autonomous/SimpleAutonomous.java	(date 1614388842623)
+@@ -41,20 +41,12 @@
+ 
+         Robot.writeToDefaultFile( "******** Main Class Started ********", true, true );
+ 
+-        robot.driveDistancePID( 24, 0.5, true );
+-        //robot.driveDistance( 15, 1, true );
+-
+-        if( false ) {
+-            picTest = new PicturePIDTest();
++        //robot.driveDistancePID( 24, 0.5, true );
++        robot.driveDistance( 15, 1, true );
+ 
+-            telemetry.addLine("Height :: " + picTest.getHeight());
+-            telemetry.addLine("Width :: " + picTest.getWidth());
+-            telemetry.update();
+-        }
++        robot.sleepRobot2( 7*1000 );
+ 
+-        robot.sleepRobot2( 5*1000 );
+-
+-
++        robot.driveDistance( 30, 1, true );
+ 
+ /*
+ 
+Index: TeamCode/src/main/java/org/firstinspires/ftc/teamcode/robots/RobotWood.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package org.firstinspires.ftc.teamcode.robots;\r\n\r\nimport android.util.Log;\r\n\r\nimport com.qualcomm.robotcore.eventloop.opmode.OpMode;\r\nimport com.qualcomm.robotcore.hardware.HardwareMap;\r\n\r\nimport org.firstinspires.ftc.teamcode.drives.MecanumDrive;\r\nimport org.firstinspires.ftc.teamcode.mechanisms.GoalLiftWood;\r\nimport org.firstinspires.ftc.teamcode.utils.*;\r\n\r\npublic class RobotWood extends Robot {\r\n\r\n    public MecanumDrive mecanumDrive;\r\n\r\n    public GoalLiftWood goalLift;\r\n\r\n    public Tracking tracker;\r\n\r\n    public TensorFlowUtil tensorFlowUtil;\r\n\r\n    //\r\n    public static double MIN_POWER = 0.1;\r\n\r\n    public RobotWood(HardwareMap hw, OpMode op){\r\n        super(hw, op);\r\n\r\n        super.driveTrain = new MecanumDrive(hw);\r\n        mecanumDrive = (MecanumDrive) driveTrain;\r\n        tracker = new Tracking(mecanumDrive, hw);\r\n        goalLift = new GoalLiftWood(hw);\r\n        tensorFlowUtil = new TensorFlowUtil(hw, op);\r\n\r\n    }\r\n\r\n    public void dropOffGoal() { Log.e(\"|-|-|-| \", \"dropOffGoal();\");\r\n\r\n        TensorFlowUtil.Stack stackPos = tensorFlowUtil.getStack();\r\n\r\n        switch( stackPos ) {\r\n            case NONE:\r\n                driveToZoneA();\r\n                break;\r\n            case SINGLE:\r\n                driveToZoneB();\r\n                break;\r\n            case QUAD:\r\n                driveToZoneC();\r\n                break;\r\n        }\r\n\r\n    }\r\n   public void driveToZoneA() { // 0 rings :: target zone A\r\n\r\n        Log.e(\"|-|-|-| \", \"driveToZonA();\");\r\n\r\n        telemetry.addLine( \"driveToZoneA()\" );\r\n        telemetry.update();\r\n\r\n        driveDistance(12, -0.75, true);\r\n\r\n        // drive backwards a bit\r\n        // strafe right 4 feet\r\n        // drop goal\r\n\r\n    }\r\n\r\n    public void driveToZoneB() { // 1 ring :: target zone B\r\n\r\n        Log.e(\"|-|-|-| \", \"driveToZoneB()\");\r\n\r\n        telemetry.addLine( \"driveToZoneB()\" );\r\n        telemetry.update();\r\n\r\n        strafeDistance(12, -0.75, true);\r\n\r\n        // strafe right 2 feet\r\n        // drive forward\r\n        // drop goal\r\n\r\n    }\r\n\r\n    public void driveToZoneC() { // 4 rings :: target zone C\r\n\r\n        Log.e(\"|-|-|-| \", \"driveToZoneC();\");\r\n\r\n        telemetry.addLine( \"driveToZoneC()\" );\r\n        telemetry.update();\r\n\r\n        driveDistance(12, 0.75, true);\r\n\r\n        // strafe right 4 feet\r\n        // drive forward 4 feet\r\n        // drop goal\r\n\r\n    }\r\n\r\n    public void drive(double drivePower, double strafePower, double rotatePower) {\r\n        mecanumDrive.drive(drivePower, strafePower, rotatePower);\r\n    }\r\n\r\n    public void driveDistance( double distance, double power, boolean setPowerZero ) {\r\n\r\n        mecanumDrive.drive( power, 0, 0 );\r\n\r\n        int ticksToTravel = mecanumDrive.convertDistTicks(distance);\r\n        int initialXPos = tracker.getLateralPosition();\r\n        int initialYPos = tracker.getLongitudinalPosition();\r\n        double percent = 0.5;\r\n\r\n        mecanumDrive.drive( power, 0, 0 );\r\n        while( tracker.getLateralPosition() - initialXPos < ticksToTravel && opModeIsActive() ) {\r\n\r\n            /*\r\n            double m = (power-(Math.signum(power)*MIN_POWER))/(-distance*(1-distance));\r\n            double x = mecanumDrive.convertDistTicks(tracker.getLateralPosition() - ticksToTravel);\r\n            double b = (Math.signum(power)*MIN_POWER)-m*distance;\r\n\r\n            if( tracker.getLateralPosition() - initialXPos > ticksToTravel*percent )\r\n                power = m*x + b;\r\n\r\n             */\r\n\r\n            mecanumDrive.drive( power, 0, 0 );\r\n        }\r\n\r\n        //sets all power to zero afterwords\r\n        if(setPowerZero)\r\n            mecanumDrive.drive( 0, 0, 0 );\r\n    }\r\n\r\n    public void strafeDistance( double distance, double power, boolean setPowerZero ) {\r\n\r\n        mecanumDrive.drive( 0, power, 0 );\r\n\r\n        int ticksToTravel = mecanumDrive.convertDistTicks(distance);\r\n        int initialXPos = tracker.getLateralPosition();\r\n        int initialYPos = tracker.getLongitudinalPosition();\r\n        double percent = 0.5;\r\n\r\n        mecanumDrive.drive( 0, power, 0 );\r\n        while( tracker.getLongitudinalPosition() - initialYPos < ticksToTravel && opModeIsActive()) {\r\n\r\n            double m = (power-(Math.signum(power)*MIN_POWER))/(-distance*(1-distance));\r\n            double x = mecanumDrive.convertDistTicks(tracker.getLateralPosition() - ticksToTravel);\r\n            double b = (Math.signum(power)*MIN_POWER)-m*distance;\r\n\r\n            if( tracker.getLongitudinalPosition() - initialXPos > ticksToTravel*percent )\r\n                power = m*x + b;\r\n\r\n            mecanumDrive.drive( 0, power, 0 );\r\n        }\r\n\r\n        //sets all power to zero afterwords\r\n        if(setPowerZero)\r\n            mecanumDrive.drive( 0, 0, 0 );\r\n    }\r\n\r\n    public void driveDistancePID( double distance, double power, boolean setPowerZero ) {\r\n\r\n        //mecanumDrive.drive( power, 0, 0 );\r\n\r\n        int ticksToTravel = (int) Math.signum(power) * mecanumDrive.convertDistTicks(distance);\r\n        int initialXPos = tracker.getLateralPosition();\r\n        int initialYPos = tracker.getLongitudinalPosition();\r\n        double initialGyroHeading = -tracker.getGyroHeading();\r\n        double driveCorrections = power;\r\n        double gyroCorrections = 0;\r\n\r\n        while( (Math.abs(driveCorrections) > 0.01 || Math.abs(gyroCorrections) > 0.01 ) && opModeIsActive() ) {\r\n\r\n            driveCorrections = tracker.drivePID( ticksToTravel + initialXPos );\r\n            if( Math.abs(driveCorrections) < 0.2 )\r\n                driveCorrections = Math.signum(driveCorrections)*0.2;\r\n            gyroCorrections = tracker.gyroDrivePID( initialGyroHeading );\r\n            //gyroCorrections = 0;\r\n\r\n            telemetry.addLine(\"driveCorrections = \" + driveCorrections );\r\n            telemetry.addLine(\"gyroCorrections = \" + gyroCorrections );\r\n\r\n            mecanumDrive.drive( driveCorrections, 0, gyroCorrections );\r\n\r\n            telemetry.addLine(\"longitudinal position = \" + tracker.getLongitudinalPosition() + \" (ticks), \"\r\n                    + mecanumDrive.convertTicksDist( tracker.getLongitudinalPosition()) + \" (in)\" );\r\n            telemetry.addLine(\"lateral position = \" + tracker.getLateralPosition() + \" (ticks), \"\r\n                    + mecanumDrive.convertTicksDist( tracker.getLateralPosition()) + \" (in)\" );\r\n            telemetry.update();\r\n        }\r\n\r\n        //sets all power to zero afterwords\r\n        if(setPowerZero)\r\n            mecanumDrive.drive( 0, 0, 0 );\r\n    }\r\n\r\n    public void strafeDistancePID( double distance, double power, boolean setPowerZero ) {\r\n\r\n        mecanumDrive.drive( 0, power, 0 );\r\n\r\n        int ticksToTravel = mecanumDrive.convertDistTicks(distance);\r\n        int initialXPos = tracker.getLateralPosition();\r\n        int initialYPos = tracker.getLongitudinalPosition();\r\n        double initialGyroHeading = -tracker.getGyroHeading();\r\n        double percent = 0.5;\r\n\r\n        while( tracker.getLongitudinalPosition() - initialYPos < ticksToTravel && opModeIsActive()) {\r\n\r\n            mecanumDrive.drive( 0, tracker.strafePID( ticksToTravel + initialYPos ), tracker.gyroStrafePID( initialGyroHeading ) );\r\n\r\n            telemetry.addLine(\"longitudinal position = \" + tracker.getLongitudinalPosition() + \" (ticks), \"\r\n                    + mecanumDrive.convertTicksDist( tracker.getLongitudinalPosition()) + \" (in)\" );\r\n            telemetry.addLine(\"lateral position = \" + tracker.getLateralPosition() + \" (ticks), \"\r\n                    + mecanumDrive.convertTicksDist( tracker.getLateralPosition()) + \" (in)\" );\r\n            telemetry.update();\r\n        }\r\n\r\n\r\n\r\n        //sets all power to zero afterwords\r\n        if(setPowerZero)\r\n            mecanumDrive.drive( 0, 0, 0 );\r\n\r\n    }\r\n\r\n    /**\r\n     *\r\n     * @param degrees forward is zero, turning right is positive, limit: 359 degrees\r\n     * @param power positive will turn right, negative turns left\r\n     * @param setPowerZero if true, will set the power to zero once finished\r\n     */\r\n    public void rotateDegrees( double degrees, double power, boolean setPowerZero ) {\r\n\r\n        mecanumDrive.drive( 0, 0, power );\r\n\r\n        double initialDegrees = tracker.getGyroHeading();\r\n\r\n        if( degrees > 0 )\r\n            while( tracker.getGyroHeading() - initialDegrees < degrees && opModeIsActive())\r\n                mecanumDrive.drive( 0, 0, power );\r\n        else if( degrees < 0 )\r\n            while( tracker.getGyroHeading() - initialDegrees > degrees && opModeIsActive())\r\n                mecanumDrive.drive( 0, 0, power );\r\n\r\n        //sets all power to zero afterwords\r\n        if(setPowerZero) {\r\n            mecanumDrive.drive( 0, 0, 0 );\r\n        }\r\n\r\n\r\n    }\r\n\r\n    /**\r\n     *\r\n     * @param degrees forward is zero, turning right is positive, limit: 359 degrees\r\n     * @param power positive will turn right, negative turns left\r\n     */\r\n    public void rotateDegrees( double degrees, double power ) throws InterruptedException {\r\n\r\n        //mecanumDrive.drive( 0, 0, power );\r\n\r\n        double initialDegrees = tracker.get360GyroHeading();\r\n        double percent = 0.5;\r\n        double variable = 5*power;\r\n\r\n        if (power > 0) {\r\n            mecanumDrive.drive( 0, 0, power );\r\n            sleep( 250 );\r\n            while( opModeIsActive() && tracker.get360GyroHeading() - initialDegrees < degrees - variable )\r\n            {\r\n                telemetry.addData(\"While:\", tracker.get360GyroHeading() - initialDegrees < degrees)\r\n                        .addData(\"While:\", tracker.get360GyroHeading() - initialDegrees > degrees)\r\n                        .addData(\"Heading\", tracker.get360GyroHeading());\r\n                telemetry.update();\r\n\r\n                double m = (power-(Math.signum(power)*MIN_POWER))/(-degrees*(1-percent));\r\n                double x = tracker.get360GyroHeading() - initialDegrees;\r\n                double b = (Math.signum(power)*MIN_POWER)-m*degrees;\r\n\r\n                if( tracker.get360GyroHeading() - initialDegrees > degrees*percent )\r\n                    power = m*x + b;\r\n                mecanumDrive.drive( 0, 0, power );\r\n            }\r\n            mecanumDrive.drive( 0, 0, 0 );\r\n        }\r\n        else if ( power != 0 )\r\n        {\r\n            mecanumDrive.drive( 0, 0, power );\r\n            while( opModeIsActive() && tracker.get360GyroHeading() - initialDegrees > degrees + variable )\r\n            {\r\n                telemetry.addData(\"While:\", tracker.get360GyroHeading() - initialDegrees < degrees)\r\n                        .addData(\"While:\", tracker.get360GyroHeading() - initialDegrees > degrees)\r\n                        .addData(\"Heading\", tracker.get360GyroHeading());\r\n                telemetry.update();\r\n\r\n                double m = (power-(Math.signum(power)*MIN_POWER))/(-degrees*(1-percent));\r\n                double x = tracker.get360GyroHeading() - initialDegrees;\r\n                double b = (Math.signum(power)*MIN_POWER)-m*degrees;\r\n\r\n                if( tracker.get360GyroHeading() - initialDegrees > degrees*percent )\r\n                    power = m*x + b;\r\n                mecanumDrive.drive( 0, 0, power );\r\n                mecanumDrive.drive( 0, 0, power );\r\n            }\r\n            mecanumDrive.drive( 0, 0, 0 );\r\n        }\r\n\r\n        /*\r\n        while( opModeIsActive())\r\n        {\r\n            telemetry.addData(\"getGyroHeading\", tracker.getGyroHeading())\r\n                    .addData(\"getNewGyroHeading\", tracker.getNewGyroHeading());\r\n            telemetry.update();\r\n        }*/\r\n\r\n\r\n    }\r\n\r\n    /**\r\n     * @param drivePower - sets power to drive - negative power is backwards\r\n     * @param strafePower - sets power to strafe - negative power is left\r\n     * @param time - amount of time to run the motors in MILLISECONDS\r\n     */\r\n    public void omniTime(double drivePower, double strafePower, long time, boolean setPowerZero)\r\n    {\r\n        //gyro.resetZAxisIntegrator();\r\n        //set power to 'drive' motors\r\n\r\n        mecanumDrive.drive(drivePower, strafePower, 0);\r\n\r\n        //wait for certain amount of time while motors are running\r\n        //robotMecanum.wait(time);\r\n        long setTime = System.currentTimeMillis();\r\n        previousTime = opMode.getRuntime();\r\n\r\n        while(System.currentTimeMillis() - setTime < (time) && opModeIsActive())\r\n        {\r\n            mecanumDrive.drive(drivePower, strafePower, /*gyroPID(180, opMode.getRuntime() - previousTime)*/0);\r\n        }\r\n\r\n        //sets all power to zero afterwords\r\n        if(setPowerZero) {\r\n            mecanumDrive.drive( 0, 0, 0 );\r\n        }\r\n    }\r\n\r\n\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- TeamCode/src/main/java/org/firstinspires/ftc/teamcode/robots/RobotWood.java	(revision d0b8fbeaab2a05a9353039fbad523e23040aea30)
++++ TeamCode/src/main/java/org/firstinspires/ftc/teamcode/robots/RobotWood.java	(date 1614390780291)
+@@ -20,7 +20,14 @@
+     public TensorFlowUtil tensorFlowUtil;
+ 
+     //
+-    public static double MIN_POWER = 0.1;
++    public static double MAX_POWER = 0.7;
++    public static double MIN_POWER = 0.2;
++
++
++    final static double DRIVE_START_PERCENT = 0.3;
++    final static double DRIVE_END_PERCENT = 0.6;
++    final static double DRIVE_POWER_PERCENT_INCREASE = 0.3;
++    final static double DRIVE_POWER = 0.3;
+ 
+     public RobotWood(HardwareMap hw, OpMode op){
+         super(hw, op);
+@@ -101,19 +108,24 @@
+ 
+     public void driveDistance( double distance, double power, boolean setPowerZero ) {
+ 
+-        mecanumDrive.drive( power, 0, 0 );
++        //mecanumDrive.drive( power, 0, 0 );
+ 
+         int ticksToTravel = mecanumDrive.convertDistTicks(distance);
+         int initialXPos = tracker.getLateralPosition();
+         int initialYPos = tracker.getLongitudinalPosition();
+-        double percent = 0.5;
++        //double percent = 0.5;
++        double initialPower;
++        power = 0.3;
++        double distanceTravelled = tracker.getLateralPosition() - initialXPos;
++        double dPower = MAX_POWER-MIN_POWER;
++        String textToWrite;
+ 
+         mecanumDrive.drive( power, 0, 0 );
+-        while( tracker.getLateralPosition() - initialXPos < ticksToTravel && opModeIsActive() ) {
++        while( distanceTravelled < ticksToTravel && opModeIsActive() ) {
+ 
+             /*
+             double m = (power-(Math.signum(power)*MIN_POWER))/(-distance*(1-distance));
+-            double x = mecanumDrive.convertDistTicks(tracker.getLateralPosition() - ticksToTravel);
++            double x = mecanumDrive.convertTicksDist(tracker.getLateralPosition() - ticksToTravel);
+             double b = (Math.signum(power)*MIN_POWER)-m*distance;
+ 
+             if( tracker.getLateralPosition() - initialXPos > ticksToTravel*percent )
+@@ -121,6 +133,33 @@
+ 
+              */
+ 
++            distanceTravelled = tracker.getLateralPosition() - initialXPos;
++            if (distanceTravelled < DRIVE_START_PERCENT * ticksToTravel) {
++                initialPower = MIN_POWER;
++                power = (dPower / (DRIVE_START_PERCENT * ticksToTravel)) * distanceTravelled + initialPower;
++            }
++
++            if( distanceTravelled >= DRIVE_END_PERCENT*ticksToTravel ) {
++                initialPower = MAX_POWER;
++                power = -(dPower / (ticksToTravel - DRIVE_END_PERCENT * ticksToTravel)) * distanceTravelled + initialPower;
++            }
++
++            textToWrite = "(" + distanceTravelled + " < " + DRIVE_START_PERCENT + "*" + ticksToTravel + ")" + System.lineSeparator();
++            textToWrite += "(" + distanceTravelled + " < " + DRIVE_START_PERCENT*ticksToTravel + "): " + (distanceTravelled < DRIVE_START_PERCENT*ticksToTravel) + System.lineSeparator();
++            textToWrite += dPower + "/(" + DRIVE_START_PERCENT + "*" + ticksToTravel + ")"          + System.lineSeparator();
++
++            Robot.writeToDefaultFile( textToWrite, true, false );
++
++            telemetry.addLine( "Power: " + power );
++            telemetry.update();
++
++
++            textToWrite = "Power: " + power + System.lineSeparator();
++            textToWrite += "Distance: " + distanceTravelled + System.lineSeparator();
++            textToWrite += "--------------------------------------------------";
++
++            Robot.writeToDefaultFile( textToWrite, true, false );
++
+             mecanumDrive.drive( power, 0, 0 );
+         }
+ 
+@@ -169,6 +208,7 @@
+ 
+         while( (Math.abs(driveCorrections) > 0.01 || Math.abs(gyroCorrections) > 0.01 ) && opModeIsActive() ) {
+ 
++
+             driveCorrections = tracker.drivePID( ticksToTravel + initialXPos );
+             if( Math.abs(driveCorrections) < 0.2 )
+                 driveCorrections = Math.signum(driveCorrections)*0.2;
+@@ -185,6 +225,7 @@
+             telemetry.addLine("lateral position = " + tracker.getLateralPosition() + " (ticks), "
+                     + mecanumDrive.convertTicksDist( tracker.getLateralPosition()) + " (in)" );
+             telemetry.update();
++
+         }
+ 
+         //sets all power to zero afterwords
+Index: TeamCode/build.gradle
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>//\r\n// build.gradle in TeamCode\r\n//\r\n// Most of the definitions for building your module reside in a common, shared\r\n// file 'build.common.gradle'. Being factored in this way makes it easier to\r\n// integrate updates to the FTC into your code. If you really need to customize\r\n// the build definitions, you can place those customizations in this file, but\r\n// please think carefully as to whether such customizations are really necessary\r\n// before doing so.\r\n\r\n\r\n// Custom definitions may go here\r\n\r\n// Include common definitions from above.\r\napply from: '../build.common.gradle'\r\n\r\nrepositories {\r\n    maven { url = \"https://dl.bintray.com/first-tech-challenge/ftcsdk/\" }\r\n}\r\n\r\ndependencies {\r\n    annotationProcessor files('lib/OpModeAnnotationProcessor.jar')\r\n    implementation 'org.jetbrains:annotations-java5:15.0'\r\n}\r\n\r\n/*task pushJavaFiles (type: Exec) {\r\n    commandLine('adb', '-s', 'f1a5675e40aaaffb', 'push', 'D:\\\\Robotics\\\\Ultimate-Goal\\\\TeamCode\\\\src\\\\main\\\\java\\\\org\\\\firstinspires\\\\ftc\\\\teamcode\\\\.',  '/sdcard/FIRST/java/src')\r\n}\r\n\r\ntask startREVCompiler(dependsOn: pushJavaFiles){\r\n    doLast{\r\n        exec{\r\n            commandLine('adb', '-s', 'f1a5675e40aaaffb', 'shell', 'cat', '>>', 'sdcard/FIRST/java/control/buildRequest.txt')\r\n        }\r\n        exec{\r\n            commandLine('adb', '-s', 'f1a5675e40aaaffb', 'push', 'D:\\\\Robotics\\\\buildRequest.txt', '/sdcard/FIRST/java/control')\r\n        }\r\n    }\r\n}*/
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- TeamCode/build.gradle	(revision d0b8fbeaab2a05a9353039fbad523e23040aea30)
++++ TeamCode/build.gradle	(date 1614373217728)
+@@ -21,6 +21,7 @@
+ dependencies {
+     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
+     implementation 'org.jetbrains:annotations-java5:15.0'
++    implementation 'com.jjoe64:graphview:4.2.2'
+ }
+ 
+ /*task pushJavaFiles (type: Exec) {
+Index: TeamCode/src/main/java/org/firstinspires/ftc/teamcode/robots/Robot.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package org.firstinspires.ftc.teamcode.robots;\r\n\r\nimport android.os.Environment;\r\nimport android.util.Log;\r\n\r\nimport com.qualcomm.hardware.lynx.LynxModule;\r\nimport com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;\r\nimport com.qualcomm.robotcore.eventloop.opmode.OpMode;\r\nimport com.qualcomm.robotcore.hardware.HardwareMap;\r\n\r\nimport org.firstinspires.ftc.robotcore.external.Telemetry;\r\nimport org.firstinspires.ftc.teamcode.R;\r\nimport org.firstinspires.ftc.teamcode.drives.Drive;\r\nimport org.firstinspires.ftc.teamcode.utils.TensorFlow;\r\nimport org.firstinspires.ftc.teamcode.utils.VuforiaLocalization;\r\n\r\nimport java.io.File;\r\nimport java.io.FileWriter;\r\nimport java.io.IOException;\r\nimport java.text.SimpleDateFormat;\r\nimport java.util.Date;\r\n\r\n/**\r\n * This class sets up and manages a robot\r\n */\r\npublic abstract class Robot {\r\n    HardwareMap hardwareMap;\r\n    OpMode opMode;\r\n    Telemetry telemetry;\r\n\r\n    // time\r\n    double previousTime;\r\n\r\n    // drive\r\n    public Drive driveTrain;\r\n\r\n    //mechanisms\r\n    //RingShooter shooter;\r\n    //GoalLift lift;\r\n\r\n    //Vuforia\r\n    VuforiaLocalization vuforiaLocalization;\r\n    private final String VUFORIA_TRACKABLES_ASSET_NAME = \"Ultimate Goal\";\r\n    String vuforiaKey;\r\n\r\n    //Tensor Flow\r\n    TensorFlow tfod;\r\n    private final String TFOD_MODEL_ASSET_NAME = \"UltimateGoal.tflite\";\r\n    private final String[] TFOD_MODEL_LABELS = {\"Quad\", \"Single\"};\r\n\r\n    private static final String DEFAULT_LOG_FILE_NAME = \"*robotLog.txt\";\r\n\r\n\r\n    /**\r\n     * Creates a Robot\r\n     * @param hw robot's hardware map\r\n     */\r\n    public Robot( HardwareMap hw, OpMode op ) {\r\n        this.hardwareMap = hw;\r\n        this.opMode = op;\r\n        telemetry = opMode.telemetry;\r\n\r\n        vuforiaKey = hardwareMap.appContext.getResources().getString(R.string.vuforiakey);\r\n\r\n        //drive type\r\n\r\n        //mechanisms\r\n        //shooter = new RingShooter(hw);\r\n        //lift = new GoalLift(hw);\r\n\r\n        //Vuforia.startVuforiaEngine(VUFORIA_KEY, \"webcam\", true, hw);\r\n        //vuforiaNavigation = new VuforiaNavigation(VUFORIA_TRACKABLES_ASSET_NAME);\r\n        //tfod = new TensorFlow(TFOD_MODEL_ASSET_NAME, 0.8f, true, hardwareMap, TFOD_MODEL_LABELS);\r\n\r\n\r\n        //Bulk Caching to decrease cycle times\r\n        for (LynxModule module : hw.getAll(LynxModule.class)) {\r\n            module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);\r\n        }\r\n\r\n\r\n    }\r\n\r\n    public static void writeToDefaultFile( String writeText, boolean isAppending, boolean includeTimeStamp ) {\r\n        writeAFile( DEFAULT_LOG_FILE_NAME, writeText, isAppending, includeTimeStamp );\r\n    }\r\n\r\n    public static void writeAFile(String fileName, String writeText, boolean isAppending, boolean includeTimeStamp ){\r\n\r\n        // \"\\n\" = System.lineSeparator()\r\n\r\n        String time = \"\";\r\n        if( includeTimeStamp ) {\r\n            SimpleDateFormat formatter1 = new SimpleDateFormat(\"MM-dd HH:mm:ss\");\r\n            Date date = new Date();\r\n            time = formatter1.format(date) + \" :: \";\r\n        }\r\n\r\n        String path = Environment.getExternalStorageDirectory().getPath() + \"/\" + \"FIRST\" + \"/\";\r\n        //\".../Internal Storage/\";\r\n\r\n        try {\r\n            FileWriter writer = new FileWriter( new File( path + fileName ), isAppending );\r\n            writer.write( time + writeText + System.lineSeparator() );\r\n            writer.close();\r\n        } catch ( IOException e ) {\r\n            e.printStackTrace();\r\n            Log.e( \"|-|-|-| \", e.getStackTrace().toString() );\r\n        }\r\n\r\n    }\r\n\r\n\r\n    public void sleep(long millis){\r\n        long startTime = System.currentTimeMillis();\r\n        while(System.currentTimeMillis() < startTime + millis);\r\n    }\r\n\r\n    /**\r\n     * opMode version of LinearOpmode's opModeIsActive\r\n     * @return\r\n     */\r\n    public boolean opModeIsActive()\r\n    {\r\n        try {\r\n            return ((LinearOpMode) opMode).opModeIsActive();\r\n        } catch (ClassCastException e){\r\n            return true;\r\n        }\r\n    }\r\n\r\n    /**\r\n     *\r\n     * @param delay - delay/wait time in SECONDS\r\n     */\r\n    public void sleepRobot(long delay)\r\n    {\r\n        long setTime = System.currentTimeMillis();\r\n        previousTime = opMode.getRuntime();\r\n\r\n        while( (System.currentTimeMillis() - setTime)*1000 < (delay) && opModeIsActive())\r\n            previousTime = opMode.getRuntime();\r\n\r\n        telemetry.addData(\"Finished Sleep\", \"\");\r\n        telemetry.update();\r\n    }\r\n\r\n    public void sleepRobot2(long delay) {\r\n        double currTime = opMode.getRuntime();\r\n        double waitUntil = currTime + (double)(delay/1000);\r\n        while( opMode.getRuntime() < waitUntil ) {}\r\n    }\r\n\r\n\r\n\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- TeamCode/src/main/java/org/firstinspires/ftc/teamcode/robots/Robot.java	(revision d0b8fbeaab2a05a9353039fbad523e23040aea30)
++++ TeamCode/src/main/java/org/firstinspires/ftc/teamcode/robots/Robot.java	(date 1614389488848)
+@@ -148,7 +148,7 @@
+     public void sleepRobot2(long delay) {
+         double currTime = opMode.getRuntime();
+         double waitUntil = currTime + (double)(delay/1000);
+-        while( opMode.getRuntime() < waitUntil ) {}
++        while( opMode.getRuntime() < waitUntil && opModeIsActive() ) {}
+     }
+ 
+ 

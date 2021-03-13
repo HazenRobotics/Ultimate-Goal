@@ -1,11 +1,19 @@
 package org.firstinspires.ftc.teamcode.utils;
 
+import android.graphics.Path;
+
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+
+import org.apache.commons.math3.linear.OpenMapRealMatrix;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES;
+import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.RADIANS;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.XYZ;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.YZX;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.EXTRINSIC;
@@ -17,6 +25,7 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.
 public class FieldMap {
     //All measurements are in mm
     private static final float mmPerInch = (float)DistanceUnit.mmPerInch;
+    private static final float inchPerMM = (float) DistanceUnit.MM.toInches(1);
     //Field information
     private static final float fieldSize = 144 * mmPerInch;
     private static final float mmTargetHeight   = (6) * mmPerInch;
@@ -91,28 +100,36 @@ public class FieldMap {
 
     }
 
-    //target zones
-    public static class TargetGoalZones {
+    /**
+     * Locations on the ground, in inches
+     */
+    public static class GroundLocations {
 
-        private static final float EDGE_TARGETS_Y_OFFSET = 12f * mmPerInch;
-        private static final float MIDDLE_TARGET_Y_OFFSET = 36f * mmPerInch;
-        private static final float CENTERLINE_TARGET_X_OFFSET = 12f * mmPerInch;
-        private static final float MIDDLE_TARGET_X_OFFSET = quadField;
-        private static final float FAR_TARGET_X_OFFSET = 60f * mmPerInch;
+        private static final float EDGE_TARGETS_Y_OFFSET = 12f;
+        private static final float MIDDLE_TARGET_Y_OFFSET = 36f;
+        private static final float CENTERLINE_TARGET_X_OFFSET = 12f;
+        private static final float MIDDLE_TARGET_X_OFFSET = quadField / mmPerInch;
+        private static final float FAR_TARGET_X_OFFSET = 60f;
 
-        public static final OpenGLMatrix BLUE_CENTERLINE_GOAL_ZONE = OpenGLMatrix
-                .translation(CENTERLINE_TARGET_X_OFFSET, EDGE_TARGETS_Y_OFFSET, 0);
-        public static final OpenGLMatrix BLUE_MIDDLE_GOAL_ZONE = OpenGLMatrix
-                .translation(MIDDLE_TARGET_X_OFFSET, MIDDLE_TARGET_Y_OFFSET, 0);
-        public static final OpenGLMatrix BLUE_FAR_GOAL_ZONE = OpenGLMatrix
-                .translation(FAR_TARGET_X_OFFSET, EDGE_TARGETS_Y_OFFSET, 0);
+        public static final Vector2d BLUE_CENTERLINE_GOAL_ZONE = new Vector2d(CENTERLINE_TARGET_X_OFFSET, EDGE_TARGETS_Y_OFFSET);
+        public static final Vector2d BLUE_MIDDLE_GOAL_ZONE = new Vector2d(MIDDLE_TARGET_X_OFFSET, MIDDLE_TARGET_Y_OFFSET);
+        public static final Vector2d BLUE_FAR_GOAL_ZONE = new Vector2d(FAR_TARGET_X_OFFSET, EDGE_TARGETS_Y_OFFSET);
 
-        public static final OpenGLMatrix RED_CENTERLINE_GOAL_ZONE = OpenGLMatrix
-                .translation(CENTERLINE_TARGET_X_OFFSET, -EDGE_TARGETS_Y_OFFSET, 0);
-        public static final OpenGLMatrix RED_MIDDLE_GOAL_ZONE = OpenGLMatrix
-                .translation(MIDDLE_TARGET_X_OFFSET, -MIDDLE_TARGET_Y_OFFSET, 0);
-        public static final OpenGLMatrix RED_FAR_GOAL_ZONE = OpenGLMatrix
-                .translation(FAR_TARGET_X_OFFSET, -EDGE_TARGETS_Y_OFFSET, 0);
+        public static final Vector2d RED_CENTERLINE_GOAL_ZONE = new Vector2d(CENTERLINE_TARGET_X_OFFSET, -EDGE_TARGETS_Y_OFFSET);
+        public static final Vector2d RED_MIDDLE_GOAL_ZONE = new Vector2d(MIDDLE_TARGET_X_OFFSET, -MIDDLE_TARGET_Y_OFFSET);
+        public static final Vector2d RED_FAR_GOAL_ZONE = new Vector2d(FAR_TARGET_X_OFFSET, -EDGE_TARGETS_Y_OFFSET);
+
+
+        private static float STARTLINE_X_OFFSET = (-halfField / mmPerInch) + 1f;
+        private static float STARTLINE_Y_OFFSET = 24f;
+
+        public static final Vector2d BLUE_CENTER_START_LINE = new Vector2d(STARTLINE_X_OFFSET, STARTLINE_Y_OFFSET);
+        public static final Vector2d BLUE_EDGE_START_LINE = new Vector2d(STARTLINE_X_OFFSET, STARTLINE_Y_OFFSET * 2);
+
+        public static final Vector2d RED_CENTER_START_LINE = new Vector2d(STARTLINE_X_OFFSET, -STARTLINE_Y_OFFSET);
+        public static final Vector2d RED_EDGE_START_LINE = new Vector2d(STARTLINE_X_OFFSET, -STARTLINE_Y_OFFSET * 2);
+
+        public static final double LAUNCH_LINE_X = 12f;
 
     }
 
@@ -175,6 +192,35 @@ public class FieldMap {
 
     public static double getHeightDifferenceBetweenTwoPoints(VectorF point1, VectorF point2){
         return point2.get(2) - point1.get(2);
+    }
+
+    public static VectorF toVectorF(OpenGLMatrix position){
+        float[] data = position.getData();
+        return new VectorF(data[14], data[13], data[15]);//position.toVector();
+    }
+
+    public static Orientation toOrientation(OpenGLMatrix position){
+        return Orientation.getOrientation(position, EXTRINSIC, XYZ, DEGREES);
+    }
+
+    public static Pose2d toPose2d(OpenGLMatrix position){
+        VectorF point = toVectorF(position);
+        double heading = toOrientation(position).toAngleUnit(RADIANS).thirdAngle;
+
+        return new Pose2d(point.get(0), point.get(1), heading);
+    }
+
+    public static Vector2d toVector2d(OpenGLMatrix position){
+        VectorF point = toVectorF(position);
+        return new Vector2d(point.get(0), point.get(1));
+    }
+
+    public static boolean isWithinLaunchZone(OpenGLMatrix position){
+        return toVectorF(position).get(0) / mmPerInch < GroundLocations.LAUNCH_LINE_X;
+    }
+
+    public static VectorF toInches(VectorF vector) {
+        return vector.multiplied(inchPerMM);
     }
 
 

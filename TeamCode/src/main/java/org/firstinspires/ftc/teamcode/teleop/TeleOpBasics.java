@@ -1,14 +1,17 @@
-package org.firstinspires.ftc.teamcode.teleop;
+/*package org.firstinspires.ftc.teamcode.teleop;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@TeleOp(name="TeleOpDriverTest", group="teleop")
-public class TeleOpTest extends OpMode
+import org.firstinspires.ftc.teamcode.road_runner.util.Encoder;
+
+@TeleOp(name="TeleOpBasics", group="teleop")
+public class TeleOpBasics extends OpMode
 {
     DcMotor frontLeftMotor;
     DcMotor frontRightMotor;
@@ -21,6 +24,9 @@ public class TeleOpTest extends OpMode
 
     BNO055IMU gyro;
 
+    Encoder parallelEncoder;
+    Encoder perpendicularEncoder;
+
     @Override
     public void init()
     {
@@ -30,15 +36,17 @@ public class TeleOpTest extends OpMode
         backLeftMotor = hardwareMap.dcMotor.get("backLeft");
         backRightMotor = hardwareMap.dcMotor.get("backRight");
 
+        parallelEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "intake"));
+        perpendicularEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "goalLift"));
+
         gyro = hardwareMap.get( BNO055IMU.class, "imu" );
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         gyro.initialize( parameters );
 
         // make sure the imu gyro is calibrated before continuing.
-        while ( !gyro.isGyroCalibrated() )
-        {
+        while ( !gyro.isGyroCalibrated() ) {
             long startTime = System.currentTimeMillis();
-            while( System.currentTimeMillis() < startTime + 50 /* milliseconds to wait */ );
+            while( System.currentTimeMillis() < startTime + 50 ); // milliseconds to wait
         }
 
         telemetry.addData("Mode", "waiting for start");
@@ -61,15 +69,14 @@ public class TeleOpTest extends OpMode
         //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
         //driving
 
-        double percent = 0.5;
-        double drive = percent * -gamepad1.left_stick_y;
-        double strafe = percent * gamepad1.left_stick_x;
-        double rotate = percent * gamepad1.right_stick_x;
+        double drive = -gamepad1.left_stick_y;
+        double strafe = gamepad1.left_stick_x;
+        double rotate = gamepad1.right_stick_x;
 
-        frontLeftPower = -drive - strafe + rotate;
-        backLeftPower = -drive + strafe - rotate;
-        frontRightPower = drive - strafe - rotate;
-        backRightPower = drive + strafe + rotate;
+        frontLeftPower = drive + strafe + rotate;
+        frontRightPower = -drive + strafe - rotate;
+        backLeftPower = drive - strafe - rotate;
+        backRightPower = -drive - strafe + rotate;
 
         frontLeftMotor.setPower(frontLeftPower);
         frontRightMotor.setPower(frontRightPower);
@@ -113,4 +120,4 @@ public class TeleOpTest extends OpMode
         telemetry.update();
 
     }
-}
+}*/

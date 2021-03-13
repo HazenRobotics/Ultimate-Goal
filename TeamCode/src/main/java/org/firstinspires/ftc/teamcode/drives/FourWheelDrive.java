@@ -93,7 +93,7 @@ public class FourWheelDrive implements Drive {
     }
 
     private void updateState(){
-        if(frontLeft.getPower() > 0 || frontRight.getPower() > 0 || backLeft.getPower() > 0 || backRight.getPower() > 0)
+        if(frontLeft.getPower() != 0 || frontRight.getPower() != 0 || backLeft.getPower() != 0 || backRight.getPower() != 0)
             currentState = State.MOVING;
         else
             currentState = State.STOPPED;

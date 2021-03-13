@@ -4,8 +4,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.utils.Tracking;
-
 /**
  * This class sets up and holds methods for running a mecanum drive
  */
@@ -35,12 +33,12 @@ public class MecanumDrive extends FourWheelDrive {
 
     public int convertDistTicks( double distanceToTravel )
     {
-        return Tracking.convertDistTicks( distanceToTravel, Math.PI * WHEEL_DIAMETER );
+        return convertDistTicks( distanceToTravel, Math.PI * WHEEL_DIAMETER );
     }
 
     public int convertTicksDist( double ticksToTravel )
     {
-        return Tracking.convertTicksDist( ticksToTravel, Math.PI * WHEEL_DIAMETER );
+        return convertTicksDist( ticksToTravel, Math.PI * WHEEL_DIAMETER );
     }
 
 
@@ -72,7 +70,7 @@ public class MecanumDrive extends FourWheelDrive {
      */
     public void drive( double drive, double strafe, double rotate ) {
 
-        // You might have to play with the + or - depending on how your motors and wheels are installed
+        // You might have to play with the + or - depending on how your motors are installed
         double frontLeftPower  = drive + strafe - rotate;
         double backLeftPower   = drive - strafe - rotate;
         double frontRightPower = drive - strafe + rotate;
@@ -80,5 +78,10 @@ public class MecanumDrive extends FourWheelDrive {
 
         setMotorPower( frontLeftPower, frontRightPower, backLeftPower, backRightPower );
     }
+
+    /*
+    public void setMotorPower(double frontLeftPower, double frontRightPower, double backLeftPower, double backRightPower){
+        setMotorPower(frontLeftPower, frontRightPower, backLeftPower, backRightPower);
+    }*/
 
 }

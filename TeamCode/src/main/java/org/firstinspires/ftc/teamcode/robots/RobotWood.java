@@ -1,14 +1,11 @@
 package org.firstinspires.ftc.teamcode.robots;
 
-import android.util.Log;
-
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.drives.MecanumDrive;
 import org.firstinspires.ftc.teamcode.mechanisms.GoalLift;
-import org.firstinspires.ftc.teamcode.mechanisms.GoalLiftWood;
-import org.firstinspires.ftc.teamcode.mechanisms.RingShooterWood;
+import org.firstinspires.ftc.teamcode.mechanisms.RingShooter;
 import org.firstinspires.ftc.teamcode.utils.*;
 
 public class RobotWood extends Robot {
@@ -17,21 +14,21 @@ public class RobotWood extends Robot {
 
     public GoalLift goalLift;
 
-    public RingShooterWood ringShooter;
+    public RingShooter ringShooter;
 
     public Tracking tracker;
 
     public TensorFlowUtil tensorFlowUtil;
 
-    public static double MAX_POWER = 0.7;
-    public static double MIN_POWER = 0.2;
+    public static double MIN_POWER = 0.1;
 
-    final static double DRIVE_START_PERCENT = 0.3;
-    final static double DRIVE_END_PERCENT = 0.6;
-    final static double DRIVE_POWER_PERCENT_INCREASE = 0.3;
-    final static double DRIVE_POWER = 0.3;
+    public static double FLY_WHEEL_RADIUS = 0;
 
-    final static int FLY_WHEEL_RADIUS = 0;
+    public static double PUSHED_POSTITION = 0.4;
+    public static double RETRACTED_POSTITION = 0.0;
+
+    public static double OPEN_POSTITION = 0.5;
+    public static double CLOSED_POSTITION = 0.1;
 
     public RobotWood(HardwareMap hw, OpMode op){
         super(hw, op);
@@ -39,12 +36,12 @@ public class RobotWood extends Robot {
         super.driveTrain = new MecanumDrive(hw);
         mecanumDrive = (MecanumDrive) driveTrain;
         tracker = new Tracking(mecanumDrive, hw);
-        goalLift = new GoalLift(hw);
-        ringShooter = new RingShooterWood( hw, FLY_WHEEL_RADIUS, 0.5 /* test this */, 0.25 /* test this */ );
+        goalLift = new GoalLift(hw, OPEN_POSTITION, CLOSED_POSTITION );
+        ringShooter = new RingShooter(hw, FLY_WHEEL_RADIUS, PUSHED_POSTITION, RETRACTED_POSTITION );
         tensorFlowUtil = new TensorFlowUtil(hw, op);
     }
 
-    public void dropOffGoal() { Log.e("|-|-|-| ", "dropOffGoal();");
+    public void dropOffGoal() { Robot.writeToDefaultFile("dropOffGOal()", true, true );
 
         TensorFlowUtil.Stack stackPos = tensorFlowUtil.getStack();
 
@@ -59,11 +56,11 @@ public class RobotWood extends Robot {
                 driveToZoneC();
                 break;
         }
-
     }
-   public void driveToZoneA() { // 0 rings :: target zone A
 
-        Log.e("|-|-|-| ", "driveToZonA();");
+    public void driveToZoneA() { // 0 rings :: target zone A
+
+        Robot.writeToDefaultFile( "driveToZoneA()", true, true);
 
         telemetry.addLine( "driveToZoneA()" );
         telemetry.update();
@@ -78,7 +75,7 @@ public class RobotWood extends Robot {
 
     public void driveToZoneB() { // 1 ring :: target zone B
 
-        Log.e("|-|-|-| ", "driveToZoneB()");
+        Robot.writeToDefaultFile( "driveToZoneB()", true, true);
 
         telemetry.addLine( "driveToZoneB()" );
         telemetry.update();
@@ -93,7 +90,7 @@ public class RobotWood extends Robot {
 
     public void driveToZoneC() { // 4 rings :: target zone C
 
-        Log.e("|-|-|-| ", "driveToZoneC();");
+        Robot.writeToDefaultFile( "driveToZoneC()", true, true);
 
         telemetry.addLine( "driveToZoneC()" );
         telemetry.update();
@@ -112,57 +109,25 @@ public class RobotWood extends Robot {
 
     public void driveDistance( double distance, double power, boolean setPowerZero ) {
 
-        //mecanumDrive.drive( power, 0, 0 );
+        mecanumDrive.drive( power, 0, 0 );
 
         int ticksToTravel = mecanumDrive.convertDistTicks(distance);
         int initialXPos = tracker.getLateralPosition();
         int initialYPos = tracker.getLongitudinalPosition();
-        //double percent = 0.5;
-        double initialPower;
-        power = 0.3;
-        double distanceTravelled = tracker.getLateralPosition() - initialXPos;
-        double dPower = MAX_POWER-MIN_POWER;
-        String textToWrite;
+        double percent = 0.5;
 
         mecanumDrive.drive( power, 0, 0 );
-        while( distanceTravelled < ticksToTravel && opModeIsActive() ) {
+        while( tracker.getLateralPosition() - initialXPos < ticksToTravel && opModeIsActive() ) {
 
             /*
             double m = (power-(Math.signum(power)*MIN_POWER))/(-distance*(1-distance));
-            double x = mecanumDrive.convertTicksDist(tracker.getLateralPosition() - ticksToTravel);
+            double x = mecanumDrive.convertDistTicks(tracker.getLateralPosition() - ticksToTravel);
             double b = (Math.signum(power)*MIN_POWER)-m*distance;
 
             if( tracker.getLateralPosition() - initialXPos > ticksToTravel*percent )
                 power = m*x + b;
 
              */
-
-            distanceTravelled = tracker.getLateralPosition() - initialXPos;
-            if (distanceTravelled < DRIVE_START_PERCENT * ticksToTravel) {
-                initialPower = MIN_POWER;
-                power = (dPower / (DRIVE_START_PERCENT * ticksToTravel)) * distanceTravelled + initialPower;
-            }
-
-            if( distanceTravelled >= DRIVE_END_PERCENT*ticksToTravel ) {
-                initialPower = MAX_POWER;
-                power = -(dPower / (ticksToTravel - DRIVE_END_PERCENT * ticksToTravel)) * distanceTravelled + initialPower;
-            }
-
-            textToWrite = "(" + distanceTravelled + " < " + DRIVE_START_PERCENT + "*" + ticksToTravel + ")" + System.lineSeparator();
-            textToWrite += "(" + distanceTravelled + " < " + DRIVE_START_PERCENT*ticksToTravel + "): " + (distanceTravelled < DRIVE_START_PERCENT*ticksToTravel) + System.lineSeparator();
-            textToWrite += dPower + "/(" + DRIVE_START_PERCENT + "*" + ticksToTravel + ")"          + System.lineSeparator();
-
-            Robot.writeToDefaultFile( textToWrite, true, false );
-
-            telemetry.addLine( "Power: " + power );
-            telemetry.update();
-
-
-            textToWrite = "Power: " + power + System.lineSeparator();
-            textToWrite += "Distance: " + distanceTravelled + System.lineSeparator();
-            textToWrite += "--------------------------------------------------";
-
-            Robot.writeToDefaultFile( textToWrite, true, false );
 
             mecanumDrive.drive( power, 0, 0 );
         }
@@ -197,73 +162,6 @@ public class RobotWood extends Robot {
         //sets all power to zero afterwords
         if(setPowerZero)
             mecanumDrive.drive( 0, 0, 0 );
-    }
-
-    public void driveDistancePID( double distance, double power, boolean setPowerZero ) {
-
-        //mecanumDrive.drive( power, 0, 0 );
-
-        int ticksToTravel = (int) Math.signum(power) * mecanumDrive.convertDistTicks(distance);
-        int initialXPos = tracker.getLateralPosition();
-        int initialYPos = tracker.getLongitudinalPosition();
-        double initialGyroHeading = -tracker.getGyroHeading();
-        double driveCorrections = power;
-        double gyroCorrections = 0;
-
-        while( (Math.abs(driveCorrections) > 0.01 || Math.abs(gyroCorrections) > 0.01 ) && opModeIsActive() ) {
-
-
-            driveCorrections = tracker.drivePID( ticksToTravel + initialXPos );
-            if( Math.abs(driveCorrections) < 0.2 )
-                driveCorrections = Math.signum(driveCorrections)*0.2;
-            gyroCorrections = tracker.gyroDrivePID( initialGyroHeading );
-            //gyroCorrections = 0;
-
-            telemetry.addLine("driveCorrections = " + driveCorrections );
-            telemetry.addLine("gyroCorrections = " + gyroCorrections );
-
-            mecanumDrive.drive( driveCorrections, 0, gyroCorrections );
-
-            telemetry.addLine("longitudinal position = " + tracker.getLongitudinalPosition() + " (ticks), "
-                    + mecanumDrive.convertTicksDist( tracker.getLongitudinalPosition()) + " (in)" );
-            telemetry.addLine("lateral position = " + tracker.getLateralPosition() + " (ticks), "
-                    + mecanumDrive.convertTicksDist( tracker.getLateralPosition()) + " (in)" );
-            telemetry.update();
-
-        }
-
-        //sets all power to zero afterwords
-        if(setPowerZero)
-            mecanumDrive.drive( 0, 0, 0 );
-    }
-
-    public void strafeDistancePID( double distance, double power, boolean setPowerZero ) {
-
-        mecanumDrive.drive( 0, power, 0 );
-
-        int ticksToTravel = mecanumDrive.convertDistTicks(distance);
-        int initialXPos = tracker.getLateralPosition();
-        int initialYPos = tracker.getLongitudinalPosition();
-        double initialGyroHeading = -tracker.getGyroHeading();
-        double percent = 0.5;
-
-        while( tracker.getLongitudinalPosition() - initialYPos < ticksToTravel && opModeIsActive()) {
-
-            mecanumDrive.drive( 0, tracker.strafePID( ticksToTravel + initialYPos ), tracker.gyroStrafePID( initialGyroHeading ) );
-
-            telemetry.addLine("longitudinal position = " + tracker.getLongitudinalPosition() + " (ticks), "
-                    + mecanumDrive.convertTicksDist( tracker.getLongitudinalPosition()) + " (in)" );
-            telemetry.addLine("lateral position = " + tracker.getLateralPosition() + " (ticks), "
-                    + mecanumDrive.convertTicksDist( tracker.getLateralPosition()) + " (in)" );
-            telemetry.update();
-        }
-
-
-
-        //sets all power to zero afterwords
-        if(setPowerZero)
-            mecanumDrive.drive( 0, 0, 0 );
-
     }
 
     /**

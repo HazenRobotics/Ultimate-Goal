@@ -22,7 +22,7 @@ public class MainAutonomous extends LinearOpMode
     {
         robot = new RobotWood(hardwareMap, this);
         robot.driveTrain = new MecanumDrive(hardwareMap);
-        robot.tensorFlowUtil.initTensorFlow(hardwareMap);
+        robot.tensorFlowUtil.initTensorFlow();
 
         //telemetry.setAutoClear( false );
 

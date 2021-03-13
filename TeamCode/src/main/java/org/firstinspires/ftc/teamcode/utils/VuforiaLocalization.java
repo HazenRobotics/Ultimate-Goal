@@ -71,7 +71,7 @@ public class VuforiaLocalization {
      */
     private void setCameraPosition(){
         for(VuforiaTrackable trackable : trackables){
-            ((VuforiaTrackableDefaultListener) trackable.getListener()).setPhoneInformation(FieldMap.RobotInfo.CAMERA_FROM_ROBOT, VuforiaLocalizer.CameraDirection.BACK);
+            ((VuforiaTrackableDefaultListener) trackable.getListener()).setPhoneInformation(FieldMap.RobotInfo.CAMERA_FROM_ROBOT, org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection.BACK);
         }
     }
 
