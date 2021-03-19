@@ -56,7 +56,7 @@ public class RobotTechnicolorRR {
      * @param liftPower power at which to move the lift
      */
     public void setLiftPosition(GoalLift.LiftPosition liftPosition, double liftPower) {
-        goalLift.setGoalLiftPosition(liftPosition, liftPower);
+        goalLift.setGoalLiftPosition(liftPosition, liftPower, 1000);
     }
 
     public void setIntakePower(double power) {

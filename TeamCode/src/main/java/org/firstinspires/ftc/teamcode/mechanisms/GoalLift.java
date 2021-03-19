@@ -63,7 +63,7 @@ public class GoalLift {
         loweredButton = hw.touchSensor.get(loweredButtonName);
 
         //change this based on needed motor direction
-        lift.setDirection(DcMotorSimple.Direction.FORWARD);
+        lift.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
     /**
@@ -79,7 +79,7 @@ public class GoalLift {
      * @param position position to move the lift to
      * @param power power at which to move the lift
      */
-    public void setGoalLiftPosition( LiftPosition position, double power ) {
+    public void setGoalLiftPosition( LiftPosition position, double power, long timeLimit ) {
 
         switch( position ) {
             case LIFTED: {
@@ -87,7 +87,7 @@ public class GoalLift {
                     break;
 
                 currentLiftPosition = LiftPosition.LIFTED;
-                liftToPosition( LiftPosition.LIFTED, power );
+                liftToPosition( LiftPosition.LIFTED, power, timeLimit );
                 break;
             }
             case LOWERED:{
@@ -95,7 +95,7 @@ public class GoalLift {
                     break;
 
                 currentLiftPosition = LiftPosition.LOWERED;
-                liftToPosition( LiftPosition.LOWERED, power );
+                liftToPosition( LiftPosition.LOWERED, power, timeLimit );
                 break;
             }
         }
@@ -119,8 +119,8 @@ public class GoalLift {
      * @param position position to move the lift to
      * @param power power at which to move the lift
      */
-    private void liftToPosition( LiftPosition position, double power ) {
-        long time = System.currentTimeMillis() + 1000;
+    private void liftToPosition( LiftPosition position, double power, long timeLimit ) {
+        long time = System.currentTimeMillis() + timeLimit;
         if(position == LiftPosition.LIFTED) {
             lift.setPower(power);
             while (!liftedButton.isPressed() && System.currentTimeMillis() < time);

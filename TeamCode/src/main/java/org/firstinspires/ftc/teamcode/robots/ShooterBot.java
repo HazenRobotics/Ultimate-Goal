@@ -72,7 +72,7 @@ public class ShooterBot extends Robot {
      * @param liftPower power at which to move the lift
      */
     public void setLiftPosition(GoalLift.LiftPosition liftPosition, double liftPower) {
-        goalLift.setGoalLiftPosition(liftPosition, liftPower);
+        goalLift.setGoalLiftPosition(liftPosition, liftPower, 1000);
     }
 
     public void setClawPosition(GoalLift.ClawPosition clawPosition) {

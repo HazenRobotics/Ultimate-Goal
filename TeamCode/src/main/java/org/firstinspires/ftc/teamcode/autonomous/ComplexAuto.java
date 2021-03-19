@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.robots.RobotTechnicolorRR;
 import org.firstinspires.ftc.teamcode.utils.FieldMap;
 import org.firstinspires.ftc.teamcode.utils.TensorFlowUtil.Stack;
 
-@Autonomous(name="Complex Auto")
+@Autonomous(name="Complex Auto", group="Competition")
 public class ComplexAuto extends LinearOpMode {
 
     private RobotTechnicolorRR robot;
@@ -27,8 +27,8 @@ public class ComplexAuto extends LinearOpMode {
         waitForStart();
 
         //Detect stack
-        robot.drive(robot.trajectoryBuilder().lineToConstantHeading(new Vector2d(-42, -40)).build());
-        robot.tfod.runStackDetection(10000);
+        robot.drive(robot.trajectoryBuilder().lineToConstantHeading(new Vector2d(-52, -40)).build());
+        robot.tfod.runStackDetection(1000);
         stack = robot.tfod.getStack();
 
 
@@ -50,10 +50,10 @@ public class ComplexAuto extends LinearOpMode {
         }
 
         //Drop wobble goal TODO: create method in robot class for this
-        robot.goalLift.setGoalLiftPosition(GoalLift.LiftPosition.LOWERED, 0.6);
+        robot.goalLift.setGoalLiftPosition(GoalLift.LiftPosition.LOWERED, 0.6, 500);
         robot.goalLift.setClawPosition(GoalLift.ClawPosition.OPEN);
         sleep(1000);
-        robot.goalLift.setGoalLiftPosition(GoalLift.LiftPosition.LIFTED, 0.6);
+        robot.goalLift.setGoalLiftPosition(GoalLift.LiftPosition.LIFTED, 0.6, 800);
         robot.goalLift.setClawPosition(GoalLift.ClawPosition.CLOSED);
 
         //Return to center line

@@ -48,9 +48,9 @@ public class TeleOpWood extends OpMode {
         // goal lift = gamepad1.y and gamepad1.a
         double liftPower = 0.5;
         if( gamepad1.y )
-            robot.goalLift.setGoalLiftPosition( robot.LIFT_LIFTED, liftPower );
+            robot.goalLift.setGoalLiftPosition( robot.LIFT_LIFTED, liftPower, 1000 );
         if( gamepad1.a )
-            robot.goalLift.setGoalLiftPosition( robot.LIFT_LOWERED, liftPower );
+            robot.goalLift.setGoalLiftPosition( robot.LIFT_LOWERED, liftPower, 1000 );
 
         // ring shooter = gamepad1.right_trigger
         double ringShooterPower = 0.75;

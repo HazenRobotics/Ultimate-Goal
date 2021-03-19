@@ -33,7 +33,7 @@ public class RingShooter {
     private double flyWheelRadius;
     private static double launchAngle = 35; // degrees
 
-    private static final double RING_PUSH_TIME = 1500; // milliseconds
+    private static final double RING_PUSH_TIME = 800; // milliseconds
 
     public enum PusherPosition {
         PUSHED,
@@ -89,8 +89,8 @@ public class RingShooter {
         rightFlyWheelMotor = hw.get(DcMotorEx.class, rightFlyWheelName);
 
         //change these based on motor direction
-        leftFlyWheelMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-        rightFlyWheelMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftFlyWheelMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightFlyWheelMotor.setDirection(DcMotorSimple.Direction.FORWARD);
 
         pusher = hw.servo.get(pusherName);
     }
