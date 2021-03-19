@@ -7,8 +7,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.robots.RobotTechnicolorRR;
 
-@TeleOp (name = "Shooter Bot")
-public class TeleOpShooter extends OpMode {
+@TeleOp (name = "Technicolor", group = "Competition")
+public class TeleOpTechnicolor extends OpMode {
 
     RobotTechnicolorRR robot;
 
