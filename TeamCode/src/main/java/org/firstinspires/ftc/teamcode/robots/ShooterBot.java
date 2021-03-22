@@ -24,7 +24,8 @@ public class ShooterBot extends Robot {
     public static double OPEN_POSTITION = 1.0;
     public static double CLOSED_POSTITION = 0.0;
 
-    public static boolean REVERSE_MOTOR_DIRECTION = true;
+    public static boolean REVERSE_LIFT_DIRECTION = true;
+    public static boolean REVERSE_SHOOTER_DIRECTION = true;
 
     //public Tracking tracker;
 
@@ -43,8 +44,8 @@ public class ShooterBot extends Robot {
         super.driveTrain = new MecanumDrive(hw);
         mecanumDrive = (MecanumDrive) driveTrain;
         //tracker = new Tracking(mecanumDrive, hw);
-        goalLift = new GoalLift(hw, OPEN_POSTITION, CLOSED_POSTITION);
-        ringShooter = new RingShooter(hw, FLY_WHEEL_RADIUS, PUSHED_POSTITION, RETRACTED_POSTITION, REVERSE_MOTOR_DIRECTION);
+        goalLift = new GoalLift(hw, OPEN_POSTITION, CLOSED_POSTITION, REVERSE_LIFT_DIRECTION);
+        ringShooter = new RingShooter(hw, FLY_WHEEL_RADIUS, PUSHED_POSTITION, RETRACTED_POSTITION, REVERSE_SHOOTER_DIRECTION);
     }
 
     /**

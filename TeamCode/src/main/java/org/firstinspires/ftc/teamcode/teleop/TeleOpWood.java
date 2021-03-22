@@ -2,13 +2,12 @@ package org.firstinspires.ftc.teamcode.teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.PIDCoefficients;
 
 import org.firstinspires.ftc.teamcode.mechanisms.GoalLift;
 import org.firstinspires.ftc.teamcode.mechanisms.RingShooter;
 import org.firstinspires.ftc.teamcode.robots.Robot;
 import org.firstinspires.ftc.teamcode.robots.RobotWood;
-import org.firstinspires.ftc.teamcode.utils.GeneralPID;
+import org.firstinspires.ftc.teamcode.utils.GamepadEvents;
 
 // TeleOp class for the new wooden robot
 @TeleOp(name="TeleOpWood", group="teleop")
@@ -19,6 +18,8 @@ public class TeleOpWood extends OpMode {
 
     // PIDCoefficients coefficients;
     //GeneralPID pIDCorrections;
+
+    GamepadEvents gamepad1Events = new GamepadEvents(super.gamepad1);
 
     public static boolean doTelemetry = true;
 
@@ -70,11 +71,12 @@ public class TeleOpWood extends OpMode {
 
         // intake = gamepad1.left_trigger
         double intakePower = 1;
-        robot.ringShooter.setIntakeMotorPower( gamepad1.left_trigger*intakePower );
+        //robot.ringShooter.setIntakeMotorPower( gamepad1.left_trigger*intakePower );
+        if( gamepad1Events.right_bumper.onPress() )
+            robot.ringShooter.setIntakeMotorPower( robot.ringShooter.getIntakePower() > 0 ? 0 : intakePower );
 
 
-
-        addInfoTelemetry();
+        //addInfoTelemetry();
 
         //int testPID = generalPID
 
@@ -84,7 +86,7 @@ public class TeleOpWood extends OpMode {
 
     public void addControlTelemtry() {
 
-        telemetry.addLine("            Controls:");
+        telemetry.addLine("               Controls:");
         telemetry.addData("Drive ", "Gp1: left stick y (axis)")
                 .addData("Strafe", "Gp1: left stick x (axis)")
                 .addData("Rotate", "Gp1: right stick x (axis)")
@@ -125,7 +127,7 @@ public class TeleOpWood extends OpMode {
         telemetry.addLine( "Intake Power = " + robot.ringShooter.getIntakePower() );
         addLine();
 
-        telemetry.addLine("getGyroHeading    = " + robot.tracker.getGyroHeading() );
+        telemetry.addLine("getGyroHeading        = " + robot.tracker.getGyroHeading() );
         telemetry.addLine("get360GyroHeading = " + robot.tracker.get360GyroHeading() );
 
     }
