@@ -28,7 +28,7 @@ public class ComplexAuto extends LinearOpMode {
 
         //Detect stack
         robot.drive(robot.trajectoryBuilder().lineToConstantHeading(new Vector2d(-52, -40)).build());
-        robot.tfod.runStackDetection(1000);
+        robot.tfod.runStackDetection(200);
         stack = robot.tfod.getStack();
 
 
@@ -57,7 +57,11 @@ public class ComplexAuto extends LinearOpMode {
         robot.goalLift.setClawPosition(GoalLift.ClawPosition.CLOSED);
 
         //Return to center line
-        robot.drive(robot.trajectoryBuilder().lineTo(new Vector2d(12, -18.5)).build());
+        if(stack == Stack.QUAD) {
+            robot.drive(robot.trajectoryBuilder().lineToLinearHeading(new Pose2d(12, -24, Math.toRadians(0))).build());
+        } else {
+            robot.drive(robot.trajectoryBuilder().lineToLinearHeading(new Pose2d(12, -24, Math.toRadians(180))).build());
+        }
 
         while (opModeIsActive() && !isStopRequested()) {
             idle();

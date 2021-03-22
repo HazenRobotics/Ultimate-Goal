@@ -68,9 +68,6 @@ public class RingShooter {
 
         this.pushedPosition = pushedPosition;
         this.retractedPosition = retractedPosition;
-
-        leftFlyWheelMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightFlyWheelMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     /**

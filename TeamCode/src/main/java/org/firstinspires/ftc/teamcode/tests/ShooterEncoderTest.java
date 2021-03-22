@@ -22,9 +22,8 @@ public class ShooterEncoderTest extends OpMode {
     @Override
     public void loop() {
         robot.ringShooter.setFlyWheelMotorPower(gamepad1.right_trigger);
-        telemetry.addData("Left Flywheel Position", robot.ringShooter.leftFlyWheelMotor.getCurrentPosition());
+        telemetry.addData("Left Flywheel Position", robot.drive.getWheelPositions());
         telemetry.addData("Right Flywheel Position", robot.ringShooter.rightFlyWheelMotor.getCurrentPosition());
         telemetry.update();
-
     }
 }

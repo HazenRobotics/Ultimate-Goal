@@ -65,9 +65,9 @@ public class RRMecanumDriveTechnicolor extends MecanumDrive {
 
     public static double LATERAL_MULTIPLIER = 1.26;
 
-    public static double VX_WEIGHT = 0.25;
-    public static double VY_WEIGHT = 0.25;
-    public static double OMEGA_WEIGHT = 0.25;
+    public static double VX_WEIGHT = 3;
+    public static double VY_WEIGHT = 3;
+    public static double OMEGA_WEIGHT = 5;
 
     public static int POSE_HISTORY_LIMIT = 100;
 
@@ -205,6 +205,25 @@ public class RRMecanumDriveTechnicolor extends MecanumDrive {
 
     public void turn(double angle) {
         turnAsync(angle);
+        waitForIdle();
+    }
+
+    public void turnToAsync(double angle) {
+        lastPoseOnTurn = getPoseEstimate();
+
+        turnProfile = MotionProfileGenerator.generateSimpleMotionProfile(
+                new MotionState(getPoseEstimate().getHeading(), 0, 0,0 ),
+                new MotionState(angle, 0, 0, 0),
+                MAX_ANG_VEL,
+                MAX_ANG_ACCEL
+        );
+
+        turnStart = clock.seconds();
+        mode = Mode.TURN;
+    }
+
+    public void turnTo(double angle) {
+        turnToAsync(angle);
         waitForIdle();
     }
 
