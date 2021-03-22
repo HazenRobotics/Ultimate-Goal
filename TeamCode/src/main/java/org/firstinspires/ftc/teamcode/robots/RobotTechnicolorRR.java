@@ -30,10 +30,12 @@ public class RobotTechnicolorRR {
     public static double OPEN_POSTITION = 1.0;
     public static double CLOSED_POSTITION = 0.0;
 
+    public static boolean REVERSE_MOTOR_DIRECTION = true;
+
     public RobotTechnicolorRR(HardwareMap hw, OpMode op) {
         drive = new RRMecanumDriveTechnicolor(hw);
         goalLift = new GoalLift(hw, OPEN_POSTITION, CLOSED_POSTITION);
-        ringShooter = new RingShooter(hw, FLY_WHEEL_RADIUS, PUSHED_POSTITION, RETRACTED_POSTITION);
+        ringShooter = new RingShooter(hw, FLY_WHEEL_RADIUS, PUSHED_POSTITION, RETRACTED_POSTITION, REVERSE_MOTOR_DIRECTION);
         tfod = new TensorFlowUtil(hw, op);
     }
 

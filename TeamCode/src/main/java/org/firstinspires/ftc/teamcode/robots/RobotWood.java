@@ -30,6 +30,8 @@ public class RobotWood extends Robot {
     public static double OPEN_POSTITION = 0.5;
     public static double CLOSED_POSTITION = 0.1;
 
+    public static boolean REVERSE_MOTOR_DIRECTION = true;
+
     public static final GoalLift.ClawPosition CLAW_CLOSED = GoalLift.ClawPosition.CLOSED;
     public static final GoalLift.ClawPosition CLAW_OPEN = GoalLift.ClawPosition.OPEN;
 
@@ -43,7 +45,7 @@ public class RobotWood extends Robot {
         mecanumDrive = (MecanumDrive) driveTrain;
         tracker = new Tracking(mecanumDrive, hw);
         goalLift = new GoalLift(hw, OPEN_POSTITION, CLOSED_POSTITION );
-        ringShooter = new RingShooter(hw, FLY_WHEEL_RADIUS, PUSHED_POSTITION, RETRACTED_POSTITION );
+        ringShooter = new RingShooter(hw, FLY_WHEEL_RADIUS, PUSHED_POSTITION, RETRACTED_POSTITION, REVERSE_MOTOR_DIRECTION);
         tensorFlowUtil = new TensorFlowUtil(hw, op);
     }
 

@@ -47,8 +47,8 @@ public class RingShooter {
      *
      * @param hw robot's hardware map
      */
-    public RingShooter(HardwareMap hw, double flyWheelRadius, double pushedPosition, double retractedPosition) {
-        this(hw, "intake", "leftFlyWheel", "rightFlyWheel", "pusher", flyWheelRadius, pushedPosition, retractedPosition);
+    public RingShooter(HardwareMap hw, double flyWheelRadius, double pushedPosition, double retractedPosition, boolean reverseMotorDirections) {
+        this(hw, "intake", "leftFlyWheel", "rightFlyWheel", "pusher", flyWheelRadius, pushedPosition, retractedPosition, reverseMotorDirections);
     }
 
     /**
@@ -60,9 +60,9 @@ public class RingShooter {
      * @param rightFlyWheelName name of right flywheel motor in the hardware map
      */
     public RingShooter(HardwareMap hw, String intakeMotorName, String leftFlyWheelName, String rightFlyWheelName,
-                       String pusherName, double flyWheelRadius, double pushedPosition, double retractedPosition) {
+                       String pusherName, double flyWheelRadius, double pushedPosition, double retractedPosition, boolean reverseMotorDirections ) {
 
-        setUpHardware(hw, intakeMotorName, leftFlyWheelName, rightFlyWheelName, pusherName);
+        setUpHardware(hw, intakeMotorName, leftFlyWheelName, rightFlyWheelName, pusherName, reverseMotorDirections);
 
         this.flyWheelRadius = flyWheelRadius;
 
@@ -81,7 +81,7 @@ public class RingShooter {
      * @param leftFlyWheelName  name of left flywheel motor in the hardware map
      * @param rightFlyWheelName name of right flywheel motor in the hardware map
      */
-    private void setUpHardware(HardwareMap hw, String intakeMotorName, String leftFlyWheelName, String rightFlyWheelName, String pusherName) {
+    private void setUpHardware(HardwareMap hw, String intakeMotorName, String leftFlyWheelName, String rightFlyWheelName, String pusherName, boolean reverseMotorDirections ) {
 
         intakeMotor = hw.dcMotor.get(intakeMotorName);
 
@@ -89,8 +89,13 @@ public class RingShooter {
         rightFlyWheelMotor = hw.get(DcMotorEx.class, rightFlyWheelName);
 
         //change these based on motor direction
-        leftFlyWheelMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightFlyWheelMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        leftFlyWheelMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        rightFlyWheelMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        if( reverseMotorDirections ) {
+            leftFlyWheelMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+            rightFlyWheelMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        }
 
         pusher = hw.servo.get(pusherName);
     }
