@@ -19,7 +19,7 @@ public class TeleOpWood extends OpMode {
     // PIDCoefficients coefficients;
     //GeneralPID pIDCorrections;
 
-    GamepadEvents gamepad1Events = new GamepadEvents(super.gamepad1);
+    GamepadEvents gamepad;
 
     public static boolean doTelemetry = true;
 
@@ -32,6 +32,8 @@ public class TeleOpWood extends OpMode {
 
         //coefficients = new PIDCoefficients( 0, 0, 0 );
         //pIDCorrections = new GeneralPID(coefficients);
+
+        gamepad = new GamepadEvents(super.gamepad1);
 
         telemetry.addLine("init finished");
         telemetry.update();
@@ -66,21 +68,22 @@ public class TeleOpWood extends OpMode {
         robot.ringShooter.setFlyWheelMotorPower( gamepad1.right_trigger*ringShooterPower );
 
         // ring pusher (servo) = gamepad1.left_bumper
-        if( gamepad1.left_bumper )
+        if( gamepad.left_bumper.onPress() )
             robot.ringShooter.pushRing();
 
         // intake = gamepad1.left_trigger
         double intakePower = 1;
         //robot.ringShooter.setIntakeMotorPower( gamepad1.left_trigger*intakePower );
-        if( gamepad1Events.right_bumper.onPress() )
+        if( gamepad.right_bumper.onPress() )
             robot.ringShooter.setIntakeMotorPower( robot.ringShooter.getIntakePower() > 0 ? 0 : intakePower );
 
 
-        //addInfoTelemetry();
+        addInfoTelemetry();
 
         //int testPID = generalPID
 
         telemetry.update();
+        gamepad.update();
 
     }
 
