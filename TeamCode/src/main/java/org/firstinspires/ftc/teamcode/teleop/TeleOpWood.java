@@ -2,11 +2,13 @@ package org.firstinspires.ftc.teamcode.teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.PIDCoefficients;
 
 import org.firstinspires.ftc.teamcode.mechanisms.GoalLift;
 import org.firstinspires.ftc.teamcode.mechanisms.RingShooter;
 import org.firstinspires.ftc.teamcode.robots.Robot;
 import org.firstinspires.ftc.teamcode.robots.RobotWood;
+import org.firstinspires.ftc.teamcode.utils.GeneralPID;
 
 // TeleOp class for the new wooden robot
 @TeleOp(name="TeleOpWood", group="teleop")
@@ -14,6 +16,9 @@ public class TeleOpWood extends OpMode {
 
     //Robot robot;
     RobotWood robot;
+
+    // PIDCoefficients coefficients;
+    //GeneralPID pIDCorrections;
 
     public static boolean doTelemetry = true;
 
@@ -23,6 +28,9 @@ public class TeleOpWood extends OpMode {
 
         robot.goalLift.setClawPosition( GoalLift.ClawPosition.OPEN );
         robot.ringShooter.setPusherPosition( RingShooter.PusherPosition.RETRACTED );
+
+        //coefficients = new PIDCoefficients( 0, 0, 0 );
+        //pIDCorrections = new GeneralPID(coefficients);
 
         telemetry.addLine("init finished");
         telemetry.update();
@@ -53,7 +61,7 @@ public class TeleOpWood extends OpMode {
             robot.goalLift.setGoalLiftPosition( robot.LIFT_LOWERED, liftPower, 1000 );
 
         // ring shooter = gamepad1.right_trigger
-        double ringShooterPower = 0.75;
+        double ringShooterPower = 1;
         robot.ringShooter.setFlyWheelMotorPower( gamepad1.right_trigger*ringShooterPower );
 
         // ring pusher (servo) = gamepad1.left_bumper
@@ -61,10 +69,14 @@ public class TeleOpWood extends OpMode {
             robot.ringShooter.pushRing();
 
         // intake = gamepad1.left_trigger
-        double intakePower = 0.75;
+        double intakePower = 1;
         robot.ringShooter.setIntakeMotorPower( gamepad1.left_trigger*intakePower );
 
+
+
         addInfoTelemetry();
+
+        //int testPID = generalPID
 
         telemetry.update();
 
@@ -82,6 +94,7 @@ public class TeleOpWood extends OpMode {
                 .addData("Lower Goal Lift", "Gp1: x")
                 .addData("Ring Shooter", "Gp1: right trigger")
                 .addData("Ring Pusher ", "Gp1: left bumper")
+                .addData("Intake Toggle", "Gp1: right trigger")
                 .addData("Intake", "Gp1: left trigger");
         addLine();
     }

@@ -83,8 +83,8 @@ public class ShooterBot extends Robot {
 
     /**
      *
-     * @param degrees forward is zero, turning right is positive, limit: 359 degrees
-     * @param power positive will turn right, negative turns left
+     * @param //degrees forward is zero, turning right is positive, limit: 359 degrees
+     * @param //power positive will turn right, negative turns left
      */
     /*public void rotateDegrees( double degrees, double power ) {
 
