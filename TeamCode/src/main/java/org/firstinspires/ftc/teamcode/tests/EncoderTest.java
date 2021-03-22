@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import org.firstinspires.ftc.teamcode.road_runner.util.Encoder;
 import org.firstinspires.ftc.teamcode.robots.RobotTechnicolorRR;
 
-@TeleOp
+@TeleOp(name="Localization Encoder Test", group="Test")
 public class EncoderTest extends OpMode {
     RobotTechnicolorRR robot;
     Encoder parallelEncoder;

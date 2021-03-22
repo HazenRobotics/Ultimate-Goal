@@ -7,15 +7,19 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.mechanisms.GoalLift;
 import org.firstinspires.ftc.teamcode.robots.RobotTechnicolorRR;
+import org.firstinspires.ftc.teamcode.utils.GamepadEvents;
 
 @TeleOp (name = "Technicolor", group = "Competition")
 public class TeleOpTechnicolor extends OpMode {
+    //TODO: Create button toggle for controllers
 
     RobotTechnicolorRR robot;
 
     final double LIFT_POWER = 0.5;
     final double SHOOTER_POWER = 0.85;
-    final double INTAKE_POWER = 0.9;
+    final double INTAKE_POWER = 1.0;
+
+    GamepadEvents gamepad1 = new GamepadEvents(super.gamepad1);
 
     @Override
     public void init() {
@@ -29,19 +33,14 @@ public class TeleOpTechnicolor extends OpMode {
                 -gamepad1.left_stick_x,
                 -gamepad1.right_stick_x
         ));
-        /*if(gamepad1.a) {
-            robot.setClawPosition(robot.goalLift.getCurrentClawPosition() == GoalLift.ClawPosition.OPEN ? GoalLift.ClawPosition.CLOSED : GoalLift.ClawPosition.OPEN);
-        }
-        if(gamepad1.x) {
-            robot.setLiftPosition(robot.goalLift.getCurrentLiftPosition() == GoalLift.LiftPosition.LIFTED ? GoalLift.LiftPosition.LOWERED : GoalLift.LiftPosition.LIFTED, 0.5);
-        }*/
-        /*if(gamepad1.y) {
-            robot.ringShooter.launchRingPower(1.0);
-        }*/
-        // goal lift = gamepad1.y and gamepad1.a
-        if( gamepad1.y )
+        if(gamepad1.b.onPress())
+            robot.goalLift.setClawPosition( GoalLift.ClawPosition.CLOSED );
+        if(gamepad1.x.onPress())
+            robot.goalLift.setClawPosition( GoalLift.ClawPosition.OPEN );
+
+        if( gamepad1.y.onPress() )
             robot.goalLift.setGoalLiftPosition( GoalLift.LiftPosition.LIFTED, LIFT_POWER, 1000 );
-        if( gamepad1.a )
+        if( gamepad1.a.onPress() )
             robot.goalLift.setGoalLiftPosition( GoalLift.LiftPosition.LOWERED, LIFT_POWER, 1000 );
 
         // ring shooter = gamepad1.right_trigger
@@ -49,13 +48,16 @@ public class TeleOpTechnicolor extends OpMode {
         robot.ringShooter.setFlyWheelMotorPower( gamepad1.right_trigger*SHOOTER_POWER );
 
         // ring pusher (servo) = gamepad1.left_bumper
-        if( gamepad1.left_bumper )
+        if( gamepad1.left_bumper.onPress() )
             robot.ringShooter.pushRing();
 
         // intake = gamepad1.left_trigger
-        robot.ringShooter.setIntakeMotorPower( gamepad1.left_trigger*INTAKE_POWER );
+        if(gamepad1.right_bumper.onPress())
+            robot.ringShooter.setIntakeMotorPower( robot.ringShooter.getIntakePower() > 0 ? 0 : INTAKE_POWER);
+        //robot.ringShooter.setIntakeMotorPower( gamepad1.left_trigger*INTAKE_POWER );
 
         robot.drive.update();
         telemetry.update();
+        gamepad1.update();
     }
 }

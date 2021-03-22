@@ -65,9 +65,9 @@ public class RRMecanumDriveTechnicolor extends MecanumDrive {
 
     public static double LATERAL_MULTIPLIER = 1.26;
 
-    public static double VX_WEIGHT = 1;
-    public static double VY_WEIGHT = 1;
-    public static double OMEGA_WEIGHT = 1;
+    public static double VX_WEIGHT = 0.25;
+    public static double VY_WEIGHT = 0.25;
+    public static double OMEGA_WEIGHT = 0.25;
 
     public static int POSE_HISTORY_LIMIT = 100;
 

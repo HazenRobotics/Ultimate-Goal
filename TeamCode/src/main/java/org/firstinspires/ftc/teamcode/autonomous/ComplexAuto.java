@@ -33,11 +33,11 @@ public class ComplexAuto extends LinearOpMode {
 
 
         //Shoot powershot targets
-        robot.drive(robot.trajectoryBuilder().lineToConstantHeading(new Vector2d(-42, -30)).splineToConstantHeading(new Vector2d(-10, -22.5), 0).build());
+        robot.drive(robot.trajectoryBuilder().lineToConstantHeading(new Vector2d(-36, -36)).splineToConstantHeading(new Vector2d(-10, -25.5), 0).build());
         robot.shootAtTarget(FieldMap.ScoringGoals.RED_RIGHT_POWERSHOT);
-        robot.drive(robot.trajectoryBuilder().lineTo(new Vector2d(-10, -17)).build());
+        robot.drive(robot.trajectoryBuilder().lineTo(new Vector2d(-10, -20)).build());
         robot.shootAtTarget(FieldMap.ScoringGoals.RED_MIDDLE_POWERSHOT);
-        robot.drive(robot.trajectoryBuilder().lineTo(new Vector2d(-10, -9.5)).build());
+        robot.drive(robot.trajectoryBuilder().lineTo(new Vector2d(-10, -12.5)).build());
         robot.shootAtTarget(FieldMap.ScoringGoals.RED_LEFT_POWERSHOT);
 
         //Move wobble goal to correct zone
