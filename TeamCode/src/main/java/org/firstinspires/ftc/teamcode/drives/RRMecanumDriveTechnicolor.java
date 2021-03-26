@@ -172,7 +172,7 @@ public class RRMecanumDriveTechnicolor extends MecanumDrive {
         // TODO: if desired, use setLocalizer() to change the localization method
         // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
 
-        //setLocalizer(new RoadRunnerTwoWheelTrackingLocalizer(hardwareMap, this));
+        //setLocalizer(new RRTwoWheelTrackingLocalizer(hardwareMap, this));
     }
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {
@@ -209,17 +209,7 @@ public class RRMecanumDriveTechnicolor extends MecanumDrive {
     }
 
     public void turnToAsync(double angle) {
-        lastPoseOnTurn = getPoseEstimate();
-
-        turnProfile = MotionProfileGenerator.generateSimpleMotionProfile(
-                new MotionState(getPoseEstimate().getHeading(), 0, 0,0 ),
-                new MotionState(angle, 0, 0, 0),
-                MAX_ANG_VEL,
-                MAX_ANG_ACCEL
-        );
-
-        turnStart = clock.seconds();
-        mode = Mode.TURN;
+        turnAsync(angle - getPoseEstimate().getHeading());
     }
 
     public void turnTo(double angle) {

@@ -95,6 +95,8 @@ public class RingShooter {
         }
 
         pusher = hw.servo.get(pusherName);
+
+        setFlyWheelPID(new PIDFCoefficients(2, 0, 2, 8.5));
     }
 
     /**
@@ -124,7 +126,6 @@ public class RingShooter {
      * @param angleUnit unit in which the input velocity is given, in units/second
      */
     public void setFlyWheelMotorVelocity(double velocity, AngleUnit angleUnit) {
-
         leftFlyWheelMotor.setVelocity(velocity, angleUnit);
         rightFlyWheelMotor.setVelocity(velocity, angleUnit);
     }
@@ -160,10 +161,14 @@ public class RingShooter {
      * @param omega to shoot with in rad/s
      * @param setPowerZero set motor power zero afterwards
      */
-    public void launchRingAngularVelocity(double omega, boolean setPowerZero) {
-        setFlyWheelMotorVelocity( omega, AngleUnit.RADIANS );
+    public void launchRingAngularVelocity(double omega, boolean setPowerZero, boolean speedUpTime) {
+        setFlyWheelMotorVelocity(omega, AngleUnit.RADIANS);
+        if (speedUpTime) {
+            long currentTime = System.currentTimeMillis();
+            while (System.currentTimeMillis() < currentTime + 500) ;
+        }
         pushRing();
-        if( setPowerZero )
+        if (setPowerZero)
             setFlyWheelMotorVelocity(0, AngleUnit.RADIANS);
     }
 

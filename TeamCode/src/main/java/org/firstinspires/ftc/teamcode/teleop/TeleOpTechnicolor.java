@@ -4,6 +4,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.mechanisms.GoalLift;
 import org.firstinspires.ftc.teamcode.robots.RobotTechnicolorRR;
 import org.firstinspires.ftc.teamcode.utils.GamepadEvents;
@@ -17,9 +18,13 @@ public class TeleOpTechnicolor extends OpMode {
     final double SHOOTER_POWER = 0.85;
     final double INTAKE_POWER = 1.0;
 
-    double velocity = 50;
-    double velocityChange = 50;
-    double velocityChangeChange = 10;
+    final double MAX_DRIVE_SPEED = 0.8;
+    final double MIN_DRIVE_SPEED = 0.4;
+
+    int negateIntake = 1;
+
+    double velocity = 10;
+    double velocityChange = 1;
 
     GamepadEvents gamepad1;
 
@@ -34,11 +39,7 @@ public class TeleOpTechnicolor extends OpMode {
 
     @Override
     public void loop() {
-        robot.drive.setWeightedDrivePower(new Pose2d(
-                -gamepad1.left_stick_y * sprintMult,
-                -gamepad1.left_stick_x * sprintMult,
-                -gamepad1.right_stick_x * sprintMult
-        ));
+        robot.teleopDrive(-gamepad1.left_stick_y*sprintMult, gamepad1.left_stick_x*sprintMult, -gamepad1.right_stick_x*sprintMult);
 
         /*
         //D-pad rotation control
@@ -53,23 +54,21 @@ public class TeleOpTechnicolor extends OpMode {
         }
         */
 
+        // negate the intake direction on left trigger press
+        //if( gamepad1.left_trigger.onPress() ) negateIntake *= -1;
+
         // increases and decreases the velocity of the flyWheels
-        if( gamepad1.dpad_up.onPress() ) {
+        if( gamepad1.dpad_up.onPress() )
             velocity += velocityChange;
-        } else if( gamepad1.dpad_down.onPress() ) {
+        else if( gamepad1.dpad_down.onPress() )
             velocity -= velocityChange;
-        } else if( gamepad1.dpad_right.onPress() ) {
-            velocityChange += velocityChangeChange;
-        } else if( gamepad1.dpad_left.onPress() ) {
-            velocityChange -= velocityChangeChange;
-        }
+
 
         telemetry.addLine( "velocity: " + velocity );
-        telemetry.addLine( "velocityIncrease: " + velocityChange);
 
         //Sprint control
         if(gamepad1.left_stick_button.onPress()) {
-            sprintMult = sprintMult < 1 ? 1 : 0.5;
+            sprintMult = sprintMult < MAX_DRIVE_SPEED ? MAX_DRIVE_SPEED : MIN_DRIVE_SPEED;
         }
         if(gamepad1.b.onPress())
             robot.goalLift.setClawPosition( GoalLift.ClawPosition.CLOSED );
@@ -82,8 +81,7 @@ public class TeleOpTechnicolor extends OpMode {
             robot.goalLift.setGoalLiftPosition( GoalLift.LiftPosition.LOWERED, LIFT_POWER, 1000 );
 
         // ring shooter = gamepad1.right_trigger
-        robot.ringShooter.launchRingAngularVelocity( gamepad1.right_trigger*velocity, false );
-
+        robot.ringShooter.setFlyWheelMotorVelocity( gamepad1.right_trigger*velocity, AngleUnit.RADIANS );
         //robot.ringShooter.setFlyWheelMotorPower( gamepad1.right_trigger*SHOOTER_POWER );
 
         // ring pusher (servo) = gamepad1.left_bumper

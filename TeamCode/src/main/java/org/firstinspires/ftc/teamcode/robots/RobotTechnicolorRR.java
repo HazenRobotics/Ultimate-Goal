@@ -3,10 +3,12 @@ package org.firstinspires.ftc.teamcode.robots;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.drives.RRMecanumDriveTechnicolor;
 import org.firstinspires.ftc.teamcode.mechanisms.GoalLift;
 import org.firstinspires.ftc.teamcode.mechanisms.RingShooter;
@@ -22,6 +24,8 @@ public class RobotTechnicolorRR {
     public RingShooter ringShooter;
     public TensorFlowUtil tfod;
 
+    RevBlinkinLedDriver lights;
+
     private final double FLY_WHEEL_RADIUS = 4; //in inches
 
     public static double PUSHED_POSTITION = 0.3;
@@ -31,26 +35,27 @@ public class RobotTechnicolorRR {
     public static double CLOSED_POSTITION = 0.0;
 
     public static boolean REVERSE_LIFT_DIRECTION = true;
-    public static boolean REVERSE_SHOOTER_DIRECTION = true;
+    public static boolean REVERSE_SHOOTER_DIRECTION = false;
 
     public RobotTechnicolorRR(HardwareMap hw, OpMode op) {
         drive = new RRMecanumDriveTechnicolor(hw);
         goalLift = new GoalLift(hw, OPEN_POSTITION, CLOSED_POSTITION, REVERSE_LIFT_DIRECTION);
         ringShooter = new RingShooter(hw, FLY_WHEEL_RADIUS, PUSHED_POSTITION, RETRACTED_POSTITION, REVERSE_SHOOTER_DIRECTION);
         tfod = new TensorFlowUtil(hw, op);
+        //lights = hw.get(RevBlinkinLedDriver.class, "lights");
     }
 
     /**
      * Shoots a ring at a specified target
      * @param target target at which to shoot a ring at
      */
-    public void shootAtTarget(OpenGLMatrix target, boolean setSpeedZero) {
+    public void shootAtTarget(OpenGLMatrix target, boolean setSpeedZero, boolean speedUpTime) {
         //rotate towards target
         //drive.turn(ShootingMath.getAngleToTarget(drive.getPoseEstimate(), FieldMap.toInches(FieldMap.toVectorF(target))));
         //assuming we are now lined up for the shot
         //shoot using velocity required to hit the target
         // backup shoot using power ringShooter.launchRingPower(0.85);
-        ringShooter.launchRingAngularVelocity( 10, setSpeedZero );
+        ringShooter.launchRingAngularVelocity( 10, setSpeedZero, speedUpTime );
         //ringShooter.launchRingVelocity(ShootingMath.getVelocityToTarget(FieldMap.RobotInfo.getRingLaunchPointPosition().toVector(), target.toVector(), ringShooter.getLaunchAngle()), DistanceUnit.MM);
     }
 
@@ -90,6 +95,16 @@ public class RobotTechnicolorRR {
 
     public void setPosition(Pose2d currentPosition) {
         drive.setPoseEstimate(currentPosition);
+    }
+
+    public void teleopDrive(double forwardPower, double strafePower, double turnPower) {
+        // You might have to play with the + or - depending on how your motors are installed
+        double frontLeftPower  = forwardPower + strafePower - turnPower;
+        double backLeftPower   = forwardPower - strafePower - turnPower;
+        double frontRightPower = forwardPower - strafePower + turnPower;
+        double backRightPower  = forwardPower + strafePower + turnPower;
+
+        drive.setMotorPowers( frontLeftPower, backLeftPower, backRightPower, frontRightPower );
     }
 
 
