@@ -21,13 +21,15 @@ public class BasicShooterAuto extends LinearOpMode {
         waitForStart();
 
 
+
         //Shoot powershot targets
         robot.drive(robot.trajectoryBuilder().splineToConstantHeading(new Vector2d(-10, -22.5), 0).build());
-        robot.shootAtTarget(FieldMap.ScoringGoals.RED_RIGHT_POWERSHOT);
+        robot.shootAtTarget(FieldMap.ScoringGoals.RED_RIGHT_POWERSHOT, true);
         robot.drive(robot.trajectoryBuilder().lineTo(new Vector2d(-10, -17)).build());
-        robot.shootAtTarget(FieldMap.ScoringGoals.RED_MIDDLE_POWERSHOT);
+        robot.shootAtTarget(FieldMap.ScoringGoals.RED_MIDDLE_POWERSHOT, true);
         robot.drive(robot.trajectoryBuilder().lineTo(new Vector2d(-10, -9.5)).build());
-        robot.shootAtTarget(FieldMap.ScoringGoals.RED_LEFT_POWERSHOT);
+        robot.shootAtTarget(FieldMap.ScoringGoals.RED_LEFT_POWERSHOT, true);
+
 
 
         //Return to center line

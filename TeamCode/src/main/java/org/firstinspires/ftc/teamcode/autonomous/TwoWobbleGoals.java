@@ -55,11 +55,11 @@ public class TwoWobbleGoals extends LinearOpMode {
         //Shoot powershot targets
 
 
-        robot.shootAtTarget(FieldMap.ScoringGoals.RED_RIGHT_POWERSHOT);
+        robot.shootAtTarget(FieldMap.ScoringGoals.RED_RIGHT_POWERSHOT, true);
         robot.drive(robot.trajectoryBuilder().lineTo(new Vector2d(-10, -17)).build());
-        robot.shootAtTarget(FieldMap.ScoringGoals.RED_MIDDLE_POWERSHOT);
+        robot.shootAtTarget(FieldMap.ScoringGoals.RED_MIDDLE_POWERSHOT, true);
         robot.drive(robot.trajectoryBuilder().lineTo(new Vector2d(-10, -9.5)).build());
-        robot.shootAtTarget(FieldMap.ScoringGoals.RED_LEFT_POWERSHOT);
+        robot.shootAtTarget(FieldMap.ScoringGoals.RED_LEFT_POWERSHOT, true);
 
         //Pick up 2nd wobble goal
         robot.drive(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(-20, -34.5, 0), 0).build());

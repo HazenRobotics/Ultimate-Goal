@@ -138,7 +138,20 @@ public class RingShooter {
     public void launchRingVelocity(double velocity, DistanceUnit inputUnit) {
         setFlyWheelMotorVelocity(ShootingMath.velocityToAngularVelocity(inputUnit.toMeters(velocity), inputUnit.toMeters(flyWheelRadius)), AngleUnit.RADIANS);
         pushRing();
-        setFlyWheelMotorVelocity(0, AngleUnit.RADIANS);
+        setFlyWheelMotorVelocity( 0, AngleUnit.RADIANS );
+    }
+
+    /**
+     *
+     * @param velocity to shoot with in rad/s
+     * @param setPowerZero set motor power zero afterwards
+     */
+    public void launchRingVelocity(double velocity, boolean setPowerZero) {
+        //setFlyWheelMotorVelocity(ShootingMath.velocityToAngularVelocity(inputUnit.toMeters(velocity), inputUnit.toMeters(flyWheelRadius)), AngleUnit.RADIANS);
+        setFlyWheelMotorVelocity( velocity, AngleUnit.RADIANS );
+        pushRing();
+        if( setPowerZero )
+            setFlyWheelMotorVelocity(0, AngleUnit.RADIANS);
     }
 
     /**

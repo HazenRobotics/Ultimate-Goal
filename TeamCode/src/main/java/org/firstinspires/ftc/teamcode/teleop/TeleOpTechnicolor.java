@@ -4,12 +4,9 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.mechanisms.GoalLift;
 import org.firstinspires.ftc.teamcode.robots.RobotTechnicolorRR;
-import org.firstinspires.ftc.teamcode.utils.FieldMap;
 import org.firstinspires.ftc.teamcode.utils.GamepadEvents;
-import org.firstinspires.ftc.teamcode.utils.ShootingMath;
 
 @TeleOp (name = "Technicolor", group = "Competition")
 public class TeleOpTechnicolor extends OpMode {
@@ -19,6 +16,10 @@ public class TeleOpTechnicolor extends OpMode {
     final double LIFT_POWER = 0.5;
     final double SHOOTER_POWER = 0.85;
     final double INTAKE_POWER = 1.0;
+
+    double velocity = 50;
+    double velocityChange = 50;
+    double velocityChangeChange = 10;
 
     GamepadEvents gamepad1;
 
@@ -39,6 +40,7 @@ public class TeleOpTechnicolor extends OpMode {
                 -gamepad1.right_stick_x * sprintMult
         ));
 
+        /*
         //D-pad rotation control
         if(gamepad1.dpad_up.onPress()) {
             robot.drive.turnToAsync(0);
@@ -49,6 +51,22 @@ public class TeleOpTechnicolor extends OpMode {
         } else if(gamepad1.dpad_right.onPress()) {
             robot.drive.turnToAsync(Math.toRadians(90));
         }
+        */
+
+        // increases and decreases the velocity of the flyWheels
+        if( gamepad1.dpad_up.onPress() ) {
+            velocity += velocityChange;
+        } else if( gamepad1.dpad_down.onPress() ) {
+            velocity -= velocityChange;
+        } else if( gamepad1.dpad_right.onPress() ) {
+            velocityChange += velocityChangeChange;
+        } else if( gamepad1.dpad_left.onPress() ) {
+            velocityChange -= velocityChangeChange;
+        }
+
+        telemetry.addLine( "velocity: " + velocity );
+        telemetry.addLine( "velocityIncrease: " + velocityChange);
+
         //Sprint control
         if(gamepad1.left_stick_button.onPress()) {
             sprintMult = sprintMult < 1 ? 1 : 0.5;
@@ -64,8 +82,9 @@ public class TeleOpTechnicolor extends OpMode {
             robot.goalLift.setGoalLiftPosition( GoalLift.LiftPosition.LOWERED, LIFT_POWER, 1000 );
 
         // ring shooter = gamepad1.right_trigger
+        robot.ringShooter.launchRingVelocity( gamepad1.right_trigger*velocity, false );
 
-        robot.ringShooter.setFlyWheelMotorPower( gamepad1.right_trigger*SHOOTER_POWER );
+        //robot.ringShooter.setFlyWheelMotorPower( gamepad1.right_trigger*SHOOTER_POWER );
 
         // ring pusher (servo) = gamepad1.left_bumper
         if( gamepad1.left_bumper.onPress() ) {
