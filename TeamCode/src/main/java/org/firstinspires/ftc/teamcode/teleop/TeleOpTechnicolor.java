@@ -82,7 +82,7 @@ public class TeleOpTechnicolor extends OpMode {
             robot.goalLift.setGoalLiftPosition( GoalLift.LiftPosition.LOWERED, LIFT_POWER, 1000 );
 
         // ring shooter = gamepad1.right_trigger
-        robot.ringShooter.launchRingVelocity( gamepad1.right_trigger*velocity, false );
+        robot.ringShooter.launchRingAngularVelocity( gamepad1.right_trigger*velocity, false );
 
         //robot.ringShooter.setFlyWheelMotorPower( gamepad1.right_trigger*SHOOTER_POWER );
 

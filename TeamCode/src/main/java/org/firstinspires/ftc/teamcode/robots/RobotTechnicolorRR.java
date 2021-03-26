@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.drives.RRMecanumDriveTechnicolor;
 import org.firstinspires.ftc.teamcode.mechanisms.GoalLift;
 import org.firstinspires.ftc.teamcode.mechanisms.RingShooter;
@@ -45,13 +44,13 @@ public class RobotTechnicolorRR {
      * Shoots a ring at a specified target
      * @param target target at which to shoot a ring at
      */
-    public void shootAtTarget(OpenGLMatrix target, boolean setVelocityZero) {
+    public void shootAtTarget(OpenGLMatrix target, boolean setSpeedZero) {
         //rotate towards target
         //drive.turn(ShootingMath.getAngleToTarget(drive.getPoseEstimate(), FieldMap.toInches(FieldMap.toVectorF(target))));
         //assuming we are now lined up for the shot
         //shoot using velocity required to hit the target
         // backup shoot using power ringShooter.launchRingPower(0.85);
-        ringShooter.launchRingVelocity( 100, setVelocityZero );
+        ringShooter.launchRingAngularVelocity( 10, setSpeedZero );
         //ringShooter.launchRingVelocity(ShootingMath.getVelocityToTarget(FieldMap.RobotInfo.getRingLaunchPointPosition().toVector(), target.toVector(), ringShooter.getLaunchAngle()), DistanceUnit.MM);
     }
 

@@ -58,7 +58,7 @@ public class ShooterBot extends Robot {
         //rotateDegrees(ShootingMath.getAngleToTarget(FieldMap.RobotInfo.robotLocation.toVector(), target.toVector()), turnPower);
         //assuming we are now lined up for the shot
         //shoot using velocity required to hit the target
-        ringShooter.launchRingVelocity(ShootingMath.getVelocityToTarget(FieldMap.RobotInfo.getRingLaunchPointPosition().toVector(), target.toVector(), ringShooter.getLaunchAngle()), DistanceUnit.MM);
+        ringShooter.launchRingAngularVelocity(ShootingMath.getVelocityToTarget(FieldMap.RobotInfo.getRingLaunchPointPosition().toVector(), target.toVector(), ringShooter.getLaunchAngle()), DistanceUnit.MM);
     }
 
     /**

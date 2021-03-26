@@ -135,20 +135,33 @@ public class RingShooter {
      * @param velocity  velocity at which to launch the ring
      * @param inputUnit unit used when inputting the velocity, in units/second
      */
-    public void launchRingVelocity(double velocity, DistanceUnit inputUnit) {
+    public void launchRingAngularVelocity(double velocity, DistanceUnit inputUnit) {
         setFlyWheelMotorVelocity(ShootingMath.velocityToAngularVelocity(inputUnit.toMeters(velocity), inputUnit.toMeters(flyWheelRadius)), AngleUnit.RADIANS);
         pushRing();
-        setFlyWheelMotorVelocity( 0, AngleUnit.RADIANS );
+        setFlyWheelMotorVelocity(0, AngleUnit.RADIANS);
+    }
+
+    /**
+     * Launches a ring stored in the magazine
+     *
+     * @param velocity  velocity at which to launch the ring
+     * @param setPowerZero set power to zero afterwards
+     * @param inputUnit unit used when inputting the velocity, in units/second
+     */
+    public void launchRingAngularVelocity(double velocity, boolean setPowerZero, DistanceUnit inputUnit) {
+        setFlyWheelMotorVelocity(ShootingMath.velocityToAngularVelocity(inputUnit.toMeters(velocity), inputUnit.toMeters(flyWheelRadius)), AngleUnit.RADIANS);
+        pushRing();
+        if( setPowerZero )
+            setFlyWheelMotorVelocity(0, AngleUnit.RADIANS);
     }
 
     /**
      *
-     * @param velocity to shoot with in rad/s
+     * @param omega to shoot with in rad/s
      * @param setPowerZero set motor power zero afterwards
      */
-    public void launchRingVelocity(double velocity, boolean setPowerZero) {
-        //setFlyWheelMotorVelocity(ShootingMath.velocityToAngularVelocity(inputUnit.toMeters(velocity), inputUnit.toMeters(flyWheelRadius)), AngleUnit.RADIANS);
-        setFlyWheelMotorVelocity( velocity, AngleUnit.RADIANS );
+    public void launchRingAngularVelocity(double omega, boolean setPowerZero) {
+        setFlyWheelMotorVelocity( omega, AngleUnit.RADIANS );
         pushRing();
         if( setPowerZero )
             setFlyWheelMotorVelocity(0, AngleUnit.RADIANS);
