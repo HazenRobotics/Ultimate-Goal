@@ -3,18 +3,22 @@ package org.firstinspires.ftc.teamcode.teleop;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.mechanisms.GoalLift;
+import org.firstinspires.ftc.teamcode.road_runner.util.Encoder;
 import org.firstinspires.ftc.teamcode.robots.RobotTechnicolorRR;
 import org.firstinspires.ftc.teamcode.utils.GamepadEvents;
 
 import java.util.List;
 
-@TeleOp (name = "Technicolor", group = "Competition")
-public class TeleOpTechnicolor extends OpMode {
+//@TeleOp (name = "TeleOpTCThreads", group = "Competition")
+public class TeleOpTCThreads extends OpMode {
 
     RobotTechnicolorRR robot;
+    Encoder parallelEncoder;
+    Encoder perpendicularEncoder;
 
     final double LIFT_POWER = 0.5;
     final double SHOOTER_POWER = 0.85;
@@ -23,14 +27,7 @@ public class TeleOpTechnicolor extends OpMode {
     final double MAX_DRIVE_SPEED = 0.8;
     final double MIN_DRIVE_SPEED = 0.4;
 
-    final double MAX_TURN_SPEED = 0.5;
-    final double MIN_TURN_SPEED = 0.3;
-
-    final long LIFT_TIME_LIMIT = 500;
-    final long LOWER_TIME_LIMIT = 500;
-
-    private double driveMult = MIN_DRIVE_SPEED;
-    private double turnMult = MAX_TURN_SPEED;
+    private double sprintMult = MIN_DRIVE_SPEED;
 
     int negateIntake = 1;
 
@@ -44,6 +41,8 @@ public class TeleOpTechnicolor extends OpMode {
         robot = new RobotTechnicolorRR(hardwareMap, this);
         gamepad1 = new GamepadEvents(super.gamepad1);
         robot.drive.setPoseEstimate(new Pose2d(0, 0, 0));
+        parallelEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "intake"));
+        perpendicularEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "goalLift"));
     }
 
     @Override
@@ -53,11 +52,9 @@ public class TeleOpTechnicolor extends OpMode {
 
         //Sprint control
         if(gamepad1.left_stick_button.onPress())
-            driveMult = driveMult < MAX_DRIVE_SPEED ? MAX_DRIVE_SPEED : MIN_DRIVE_SPEED;
-        if(gamepad1.right_stick_button.onPress())
-            turnMult = turnMult < MAX_TURN_SPEED ? MAX_TURN_SPEED : MIN_TURN_SPEED;
+            sprintMult = sprintMult < MAX_DRIVE_SPEED ? MAX_DRIVE_SPEED : MIN_DRIVE_SPEED;
 
-        robot.teleopDrive(-gamepad1.left_stick_y*driveMult, gamepad1.left_stick_x*driveMult, -gamepad1.right_stick_x*turnMult);
+        robot.teleopDrive(-gamepad1.left_stick_y*sprintMult, gamepad1.left_stick_x*sprintMult, -gamepad1.right_stick_x*sprintMult);
 
         /*
         //D-pad rotation control
@@ -81,6 +78,7 @@ public class TeleOpTechnicolor extends OpMode {
         else if( gamepad1.dpad_down.onPress() )
             velocity -= velocityChange;
 
+
         telemetry.addLine( "velocity: " + velocity );
 
         // claw position
@@ -91,9 +89,9 @@ public class TeleOpTechnicolor extends OpMode {
 
         // goal lift
         if( gamepad1.y.onPress() )
-            robot.goalLift.setGoalLiftPosition( GoalLift.LiftPosition.LIFTED, LIFT_POWER + 0.3, LIFT_TIME_LIMIT );
+            robot.goalLift.setGoalLiftPosition( GoalLift.LiftPosition.LIFTED, LIFT_POWER + 0.3, 1000 );
         if( gamepad1.a.onPress() )
-            robot.goalLift.setGoalLiftPosition( GoalLift.LiftPosition.LOWERED, LIFT_POWER, LOWER_TIME_LIMIT );
+            robot.goalLift.setGoalLiftPosition( GoalLift.LiftPosition.LOWERED, LIFT_POWER, 1000 );
 
         // ring shooter = gamepad1.right_trigger
         robot.ringShooter.setFlyWheelMotorVelocity( gamepad1.right_trigger*velocity, AngleUnit.RADIANS );
@@ -187,6 +185,11 @@ public class TeleOpTechnicolor extends OpMode {
         telemetry.addData( "leftRear", "Vel 1: " + velocities.get( 1 ) );
         telemetry.addData( "rightRear", "Vel 2: " + velocities.get( 2 ) );
         telemetry.addData( "rightFront", "Vel 3: " + velocities.get( 3 ) );
+
+        addLine();
+
+        telemetry.addData("Parallel Encoder", parallelEncoder.getCurrentPosition());
+        telemetry.addData("Perpendicular Encoder", perpendicularEncoder.getCurrentPosition());
 
         addLine();
 

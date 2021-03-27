@@ -28,13 +28,13 @@ public class RobotTechnicolorRR {
 
     private final double FLY_WHEEL_RADIUS = 4; //in inches
 
-    public static double PUSHED_POSTITION = 0.3;
-    public static double RETRACTED_POSTITION = 0.07;
+    public static double PUSHED_POSTITION = 0.2 ;
+    public static double RETRACTED_POSTITION = 0.0;
 
     public static double OPEN_POSTITION = 1.0;
     public static double CLOSED_POSTITION = 0.0;
 
-    public static boolean REVERSE_LIFT_DIRECTION = true;
+    public static boolean REVERSE_LIFT_DIRECTION = false ;
     public static boolean REVERSE_SHOOTER_DIRECTION = false;
 
     public RobotTechnicolorRR(HardwareMap hw, OpMode op) {
@@ -55,7 +55,7 @@ public class RobotTechnicolorRR {
         //assuming we are now lined up for the shot
         //shoot using velocity required to hit the target
         // backup shoot using power ringShooter.launchRingPower(0.85);
-        ringShooter.launchRingAngularVelocity( 10, setSpeedZero, speedUpTime );
+        ringShooter.launchRingAngularVelocity( 12, setSpeedZero, speedUpTime );
         //ringShooter.launchRingVelocity(ShootingMath.getVelocityToTarget(FieldMap.RobotInfo.getRingLaunchPointPosition().toVector(), target.toVector(), ringShooter.getLaunchAngle()), DistanceUnit.MM);
     }
 

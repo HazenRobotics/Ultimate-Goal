@@ -15,7 +15,7 @@ public class GoalLift {
     TouchSensor liftedButton;
     TouchSensor loweredButton;
 
-    Servo claw;
+    public Servo claw;
 
     private double openClawPosition;
     private double closedClawPosition;
@@ -101,15 +101,20 @@ public class GoalLift {
         }
 
     }
+
+    public void setNumericalClawPosition( double position ) {
+        claw.setPosition( position );
+    }
+
     public void setClawPosition( ClawPosition position) {
         switch (position) {
             case OPEN:
-                claw.setPosition(openClawPosition);
+                setNumericalClawPosition(openClawPosition);
                 currentClawPosition = ClawPosition.OPEN;
                 break;
             case CLOSED:
                 currentClawPosition = ClawPosition.CLOSED;
-                claw.setPosition(closedClawPosition);
+                setNumericalClawPosition(closedClawPosition);
                 break;
         }
     }
@@ -167,4 +172,13 @@ public class GoalLift {
     public LiftPosition getCurrentLiftPosition() {
         return currentLiftPosition;
     }
+
+    public boolean liftedButtonPressed() {
+        return liftedButton.isPressed();
+    }
+
+    public boolean loweredButtonPressed() {
+        return loweredButton.isPressed();
+    }
+
 }

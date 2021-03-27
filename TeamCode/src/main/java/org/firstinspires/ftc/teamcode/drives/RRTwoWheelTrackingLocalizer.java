@@ -61,11 +61,12 @@ public class RRTwoWheelTrackingLocalizer extends TwoTrackingWheelLocalizer {
                 new Pose2d(PERPENDICULAR_X, PERPENDICULAR_Y, Math.toRadians(90))
         ));
 
-        parallelEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "intake"));
-        perpendicularEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "goalLift"));
+        parallelEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "goalLift"));
+        perpendicularEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "intake"));
 
         // TODO: reverse any encoders using Encoder.setDirection(Encoder.Direction.REVERSE)
         parallelEncoder.setDirection(Encoder.Direction.REVERSE);
+        perpendicularEncoder.setDirection(Encoder.Direction.REVERSE);
 
         this.drive = drive;
     }

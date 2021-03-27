@@ -22,7 +22,7 @@ public class TwoWobbleGoals extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         robot = new RobotTechnicolorRR(hardwareMap, this);
-        robot.setPosition(new Pose2d(-61, -48));
+        robot.setPosition(new Pose2d(-62, -48));
         robot.goalLift.setClawPosition(GoalLift.ClawPosition.CLOSED);
         robot.tfod.initTensorFlow();
 
@@ -40,14 +40,18 @@ public class TwoWobbleGoals extends LinearOpMode {
             robot.drive(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(9, -36, Math.toRadians(180)), 0).build());
         } else {
             robot.drive(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(33, -60, Math.toRadians(180)), 0).build());
+            //robot.setPosition(new Pose2d(33, -56));
+            // off - puts wobble goal in center of square (4 rngs)
         }
+
+
 
         //Drop wobble goal TODO: create method in robot class for this
         robot.goalLift.setGoalLiftPosition(GoalLift.LiftPosition.LOWERED, 0.6, 500);
         robot.goalLift.setClawPosition(GoalLift.ClawPosition.OPEN);
         sleep(500);
 
-        robot.driveAsync(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(-13, -20.5, 0), 0).build());
+        robot.driveAsync(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(-13, -7.5, 0), 0).build());
 
         robot.goalLift.setGoalLiftPosition(GoalLift.LiftPosition.LIFTED, 0.6, 800);
         robot.goalLift.setClawPosition(GoalLift.ClawPosition.CLOSED);
@@ -55,18 +59,17 @@ public class TwoWobbleGoals extends LinearOpMode {
         robot.drive.waitForIdle();
 
         //Shoot powershot targets
-        robot.shootAtTarget(FieldMap.ScoringGoals.RED_RIGHT_POWERSHOT, false, false);
+        robot.shootAtTarget(FieldMap.ScoringGoals.RED_LEFT_POWERSHOT, false, false);
         robot.drive(robot.trajectoryBuilder().lineTo(new Vector2d(-13, -15)).build());
         robot.shootAtTarget(FieldMap.ScoringGoals.RED_MIDDLE_POWERSHOT, false, false);
-        robot.drive(robot.trajectoryBuilder().lineTo(new Vector2d(-13, -7.5)).build());
-        robot.shootAtTarget(FieldMap.ScoringGoals.RED_LEFT_POWERSHOT, true, false);
+        robot.drive(robot.trajectoryBuilder().lineTo(new Vector2d(-13, -20.5)).build());
+        robot.shootAtTarget(FieldMap.ScoringGoals.RED_RIGHT_POWERSHOT, true, false);
 
         //Pick up 2nd wobble goal
-        robot.drive(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(-20, -32, 0), 0).build());
+        robot.driveAsync(robot.trajectoryBuilder().lineToConstantHeading(new Vector2d(-15, -30)).splineToConstantHeading(new Vector2d(-27.5, -30), 0).build());
         robot.goalLift.setGoalLiftPosition(GoalLift.LiftPosition.LOWERED, 0.6, 200);
         robot.goalLift.setClawPosition(GoalLift.ClawPosition.OPEN);
-
-        robot.drive(robot.trajectoryBuilder().lineToConstantHeading(new Vector2d(-30, -32)).build());
+        robot.drive.waitForIdle();
         sleep(500);
 
         robot.goalLift.setClawPosition(GoalLift.ClawPosition.CLOSED);
@@ -86,7 +89,7 @@ public class TwoWobbleGoals extends LinearOpMode {
         robot.goalLift.setClawPosition(GoalLift.ClawPosition.OPEN);
         sleep(500);
 
-        robot.driveAsync(robot.trajectoryBuilder().lineTo(new Vector2d(12, -50)).build());
+        robot.driveAsync(robot.trajectoryBuilder().lineTo(new Vector2d(12, -36)).build());
 
         robot.goalLift.setGoalLiftPosition(GoalLift.LiftPosition.LIFTED, 0.6, 800);
         robot.goalLift.setClawPosition(GoalLift.ClawPosition.CLOSED);

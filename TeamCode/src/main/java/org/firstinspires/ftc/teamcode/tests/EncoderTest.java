@@ -29,6 +29,7 @@ public class EncoderTest extends OpMode {
                         -gamepad1.right_stick_x
                 )
         );
+
         telemetry.addData("Parallel Encoder", parallelEncoder.getCurrentPosition());
         telemetry.addData("Perpendicular Encoder", perpendicularEncoder.getCurrentPosition());
         telemetry.update();

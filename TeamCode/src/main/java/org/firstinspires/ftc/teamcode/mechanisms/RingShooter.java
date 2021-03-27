@@ -183,6 +183,10 @@ public class RingShooter {
         setFlyWheelMotorPower(0);
     }
 
+    public void setNumericalPusherPosition( double position ) {
+        pusher.setPosition( position );
+    }
+
     public void setPusherPosition( PusherPosition position) {
         switch (position) {
             case PUSHED:
