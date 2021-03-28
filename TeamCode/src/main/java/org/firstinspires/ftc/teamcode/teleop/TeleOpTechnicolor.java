@@ -1,13 +1,18 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.mechanisms.GoalLift;
 import org.firstinspires.ftc.teamcode.robots.RobotTechnicolorRR;
+import org.firstinspires.ftc.teamcode.utils.FieldMap;
 import org.firstinspires.ftc.teamcode.utils.GamepadEvents;
+import org.firstinspires.ftc.teamcode.utils.Vuforia;
+import org.firstinspires.ftc.teamcode.utils.VuforiaLocalization;
 
 import java.util.List;
 
@@ -29,21 +34,22 @@ public class TeleOpTechnicolor extends OpMode {
     final long LIFT_TIME_LIMIT = 500;
     final long LOWER_TIME_LIMIT = 500;
 
-    private double driveMult = MIN_DRIVE_SPEED;
-    private double turnMult = MAX_TURN_SPEED;
+    private double driveMult = MAX_DRIVE_SPEED;
+    private double turnMult = MIN_TURN_SPEED;
 
     int negateIntake = 1;
 
-    double velocity = 10;
+    double velocity = 8;
     double velocityChange = 1;
 
     GamepadEvents gamepad1;
+    Vuforia vuforia = Vuforia.getInstance();
 
     @Override
     public void init() {
         robot = new RobotTechnicolorRR(hardwareMap, this);
         gamepad1 = new GamepadEvents(super.gamepad1);
-        robot.drive.setPoseEstimate(new Pose2d(0, 0, 0));
+        //robot.vuforiaLocalization.activateTracking();
     }
 
     @Override
@@ -110,6 +116,18 @@ public class TeleOpTechnicolor extends OpMode {
         //robot.ringShooter.setIntakeMotorPower( gamepad1.left_trigger*INTAKE_POWER );
 
         //addMotorInfoTelemtry();
+
+        if(gamepad1.start.onPress()) {
+            robot.setPosition(FieldMap.toPose2d(robot.vuforiaLocalization.getRobotPosition(), robot.vuforiaLocalization.getRobotRotation()));
+            robot.drive(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(-13, -25.5, 0), 0).build());
+            robot.shootAtTarget(FieldMap.ScoringGoals.RED_RIGHT_POWERSHOT, false, true);
+            robot.drive(robot.trajectoryBuilder().lineTo(new Vector2d(-13, -20)).build());
+            robot.shootAtTarget(FieldMap.ScoringGoals.RED_MIDDLE_POWERSHOT, false, false);
+            robot.drive(robot.trajectoryBuilder().lineTo(new Vector2d(-13, -12.5)).build());
+            robot.shootAtTarget(FieldMap.ScoringGoals.RED_LEFT_POWERSHOT, true, false);
+        }
+
+        addControlTelemtry();
 
         robot.drive.update();
         telemetry.update();

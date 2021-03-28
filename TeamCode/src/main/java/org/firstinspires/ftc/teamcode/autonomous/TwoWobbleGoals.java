@@ -26,12 +26,26 @@ public class TwoWobbleGoals extends LinearOpMode {
         robot.goalLift.setClawPosition(GoalLift.ClawPosition.CLOSED);
         robot.tfod.initTensorFlow();
 
+        telemetry.addLine("Initialization Complete");
+        telemetry.update();
+
         waitForStart();
 
         //Detect stack
         robot.drive(robot.trajectoryBuilder().lineToConstantHeading(new Vector2d(-52, -40)).build());
-        robot.tfod.runStackDetection(200);
+        robot.tfod.runStackDetection(115);
         stack = robot.tfod.getStack();
+
+        //shoot
+        robot.driveAsync(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(-13, -7.5, 0), 0).build());
+        robot.ringShooter.setFlyWheelMotorVelocity(8, AngleUnit.RADIANS);
+        robot.drive.waitForIdle();
+        robot.shootAtTarget(FieldMap.ScoringGoals.RED_LEFT_POWERSHOT, false, false);
+        robot.drive(robot.trajectoryBuilder().lineTo(new Vector2d(-13, -15)).build());
+        robot.shootAtTarget(FieldMap.ScoringGoals.RED_MIDDLE_POWERSHOT, false, false);
+        robot.drive(robot.trajectoryBuilder().lineTo(new Vector2d(-13, -22.5)).build());
+        robot.shootAtTarget(FieldMap.ScoringGoals.RED_RIGHT_POWERSHOT, true, false);
+
 
         //Move wobble goal to correct zone
         if(stack == TensorFlowUtil.Stack.NONE) {
@@ -47,30 +61,15 @@ public class TwoWobbleGoals extends LinearOpMode {
 
 
         //Drop wobble goal TODO: create method in robot class for this
-        robot.goalLift.setGoalLiftPosition(GoalLift.LiftPosition.LOWERED, 0.6, 500);
+        robot.goalLift.setGoalLiftPosition(GoalLift.LiftPosition.LOWERED, 0.6, 700);
         robot.goalLift.setClawPosition(GoalLift.ClawPosition.OPEN);
         sleep(500);
 
-        robot.driveAsync(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(-13, -7.5, 0), 0).build());
-
-        robot.goalLift.setGoalLiftPosition(GoalLift.LiftPosition.LIFTED, 0.6, 800);
-        robot.goalLift.setClawPosition(GoalLift.ClawPosition.CLOSED);
-        robot.ringShooter.setFlyWheelMotorVelocity(10, AngleUnit.RADIANS);
-        robot.drive.waitForIdle();
-
-        //Shoot powershot targets
-        robot.shootAtTarget(FieldMap.ScoringGoals.RED_LEFT_POWERSHOT, false, false);
-        robot.drive(robot.trajectoryBuilder().lineTo(new Vector2d(-13, -15)).build());
-        robot.shootAtTarget(FieldMap.ScoringGoals.RED_MIDDLE_POWERSHOT, false, false);
-        robot.drive(robot.trajectoryBuilder().lineTo(new Vector2d(-13, -20.5)).build());
-        robot.shootAtTarget(FieldMap.ScoringGoals.RED_RIGHT_POWERSHOT, true, false);
 
         //Pick up 2nd wobble goal
-        robot.driveAsync(robot.trajectoryBuilder().lineToConstantHeading(new Vector2d(-15, -30)).splineToConstantHeading(new Vector2d(-27.5, -30), 0).build());
-        robot.goalLift.setGoalLiftPosition(GoalLift.LiftPosition.LOWERED, 0.6, 200);
-        robot.goalLift.setClawPosition(GoalLift.ClawPosition.OPEN);
-        robot.drive.waitForIdle();
-        sleep(500);
+        robot.drive(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(-15, -30, 0), 0).build());
+        robot.drive(robot.trajectoryBuilder().lineTo(new Vector2d(-27.5, -30)).build());
+        sleep(300);
 
         robot.goalLift.setClawPosition(GoalLift.ClawPosition.CLOSED);
         sleep(1000);
@@ -85,14 +84,19 @@ public class TwoWobbleGoals extends LinearOpMode {
             robot.drive(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(33, -50, Math.toRadians(180)), 0).build());
         }
 
-        robot.goalLift.setGoalLiftPosition(GoalLift.LiftPosition.LOWERED, 0.6, 500);
+        robot.goalLift.setGoalLiftPosition(GoalLift.LiftPosition.LOWERED, 0.6, 700);
         robot.goalLift.setClawPosition(GoalLift.ClawPosition.OPEN);
         sleep(500);
 
-        robot.driveAsync(robot.trajectoryBuilder().lineTo(new Vector2d(12, -36)).build());
+        if(stack == TensorFlowUtil.Stack.NONE) {
+            robot.driveAsync(robot.trajectoryBuilder().strafeLeft(10).splineToConstantHeading( new Vector2d(12, -36), 0).build());
+        }
+        else {
+            robot.driveAsync(robot.trajectoryBuilder().lineTo(new Vector2d(12, -36)).build());
+
+        }
 
         robot.goalLift.setGoalLiftPosition(GoalLift.LiftPosition.LIFTED, 0.6, 800);
-        robot.goalLift.setClawPosition(GoalLift.ClawPosition.CLOSED);
         robot.drive.waitForIdle();
 
 

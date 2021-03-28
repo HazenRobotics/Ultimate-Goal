@@ -121,7 +121,7 @@ public class VuforiaLocalization {
      * Gets a transformation matrix of the robots location data
      * @return robot's current location transform
      */
-    private OpenGLMatrix getRobotLocationTransform(){
+    public OpenGLMatrix getRobotLocationTransform(){
         VuforiaTrackable currentVisibleTarget = getVisibleTarget();
         if(currentVisibleTarget == null){
             return null;
@@ -133,7 +133,10 @@ public class VuforiaLocalization {
      * Updates the robot's position in the {@link FieldMap}
      */
     public void updateRobotLocation(){
-        FieldMap.RobotInfo.robotLocation = getRobotLocationTransform();
+        OpenGLMatrix robotLocation = getRobotLocationTransform();
+        if(robotLocation != null) {
+            FieldMap.RobotInfo.robotLocation = robotLocation;
+        }
     }
 
     /**
@@ -141,7 +144,7 @@ public class VuforiaLocalization {
      * @return robot's current position
      */
     public VectorF getRobotPosition(){
-        OpenGLMatrix robotLocation = getRobotLocationTransform();
+        OpenGLMatrix robotLocation = FieldMap.RobotInfo.robotLocation;
         if(robotLocation == null){
             return null;
         }
@@ -153,7 +156,7 @@ public class VuforiaLocalization {
      * @return robot's current orientation
      */
     public Orientation getRobotRotation(){
-        OpenGLMatrix robotLocation = getRobotLocationTransform();
+        OpenGLMatrix robotLocation = FieldMap.RobotInfo.robotLocation;
         if(robotLocation == null){
             return null;
         }

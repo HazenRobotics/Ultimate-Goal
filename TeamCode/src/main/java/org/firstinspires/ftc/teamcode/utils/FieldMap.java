@@ -39,16 +39,16 @@ public class FieldMap {
                 .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, 90, 0, -90));
         public static final OpenGLMatrix RED_TOWER_GOAL_TARGET_POSITION = OpenGLMatrix
                 .translation(halfField, -quadField, mmTargetHeight)
-                .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, 90, 0, -90));
+                .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, 90, 0, 0));
         public static final OpenGLMatrix RED_ALLIANCE_TARGET_POSITION = OpenGLMatrix
                 .translation(0, -halfField, mmTargetHeight)
-                .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, 90, 0, 180));
+                .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, 90, 0, 270));
         public static final OpenGLMatrix BLUE_ALLIANCE_TARGET_POSITION = OpenGLMatrix
                 .translation(0, halfField, mmTargetHeight)
                 .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, 90, 0, 0));
         public static final OpenGLMatrix FRONT_WALL_TARGET_POSITION = OpenGLMatrix
                 .translation(-halfField, 0, mmTargetHeight)
-                .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, 90, 0, 90));
+                .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, 90, 0, 180));
 
         public static final OpenGLMatrix[] TARGET_POSITIONS = {BLUE_TOWER_GOAL_TARGET_POSITION, RED_TOWER_GOAL_TARGET_POSITION,
                 RED_ALLIANCE_TARGET_POSITION, BLUE_ALLIANCE_TARGET_POSITION, FRONT_WALL_TARGET_POSITION};
@@ -138,7 +138,7 @@ public class FieldMap {
     //Robot information
     public static class RobotInfo {
         //camera position in relation to the center of the robot
-        private static final float CAMERA_FORWARD_DISPLACEMENT = 0f * mmPerInch, CAMERA_LEFT_DISPLACEMENT = 0f * mmPerInch, CAMERA_VERTICAL_DISPLACEMENT = 0f * mmPerInch;
+        private static final float CAMERA_FORWARD_DISPLACEMENT = 9.5f * mmPerInch, CAMERA_LEFT_DISPLACEMENT = -6f * mmPerInch, CAMERA_VERTICAL_DISPLACEMENT = 4f * mmPerInch;
         private static final float CAMERA_Y_ROTATE = -90f, CAMERA_Z_ROTATE = 0f, CAMERA_X_ROTATE = 0f;
         public static final OpenGLMatrix CAMERA_FROM_ROBOT = OpenGLMatrix
                 .translation(CAMERA_FORWARD_DISPLACEMENT, CAMERA_LEFT_DISPLACEMENT, CAMERA_VERTICAL_DISPLACEMENT)
@@ -203,11 +203,10 @@ public class FieldMap {
         return Orientation.getOrientation(position, EXTRINSIC, XYZ, DEGREES);
     }
 
-    public static Pose2d toPose2d(OpenGLMatrix position){
-        VectorF point = toVectorF(position);
-        double heading = toOrientation(position).toAngleUnit(RADIANS).thirdAngle;
+    public static Pose2d toPose2d(VectorF point, Orientation heading){
 
-        return new Pose2d(point.get(0), point.get(1), heading);
+        double headingVal = heading.thirdAngle;
+        return new Pose2d(point.get(0) * inchPerMM, point.get(1) * inchPerMM, Math.toRadians(headingVal));
     }
 
     public static Vector2d toVector2d(OpenGLMatrix position){

@@ -35,8 +35,7 @@ public class VuforiaTest extends OpMode {
         if(vuforiaLocalization.getVisibleTarget() != null) {
             telemetry.addData("Visible Vuforia Mark", vuforiaLocalization.getVisibleTarget().getName());
             vuforiaLocalization.updateRobotLocation();
-            telemetry.addData("Robot Position", FieldMap.RobotInfo.getRobotPosition());
-            telemetry.addData("Robot Rotation", FieldMap.RobotInfo.getRobotOrientation());
+            telemetry.addData("Robot Position", FieldMap.toPose2d(vuforiaLocalization.getRobotPosition(), vuforiaLocalization.getRobotRotation()));
         }
         else{
             telemetry.addData("Visible Vuforia Mark", "none");

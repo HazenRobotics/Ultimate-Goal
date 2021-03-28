@@ -6,14 +6,19 @@ import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.drives.RRMecanumDriveTechnicolor;
 import org.firstinspires.ftc.teamcode.mechanisms.GoalLift;
 import org.firstinspires.ftc.teamcode.mechanisms.RingShooter;
 import org.firstinspires.ftc.teamcode.utils.FieldMap;
 import org.firstinspires.ftc.teamcode.utils.TensorFlowUtil;
+import org.firstinspires.ftc.teamcode.utils.Vuforia;
+import org.firstinspires.ftc.teamcode.utils.VuforiaLocalization;
 import org.jetbrains.annotations.NotNull;
 
 public class RobotTechnicolorRR {
@@ -23,16 +28,20 @@ public class RobotTechnicolorRR {
     public GoalLift goalLift;
     public RingShooter ringShooter;
     public TensorFlowUtil tfod;
+    public VuforiaLocalization vuforiaLocalization;
 
-    RevBlinkinLedDriver lights;
+    private RevBlinkinLedDriver lights;
+    private VoltageSensor batteryVoltageSensor;
+
+    private final String VUFORIA_TRACKABLES_ASSET_NAME = "UltimateGoal";
 
     private final double FLY_WHEEL_RADIUS = 4; //in inches
 
     public static double PUSHED_POSTITION = 0.2 ;
     public static double RETRACTED_POSTITION = 0.0;
 
-    public static double OPEN_POSTITION = 1.0;
-    public static double CLOSED_POSTITION = 0.0;
+    public static double OPEN_POSTITION = 0.0;
+    public static double CLOSED_POSTITION = 1.0;
 
     public static boolean REVERSE_LIFT_DIRECTION = false ;
     public static boolean REVERSE_SHOOTER_DIRECTION = false;
@@ -42,6 +51,13 @@ public class RobotTechnicolorRR {
         goalLift = new GoalLift(hw, OPEN_POSTITION, CLOSED_POSTITION, REVERSE_LIFT_DIRECTION);
         ringShooter = new RingShooter(hw, FLY_WHEEL_RADIUS, PUSHED_POSTITION, RETRACTED_POSTITION, REVERSE_SHOOTER_DIRECTION);
         tfod = new TensorFlowUtil(hw, op);
+
+        /*final String VUFORIA_KEY = hw.appContext.getResources().getString(R.string.vuforiakey);
+        Vuforia.getInstance().setParameters(VUFORIA_KEY, "webcam", true, hw);
+        vuforiaLocalization = new VuforiaLocalization(VUFORIA_TRACKABLES_ASSET_NAME);*/
+
+        batteryVoltageSensor = hw.voltageSensor.iterator().next();
+        ringShooter.setFlyWheelPID(new PIDFCoefficients(6, 0, 3, 12 * 12 / batteryVoltageSensor.getVoltage()));
         //lights = hw.get(RevBlinkinLedDriver.class, "lights");
     }
 
@@ -55,7 +71,7 @@ public class RobotTechnicolorRR {
         //assuming we are now lined up for the shot
         //shoot using velocity required to hit the target
         // backup shoot using power ringShooter.launchRingPower(0.85);
-        ringShooter.launchRingAngularVelocity( 12, setSpeedZero, speedUpTime );
+        ringShooter.launchRingAngularVelocity( 8, setSpeedZero, speedUpTime );
         //ringShooter.launchRingVelocity(ShootingMath.getVelocityToTarget(FieldMap.RobotInfo.getRingLaunchPointPosition().toVector(), target.toVector(), ringShooter.getLaunchAngle()), DistanceUnit.MM);
     }
 
@@ -82,7 +98,7 @@ public class RobotTechnicolorRR {
 
     public TrajectoryBuilder trajectoryBuilder() {
         //If the robot's location is known and stored in field map, use that. else, get a pose estimate from the dead wheels only
-        return FieldMap.RobotInfo.robotLocation != null ? drive.trajectoryBuilder(FieldMap.toPose2d(FieldMap.RobotInfo.robotLocation)) : drive.trajectoryBuilder(drive.getPoseEstimate());
+        return drive.trajectoryBuilder(drive.getPoseEstimate());
     }
 
     public void drive(Trajectory trajectory) {
@@ -106,6 +122,5 @@ public class RobotTechnicolorRR {
 
         drive.setMotorPowers( frontLeftPower, backLeftPower, backRightPower, frontRightPower );
     }
-
 
 }

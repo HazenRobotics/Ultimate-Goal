@@ -24,6 +24,9 @@ public class ComplexAuto extends LinearOpMode {
         robot.goalLift.setClawPosition(GoalLift.ClawPosition.CLOSED);
         robot.tfod.initTensorFlow();
 
+        telemetry.addLine("Initialization Complete");
+        telemetry.update();
+
         waitForStart();
 
         //Detect stack
@@ -54,7 +57,6 @@ public class ComplexAuto extends LinearOpMode {
         robot.goalLift.setClawPosition(GoalLift.ClawPosition.OPEN);
         sleep(1000);
         robot.goalLift.setGoalLiftPosition(GoalLift.LiftPosition.LIFTED, 0.6, 800);
-        robot.goalLift.setClawPosition(GoalLift.ClawPosition.CLOSED);
 
         //Return to center line
         if(stack == Stack.QUAD) {
