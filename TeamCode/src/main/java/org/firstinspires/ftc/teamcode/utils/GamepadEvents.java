@@ -5,6 +5,9 @@ import android.view.MotionEvent;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+/**
+ * A gampad class that can access button events
+ */
 public class GamepadEvents {
 
     private Gamepad gamepad;
@@ -162,6 +165,9 @@ public class GamepadEvents {
         this.gamepad = gamepad;
     }
 
+    /**
+     * Updates the button states from the gamepad
+     */
     public void update() {
         left_stick_x = gamepad.left_stick_x;
         left_stick_y = gamepad.left_stick_y;
@@ -192,33 +198,75 @@ public class GamepadEvents {
 
 
     public class GamepadButton {
-        private boolean previous;
         private boolean value;
+        private boolean previous;
+        private long pressedTime;
+        private long heldTime;
 
         public GamepadButton() {
             previous = false;
             value = false;
         }
 
+
+        /**
+         * Checks if the button has been pressed
+         * @return if the button has been pressed
+         */
         public boolean onPress() {
-            return stateChanged() && value == true;
+            if(stateChanged() && value == true) {
+                pressedTime = System.currentTimeMillis();
+                return true;
+            }
+            return false;
         }
 
+        /**
+         * Checks if the button has been released
+         * @return if the button has been released
+         */
         public boolean onRelease() {
             return stateChanged() && value == false;
         }
 
+        /**
+         * Checks if the button has been held for an amount of time
+         * @param millis amount of time
+         * @return if the button has been held for the specified time
+         */
+        public boolean onHeldFor(long millis) {
+            return heldTime >= millis;
+        }
+
+        /**
+         * Gets the boolean value of the button
+         * @return boolean value of the button
+         */
         public boolean getValue() {
             return value;
         }
 
+        /**
+         * Checks if the button state has changed
+         * @return if the button state has changed
+         */
         private boolean stateChanged() {
             return value != previous;
         }
 
+        /**
+         * Updates the button state
+         * @param value button boolean value
+         */
         void update( boolean value) {
             this.previous = this.value;
             this.value = value;
+            if(value == true) {
+                heldTime = System.currentTimeMillis() - pressedTime;
+            } else {
+                heldTime = 0;
+                pressedTime = 0;
+            }
         }
     }
 

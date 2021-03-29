@@ -113,6 +113,8 @@ public class TeleOpTechnicolor extends OpMode {
         // intake = gamepad1.left_trigger
         if(gamepad1.right_bumper.onPress())
             robot.ringShooter.setIntakeMotorPower( robot.ringShooter.getIntakePower() > 0 ? 0 : INTAKE_POWER);
+        else if(gamepad1.right_bumper.onHeldFor(1000))
+            robot.ringShooter.setIntakeMotorPower(-INTAKE_POWER);
         //robot.ringShooter.setIntakeMotorPower( gamepad1.left_trigger*INTAKE_POWER );
 
         //addMotorInfoTelemtry();
