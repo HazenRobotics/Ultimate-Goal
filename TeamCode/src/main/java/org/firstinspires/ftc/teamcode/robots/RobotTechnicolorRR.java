@@ -28,12 +28,9 @@ public class RobotTechnicolorRR {
     public GoalLift goalLift;
     public RingShooter ringShooter;
     public TensorFlowUtil tfod;
-    public VuforiaLocalization vuforiaLocalization;
 
     private RevBlinkinLedDriver lights;
     private VoltageSensor batteryVoltageSensor;
-
-    private final String VUFORIA_TRACKABLES_ASSET_NAME = "UltimateGoal";
 
     private final double FLY_WHEEL_RADIUS = 4; //in inches
 
@@ -52,9 +49,8 @@ public class RobotTechnicolorRR {
         ringShooter = new RingShooter(hw, FLY_WHEEL_RADIUS, PUSHED_POSTITION, RETRACTED_POSTITION, REVERSE_SHOOTER_DIRECTION);
         tfod = new TensorFlowUtil(hw, op);
 
-        /*final String VUFORIA_KEY = hw.appContext.getResources().getString(R.string.vuforiakey);
+        final String VUFORIA_KEY = hw.appContext.getResources().getString(R.string.vuforiakey);
         Vuforia.getInstance().setParameters(VUFORIA_KEY, "webcam", true, hw);
-        vuforiaLocalization = new VuforiaLocalization(VUFORIA_TRACKABLES_ASSET_NAME);*/
 
         batteryVoltageSensor = hw.voltageSensor.iterator().next();
         ringShooter.setFlyWheelPID(new PIDFCoefficients(6, 0, 3, 12 * 12 / batteryVoltageSensor.getVoltage()));
@@ -71,7 +67,7 @@ public class RobotTechnicolorRR {
         //assuming we are now lined up for the shot
         //shoot using velocity required to hit the target
         // backup shoot using power ringShooter.launchRingPower(0.85);
-        ringShooter.launchRingAngularVelocity( 8, setSpeedZero, speedUpTime );
+        ringShooter.launchRingAngularVelocity( 8.15, setSpeedZero, speedUpTime );
         //ringShooter.launchRingVelocity(ShootingMath.getVelocityToTarget(FieldMap.RobotInfo.getRingLaunchPointPosition().toVector(), target.toVector(), ringShooter.getLaunchAngle()), DistanceUnit.MM);
     }
 

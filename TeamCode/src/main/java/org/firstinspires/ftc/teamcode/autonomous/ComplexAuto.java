@@ -31,7 +31,7 @@ public class ComplexAuto extends LinearOpMode {
 
         //Detect stack
         robot.drive(robot.trajectoryBuilder().lineToConstantHeading(new Vector2d(-52, -40)).build());
-        robot.tfod.runStackDetection(200);
+        robot.tfod.runStackDetection(115);
         stack = robot.tfod.getStack();
 
 
@@ -44,13 +44,13 @@ public class ComplexAuto extends LinearOpMode {
         robot.shootAtTarget(FieldMap.ScoringGoals.RED_LEFT_POWERSHOT, true, false);
 
         //Move wobble goal to correct zone
-        if(stack == Stack.NONE) {
-            robot.drive(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(-10, -60, Math.toRadians(180)), 0).build());
-        } else if(stack == Stack.SINGLE) {
-            robot.drive(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(14, -36, Math.toRadians(180)), 0).build());
-        } else {
-            robot.drive(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(38, -60, Math.toRadians(180)), 0).build());
-        }
+        if(stack == Stack.QUAD)
+            robot.drive(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(38, -60, Math.toRadians(180)), 0).build()); // quad
+        else if(stack == Stack.SINGLE)
+            robot.drive(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(14, -36, Math.toRadians(180)), 0).build()); // single
+        else
+            robot.drive(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(-10, -60, Math.toRadians(180)), 0).build()); // none
+
 
         //Drop wobble goal TODO: create method in robot class for this
         robot.goalLift.setGoalLiftPosition(GoalLift.LiftPosition.LOWERED, 0.6, 500);
@@ -59,11 +59,10 @@ public class ComplexAuto extends LinearOpMode {
         robot.goalLift.setGoalLiftPosition(GoalLift.LiftPosition.LIFTED, 0.6, 800);
 
         //Return to center line
-        if(stack == Stack.QUAD) {
+        if(stack == Stack.QUAD)
             robot.drive(robot.trajectoryBuilder().lineToLinearHeading(new Pose2d(12, -24, Math.toRadians(0))).build());
-        } else {
+        else
             robot.drive(robot.trajectoryBuilder().lineToLinearHeading(new Pose2d(12, -24, Math.toRadians(180))).build());
-        }
 
         while (opModeIsActive() && !isStopRequested()) {
             idle();

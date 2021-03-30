@@ -102,6 +102,10 @@ public class GoalLift {
 
     }
 
+    public void setGoalLiftPositionAsync( LiftPosition position, double power, long timeLimit ) {
+        new Thread(() -> setGoalLiftPosition(position, power, timeLimit)).start();
+    }
+
     public void setNumericalClawPosition( double position ) {
         claw.setPosition( position );
     }

@@ -154,8 +154,6 @@ public class TensorFlowUtil {
 
     void stopTF() {
         tensorFlow.shutdown();
-        if(vuforia.isRunning())
-            vuforia.close();
     }
 
     public void deactivateTensorFlow() {
