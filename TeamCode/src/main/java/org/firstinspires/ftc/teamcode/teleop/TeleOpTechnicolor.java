@@ -56,11 +56,14 @@ public class TeleOpTechnicolor extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         robot = new RobotTechnicolorRR(hardwareMap, this);
         gamepad1 = new GamepadEvents(super.gamepad1);
+        if(!Vuforia.getInstance().isRunning()) {
+            Vuforia.getInstance().start();
+        }
         vuforiaLocalizer = new VuforiaLocalization(VUFORIA_TRACKABLES_ASSET_NAME);
         vuforiaLocalizer.activateTracking();
 
         shootPowershotThread = new Thread(() -> {
-            robot.setPosition(new Pose2d(63, 15, 0));
+            robot.setPosition(new Pose2d(63, 15, 0)); // 61, 14 if the robot is 18" wide: 70.125-robotwidth/2, 23.125-robotwidth/2
             robot.driveAsync(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(-13, -7.5, 0), 0).build());
             robot.ringShooter.setFlyWheelMotorVelocity(8, AngleUnit.RADIANS);
             robot.drive.waitForIdle();

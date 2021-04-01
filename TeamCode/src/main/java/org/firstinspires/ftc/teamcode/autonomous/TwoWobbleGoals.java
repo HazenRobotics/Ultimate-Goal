@@ -49,11 +49,11 @@ public class TwoWobbleGoals extends LinearOpMode {
 
         //Move wobble goal to correct zone
         if(stack == TensorFlowUtil.Stack.NONE) {
-            robot.drive(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(-15, -60, Math.toRadians(180)), 0).build());
+            robot.drive(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(-15, -60, Math.toRadians(182)), 0).build());
         } else if(stack == TensorFlowUtil.Stack.SINGLE) {
-            robot.drive(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(9, -36, Math.toRadians(180)), 0).build());
+            robot.drive(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(9, -36, Math.toRadians(182)), 0).build());
         } else {
-            robot.drive(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(33, -60, Math.toRadians(180)), 0).build());
+            robot.drive(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(33, -60, Math.toRadians(182)), 0).build());
             //robot.setPosition(new Pose2d(33, -56));
             // off - puts wobble goal in center of square (4 rngs)
         }
@@ -67,11 +67,11 @@ public class TwoWobbleGoals extends LinearOpMode {
 
 
         //Pick up 2nd wobble goal
-        robot.driveAsync(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(-15, -30, 0), 0).build());
+        robot.driveAsync(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(-16, -30, 0), 90).build());
         robot.goalLift.setGoalLiftPositionAsync(GoalLift.LiftPosition.LIFTED, 0.6, 700);
         robot.drive.waitForIdle();
         robot.goalLift.setGoalLiftPositionAsync(GoalLift.LiftPosition.LOWERED, 0.6, 500);
-        robot.drive(robot.trajectoryBuilder().lineTo(new Vector2d(-28, -30)).build());
+        robot.drive(robot.trajectoryBuilder().lineToLinearHeading(new Pose2d(-29, -30, 0)).build());
         sleep(300);
 
         robot.goalLift.setClawPosition(GoalLift.ClawPosition.CLOSED);
@@ -80,11 +80,11 @@ public class TwoWobbleGoals extends LinearOpMode {
 
         //Move wobble goal to correct zone (slightly to the left)
         if(stack == TensorFlowUtil.Stack.NONE) {
-            robot.drive(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(-15, -52, Math.toRadians(180)), 0).build());
+            robot.drive(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(-15, -53, Math.toRadians(180)), 0).build());
         } else if(stack == TensorFlowUtil.Stack.SINGLE) {
-            robot.drive(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(9, -28, Math.toRadians(180)), 0).build());
+            robot.drive(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(9, -29, Math.toRadians(180)), 0).build());
         } else {
-            robot.drive(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(33, -52, Math.toRadians(180)), 0).build());
+            robot.drive(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(33, -53, Math.toRadians(180)), 0).build());
         }
 
         robot.goalLift.setGoalLiftPosition(GoalLift.LiftPosition.LOWERED, 0.6, 700);
@@ -92,7 +92,7 @@ public class TwoWobbleGoals extends LinearOpMode {
         sleep(500);
 
         if(stack == TensorFlowUtil.Stack.NONE) {
-            robot.driveAsync(robot.trajectoryBuilder().strafeRight(15).splineToConstantHeading( new Vector2d(12, -36), 0).build());
+            robot.driveAsync(robot.trajectoryBuilder().strafeRight(12).splineToConstantHeading( new Vector2d(6, -36), 0).build());
         }
         else {
             robot.driveAsync(robot.trajectoryBuilder().lineTo(new Vector2d(12, -36)).build());

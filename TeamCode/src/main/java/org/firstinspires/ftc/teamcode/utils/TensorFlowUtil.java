@@ -47,9 +47,11 @@ public class TensorFlowUtil {
 
     public void initTensorFlow() {
 
-        final String VUFORIA_KEY = hardwareMap.appContext.getResources().getString(R.string.vuforiakey);
-        vuforia.setParameters(VUFORIA_KEY, "webcam", true, hardwareMap);
-        vuforia.start();
+        if(!vuforia.isRunning()) {
+            final String VUFORIA_KEY = hardwareMap.appContext.getResources().getString(R.string.vuforiakey);
+            vuforia.setParameters(VUFORIA_KEY, "webcam", true, hardwareMap);
+            vuforia.start();
+        }
 
         tensorFlow = new TensorFlow(TENSOR_FLOW_MODEL_NAME, 0.8f, true, hardwareMap, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);
 
