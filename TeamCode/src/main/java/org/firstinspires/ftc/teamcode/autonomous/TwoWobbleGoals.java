@@ -61,7 +61,7 @@ public class TwoWobbleGoals extends LinearOpMode {
         } else if(stack == TensorFlowUtil.Stack.SINGLE) {
             robot.drive(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(9, -36, Math.toRadians(182)), 0).build());
         } else {
-            robot.drive(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(33, -60, Math.toRadians(182)), 0).build());
+            robot.drive(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(33, -58, Math.toRadians(182)), 0).build());
             //robot.setPosition(new Pose2d(33, -56));
             // off - puts wobble goal in center of square (4 rngs)
         }
@@ -79,7 +79,12 @@ public class TwoWobbleGoals extends LinearOpMode {
         robot.goalLift.setGoalLiftPositionAsync(GoalLift.LiftPosition.LIFTED, 0.6, 700);
         robot.drive.waitForIdle();
         robot.goalLift.setGoalLiftPositionAsync(GoalLift.LiftPosition.LOWERED, 0.6, 500);
-        robot.drive(robot.trajectoryBuilder().lineToLinearHeading(new Pose2d(-30, -30, Math.toRadians(5))).build());
+        if(stack == TensorFlowUtil.Stack.QUAD) {
+            robot.drive(robot.trajectoryBuilder().lineToLinearHeading(new Pose2d(-30, -30, Math.toRadians(10))).build());
+        }
+        else {
+            robot.drive(robot.trajectoryBuilder().lineToLinearHeading(new Pose2d(-30, -30, Math.toRadians(6))).build());
+        }
         sleep(300);
 
         robot.goalLift.setClawPosition(GoalLift.ClawPosition.CLOSED);
@@ -90,9 +95,9 @@ public class TwoWobbleGoals extends LinearOpMode {
         if(stack == TensorFlowUtil.Stack.NONE) {
             robot.drive(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(-15, -53, Math.toRadians(180)), 0).build());
         } else if(stack == TensorFlowUtil.Stack.SINGLE) {
-            robot.drive(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(9, -29, Math.toRadians(180)), 0).build());
+            robot.drive(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(9, -29, Math.toRadians(177)), 0).build());
         } else {
-            robot.drive(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(33, -53, Math.toRadians(180)), 0).build());
+            robot.drive(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(33, -53, Math.toRadians(175)), 0).build());
         }
 
         robot.goalLift.setGoalLiftPosition(GoalLift.LiftPosition.LOWERED, 0.6, 700);

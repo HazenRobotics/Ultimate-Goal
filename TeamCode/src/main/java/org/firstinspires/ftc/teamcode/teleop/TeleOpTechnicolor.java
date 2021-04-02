@@ -40,11 +40,12 @@ public class TeleOpTechnicolor extends LinearOpMode {
 
     int negateIntake = 1;
 
-    double velocity = 8;
+    double velocity = 9.25 ;
     double velocityChange = 1;
     double velocitySmallChange = 0.25;
 
     private GamepadEvents gamepad1;
+    private GamepadEvents gamepad2;
     private Vuforia vuforia = Vuforia.getInstance();
     private VuforiaLocalization vuforiaLocalizer;
 
@@ -56,6 +57,7 @@ public class TeleOpTechnicolor extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         robot = new RobotTechnicolorRR(hardwareMap, this);
         gamepad1 = new GamepadEvents(super.gamepad1);
+        gamepad2 = new GamepadEvents(super.gamepad2);
         if(!Vuforia.getInstance().isRunning()) {
             Vuforia.getInstance().start();
         }
@@ -73,6 +75,9 @@ public class TeleOpTechnicolor extends LinearOpMode {
             robot.drive(robot.trajectoryBuilder().lineTo(new Vector2d(-13, -22.5)).build());
             robot.shootAtTarget(FieldMap.ScoringGoals.RED_RIGHT_POWERSHOT, true, false);
         });
+
+        telemetry.addLine("Initialization Complete");
+        telemetry.update();
 
         waitForStart();
 
@@ -141,9 +146,9 @@ public class TeleOpTechnicolor extends LinearOpMode {
             }
 
             // intake = gamepad1.left_trigger
-            if(gamepad1.right_bumper.onPress())
+            if(gamepad1.right_bumper.onPress() || gamepad2.right_bumper.onPress())
                 robot.ringShooter.setIntakeMotorPower( robot.ringShooter.getIntakePower() > 0 ? 0 : INTAKE_POWER);
-            else if(gamepad1.left_trigger > 0.2)
+            else if(gamepad1.left_trigger > 0.2 || gamepad2.left_trigger > 0.2)
                 robot.ringShooter.setIntakeMotorPower(-INTAKE_POWER);
             //robot.ringShooter.setIntakeMotorPower( gamepad1.left_trigger*INTAKE_POWER );
 
@@ -164,6 +169,7 @@ public class TeleOpTechnicolor extends LinearOpMode {
             vuforiaLocalizer.updateRobotLocation();
             telemetry.update();
             gamepad1.update();
+            gamepad2.update();
             robot.drive.update();
 
             if(isStopRequested()) {

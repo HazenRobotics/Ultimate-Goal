@@ -50,7 +50,7 @@ public class TimedGoalLiftTest extends OpMode {
         telemetry.addLine( "time: " + timeToLift );
 
         telemetry.addLine( "liftedButton: " + robot.goalLift.liftedButtonPressed() );
-        telemetry.addLine( "loweredButton: " + robot.goalLift.liftedButtonPressed() );
+        telemetry.addLine( "loweredButton: " + robot.goalLift.loweredButtonPressed() );
 
         telemetry.addLine( "newLiftedButton: " + newLiftedButton.isPressed() );
         telemetry.addLine( "newLoweredButton: " + newLoweredButton.isPressed() );

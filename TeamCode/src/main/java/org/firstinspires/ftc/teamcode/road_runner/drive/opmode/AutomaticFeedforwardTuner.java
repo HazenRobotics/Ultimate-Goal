@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.internal.system.Misc;
-import org.firstinspires.ftc.teamcode.road_runner.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.drives.RRMecanumDriveTechnicolor;
 import org.firstinspires.ftc.teamcode.road_runner.util.LoggingUtil;
 import org.firstinspires.ftc.teamcode.road_runner.util.RegressionUtil;
 
@@ -34,8 +34,8 @@ import static org.firstinspires.ftc.teamcode.drives.RRDriveConstantsTechnicolor.
 @Config
 @Autonomous(group = "drive")
 public class AutomaticFeedforwardTuner extends LinearOpMode {
-    public static final double MAX_POWER = 0.7;
-    public static final double DISTANCE = 100; // in
+    public static double MAX_POWER = 0.7;
+    public static double DISTANCE = 100; // in
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -46,7 +46,7 @@ public class AutomaticFeedforwardTuner extends LinearOpMode {
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        RRMecanumDriveTechnicolor drive = new RRMecanumDriveTechnicolor(hardwareMap);
 
         NanoClock clock = NanoClock.system();
 
@@ -59,14 +59,14 @@ public class AutomaticFeedforwardTuner extends LinearOpMode {
 
         telemetry.clearAll();
         telemetry.addLine("Would you like to fit kStatic?");
-        telemetry.addLine("Press (A) for yes, (B) for no");
+        telemetry.addLine("Press (Y/Δ) for yes, (B/O) for no");
         telemetry.update();
 
         boolean fitIntercept = false;
         while (!isStopRequested()) {
-            if (gamepad1.a) {
+            if (gamepad1.y) {
                 fitIntercept = true;
-                while (!isStopRequested() && gamepad1.a) {
+                while (!isStopRequested() && gamepad1.y) {
                     idle();
                 }
                 break;
@@ -82,13 +82,13 @@ public class AutomaticFeedforwardTuner extends LinearOpMode {
         telemetry.clearAll();
         telemetry.addLine(Misc.formatInvariant(
                 "Place your robot on the field with at least %.2f in of room in front", DISTANCE));
-        telemetry.addLine("Press (A) to begin");
+        telemetry.addLine("Press (Y/Δ) to begin");
         telemetry.update();
 
-        while (!isStopRequested() && !gamepad1.a) {
+        while (!isStopRequested() && !gamepad1.y) {
             idle();
         }
-        while (!isStopRequested() && gamepad1.a) {
+        while (!isStopRequested() && gamepad1.y) {
             idle();
         }
 
@@ -140,14 +140,14 @@ public class AutomaticFeedforwardTuner extends LinearOpMode {
                     rampResult.kStatic, rampResult.rSquare));
         }
         telemetry.addLine("Would you like to fit kA?");
-        telemetry.addLine("Press (A) for yes, (B) for no");
+        telemetry.addLine("Press (Y/Δ) for yes, (B/O) for no");
         telemetry.update();
 
         boolean fitAccelFF = false;
         while (!isStopRequested()) {
-            if (gamepad1.a) {
+            if (gamepad1.y) {
                 fitAccelFF = true;
-                while (!isStopRequested() && gamepad1.a) {
+                while (!isStopRequested() && gamepad1.y) {
                     idle();
                 }
                 break;
@@ -163,13 +163,13 @@ public class AutomaticFeedforwardTuner extends LinearOpMode {
         if (fitAccelFF) {
             telemetry.clearAll();
             telemetry.addLine("Place the robot back in its starting position");
-            telemetry.addLine("Press (A) to continue");
+            telemetry.addLine("Press (Y/Δ) to continue");
             telemetry.update();
 
-            while (!isStopRequested() && !gamepad1.a) {
+            while (!isStopRequested() && !gamepad1.y) {
                 idle();
             }
-            while (!isStopRequested() && gamepad1.a) {
+            while (!isStopRequested() && gamepad1.y) {
                 idle();
             }
 
