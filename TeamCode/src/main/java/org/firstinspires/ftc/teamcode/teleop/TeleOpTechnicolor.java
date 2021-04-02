@@ -44,6 +44,9 @@ public class TeleOpTechnicolor extends LinearOpMode {
     double velocityChange = 1;
     double velocitySmallChange = 0.25;
 
+    double maxVelocity = 10.5;
+    double minVelocity = 9.25;
+
     private GamepadEvents gamepad1;
     private GamepadEvents gamepad2;
     private Vuforia vuforia = Vuforia.getInstance();
@@ -95,6 +98,11 @@ public class TeleOpTechnicolor extends LinearOpMode {
             turnMult = gamepad1.right_stick_button.getValue() ? MAX_TURN_SPEED : MIN_TURN_SPEED;
 
             robot.teleopDrive(-gamepad1.left_stick_y*driveMult, gamepad1.left_stick_x*driveMult, -gamepad1.right_stick_x*turnMult);
+
+            if( gamepad2.y.onPress() )
+                velocity = maxVelocity;
+            else if( gamepad2.a.onPress() )
+                velocity = minVelocity;
 
         /*
         //D-pad rotation control
