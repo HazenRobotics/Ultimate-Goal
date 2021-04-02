@@ -39,12 +39,20 @@ public class TwoWobbleGoals extends LinearOpMode {
         //shoot
         robot.driveAsync(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(-13, -7.5, 0), 0).build());
         robot.ringShooter.setFlyWheelMotorVelocity(8, AngleUnit.RADIANS);
+        telemetry.addData("Fly Wheel Speed", robot.ringShooter.rightFlyWheelMotor.getVelocity(AngleUnit.RADIANS));
+        telemetry.update();
         robot.drive.waitForIdle();
         robot.shootAtTarget(FieldMap.ScoringGoals.RED_LEFT_POWERSHOT, false, false);
+        telemetry.addData("Fly Wheel Speed", robot.ringShooter.rightFlyWheelMotor.getVelocity(AngleUnit.RADIANS));
+        telemetry.update();
         robot.drive(robot.trajectoryBuilder().lineTo(new Vector2d(-13, -15)).build());
         robot.shootAtTarget(FieldMap.ScoringGoals.RED_MIDDLE_POWERSHOT, false, false);
+        telemetry.addData("Fly Wheel Speed", robot.ringShooter.rightFlyWheelMotor.getVelocity(AngleUnit.RADIANS));
+        telemetry.update();
         robot.drive(robot.trajectoryBuilder().lineTo(new Vector2d(-13, -22.5)).build());
         robot.shootAtTarget(FieldMap.ScoringGoals.RED_RIGHT_POWERSHOT, true, false);
+        telemetry.addData("Fly Wheel Speed", robot.ringShooter.rightFlyWheelMotor.getVelocity(AngleUnit.RADIANS));
+        telemetry.update();
 
 
         //Move wobble goal to correct zone
@@ -71,7 +79,7 @@ public class TwoWobbleGoals extends LinearOpMode {
         robot.goalLift.setGoalLiftPositionAsync(GoalLift.LiftPosition.LIFTED, 0.6, 700);
         robot.drive.waitForIdle();
         robot.goalLift.setGoalLiftPositionAsync(GoalLift.LiftPosition.LOWERED, 0.6, 500);
-        robot.drive(robot.trajectoryBuilder().lineToLinearHeading(new Pose2d(-29, -30, 0)).build());
+        robot.drive(robot.trajectoryBuilder().lineToLinearHeading(new Pose2d(-30, -30, Math.toRadians(5))).build());
         sleep(300);
 
         robot.goalLift.setClawPosition(GoalLift.ClawPosition.CLOSED);
@@ -91,8 +99,9 @@ public class TwoWobbleGoals extends LinearOpMode {
         robot.goalLift.setClawPosition(GoalLift.ClawPosition.OPEN);
         sleep(500);
 
+        //park
         if(stack == TensorFlowUtil.Stack.NONE) {
-            robot.driveAsync(robot.trajectoryBuilder().strafeRight(12).splineToConstantHeading( new Vector2d(6, -36), 0).build());
+            robot.driveAsync(robot.trajectoryBuilder().strafeRight(12).splineToConstantHeading( new Vector2d(4, -36), 0).build());
         }
         else {
             robot.driveAsync(robot.trajectoryBuilder().lineTo(new Vector2d(12, -36)).build());

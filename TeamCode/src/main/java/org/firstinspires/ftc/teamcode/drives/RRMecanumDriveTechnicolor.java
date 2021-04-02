@@ -37,6 +37,7 @@ import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigu
 
 import org.firstinspires.ftc.teamcode.road_runner.util.DashboardUtil;
 import org.firstinspires.ftc.teamcode.road_runner.util.LynxModuleUtil;
+import org.firstinspires.ftc.teamcode.utils.AveragedGyro;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -94,7 +95,7 @@ public class RRMecanumDriveTechnicolor extends MecanumDrive {
 
     private DcMotorEx leftFront, leftRear, rightRear, rightFront;
     private List<DcMotorEx> motors;
-    private BNO055IMU imu;
+    private AveragedGyro imu;
 
     private VoltageSensor batteryVoltageSensor;
 
@@ -133,10 +134,9 @@ public class RRMecanumDriveTechnicolor extends MecanumDrive {
         }
 
         // TODO: adjust the names of the following hardware devices to match your configuration
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
-        imu.initialize(parameters);
+        imu = new AveragedGyro(hardwareMap, "imu", "imu2", parameters);
 
         // TODO: if your hub is mounted vertically, remap the IMU axes so that the z-axis points
         // upward (normal to the floor) using a command like the following:
@@ -172,7 +172,7 @@ public class RRMecanumDriveTechnicolor extends MecanumDrive {
         // TODO: if desired, use setLocalizer() to change the localization method
         // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
 
-        setLocalizer(new RRTwoWheelTrackingLocalizer(hardwareMap, this));
+        //setLocalizer(new RRTwoWheelTrackingLocalizer(hardwareMap, this));
     }
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {
@@ -407,9 +407,9 @@ public class RRMecanumDriveTechnicolor extends MecanumDrive {
 
     @Override
     public double getRawExternalHeading() {
-        return imu.getAngularOrientation().firstAngle;
+        return imu.getAngularHeading();
     }
 
     @Override
-    public Double getExternalHeadingVelocity() { return (double) imu.getAngularVelocity().zRotationRate; }
+    public Double getExternalHeadingVelocity() { return (double) imu.getAngularVelocity(); }
 }

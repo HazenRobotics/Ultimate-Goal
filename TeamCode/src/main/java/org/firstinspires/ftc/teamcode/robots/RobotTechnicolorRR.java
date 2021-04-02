@@ -53,7 +53,6 @@ public class RobotTechnicolorRR {
         Vuforia.getInstance().setParameters(VUFORIA_KEY, "webcam", true, hw);
 
         batteryVoltageSensor = hw.voltageSensor.iterator().next();
-        ringShooter.setFlyWheelPID(new PIDFCoefficients(6, 0, 0, 12 * 12 / batteryVoltageSensor.getVoltage()));
         //lights = hw.get(RevBlinkinLedDriver.class, "lights");
     }
 
@@ -62,12 +61,13 @@ public class RobotTechnicolorRR {
      * @param target target at which to shoot a ring at
      */
     public void shootAtTarget(OpenGLMatrix target, boolean setSpeedZero, boolean speedUpTime) {
+        ringShooter.setFlyWheelPID(new PIDFCoefficients(5, 0, 2, 12.5 * 12 / batteryVoltageSensor.getVoltage()));
         //rotate towards target
         //drive.turn(ShootingMath.getAngleToTarget(drive.getPoseEstimate(), FieldMap.toInches(FieldMap.toVectorF(target))));
         //assuming we are now lined up for the shot
         //shoot using velocity required to hit the target
         // backup shoot using power ringShooter.launchRingPower(0.85);
-        ringShooter.launchRingAngularVelocity( 7.9, setSpeedZero, speedUpTime );
+        ringShooter.launchRingAngularVelocity( 9.2, setSpeedZero, speedUpTime );
         //ringShooter.launchRingVelocity(ShootingMath.getVelocityToTarget(FieldMap.RobotInfo.getRingLaunchPointPosition().toVector(), target.toVector(), ringShooter.getLaunchAngle()), DistanceUnit.MM);
     }
 

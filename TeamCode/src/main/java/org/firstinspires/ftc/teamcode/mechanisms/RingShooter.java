@@ -95,8 +95,6 @@ public class RingShooter {
         }
 
         pusher = hw.servo.get(pusherName);
-
-        setFlyWheelPID(new PIDFCoefficients(2, 0, 2, 8.5));
     }
 
     /**
