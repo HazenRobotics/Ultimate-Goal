@@ -14,6 +14,7 @@ import org.firstinspires.ftc.teamcode.road_runner.util.Encoder;
 import org.firstinspires.ftc.teamcode.robots.RobotTechnicolorRR;
 
 @TeleOp(name="Shooter Encoder Test", group="Test")
+//@Disabled
 public class ShooterEncoderTest extends LinearOpMode {
     RobotTechnicolorRR robot;
     private VoltageSensor batteryVoltageSensor;

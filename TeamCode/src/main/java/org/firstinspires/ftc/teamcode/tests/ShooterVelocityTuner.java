@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.robots.RobotTechnicolorRR;
 import org.firstinspires.ftc.teamcode.utils.GamepadEvents;
 
 @TeleOp(name = "Shooter Velocity Tuner", group = "Tuner")
+//@Disabled
 public class ShooterVelocityTuner extends OpMode {
     RobotTechnicolorRR robot;
     double velocity = 8;

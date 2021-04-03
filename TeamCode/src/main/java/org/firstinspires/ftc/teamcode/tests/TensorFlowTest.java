@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.tests;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -9,6 +10,7 @@ import org.firstinspires.ftc.teamcode.utils.TensorFlow;
 import org.firstinspires.ftc.teamcode.utils.Vuforia;
 
 @TeleOp(name="TensorFlow Test")
+@Disabled
 public class TensorFlowTest extends OpMode {
 
     private final String TENSOR_FLOW_MODEL_NAME = "UltimateGoal";

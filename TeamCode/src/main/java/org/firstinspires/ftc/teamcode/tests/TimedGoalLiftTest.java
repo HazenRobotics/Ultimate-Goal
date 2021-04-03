@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.robots.RobotTechnicolorRR;
 import org.firstinspires.ftc.teamcode.utils.GamepadEvents;
 
 @TeleOp(name="TimedGoalLiftTest", group="Test")
+//@Disabled
 public class TimedGoalLiftTest extends OpMode {
     RobotTechnicolorRR robot;
 

@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.tests;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -9,6 +10,7 @@ import org.firstinspires.ftc.teamcode.utils.Vuforia;
 import org.firstinspires.ftc.teamcode.utils.VuforiaLocalization;
 
 @TeleOp(name="Vuforia Test")
+@Disabled
 public class VuforiaTest extends OpMode {
 
     private final String VUFORIA_TRACKABLES_ASSET_NAME = "UltimateGoal";

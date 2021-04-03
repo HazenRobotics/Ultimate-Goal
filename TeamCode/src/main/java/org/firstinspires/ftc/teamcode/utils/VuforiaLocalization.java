@@ -109,11 +109,10 @@ public class VuforiaLocalization {
      */
     public VuforiaTrackable getVisibleTarget(){
 
-        for(VuforiaTrackable trackable : trackables){
-            if(((VuforiaTrackableDefaultListener)trackable.getListener()).isVisible()){
+        for(VuforiaTrackable trackable : trackables)
+            if(((VuforiaTrackableDefaultListener)trackable.getListener()).isVisible())
                 return trackable;
-            }
-        }
+
         return null;
     }
 
@@ -123,9 +122,9 @@ public class VuforiaLocalization {
      */
     public OpenGLMatrix getRobotLocationTransform(){
         VuforiaTrackable currentVisibleTarget = getVisibleTarget();
-        if(currentVisibleTarget == null){
+        if(currentVisibleTarget == null)
             return null;
-        }
+
         return ((VuforiaTrackableDefaultListener)currentVisibleTarget.getListener()).getUpdatedRobotLocation();
     }
 

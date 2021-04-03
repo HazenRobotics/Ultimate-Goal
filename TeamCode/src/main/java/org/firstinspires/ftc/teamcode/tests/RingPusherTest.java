@@ -8,7 +8,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.robots.ShooterBot;
 
 @TeleOp(name = "Motor test", group="Test")
-public class MotorTest extends OpMode {
+@Disabled
+public class RingPusherTest extends OpMode {
 
     ShooterBot robot;
 
