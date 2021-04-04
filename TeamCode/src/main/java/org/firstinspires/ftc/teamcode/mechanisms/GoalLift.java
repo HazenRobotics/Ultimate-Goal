@@ -37,6 +37,8 @@ public class GoalLift {
 
     private ClawPosition currentClawPosition;
 
+    private Thread goalLiftThread;
+
     /**
      * Creates a GoalLift with the default name for the motor
      * @param hw robot's hardware map
@@ -86,24 +88,40 @@ public class GoalLift {
                 if ( currentLiftPosition == LiftPosition.LIFTED)
                     break;
 
-                currentLiftPosition = LiftPosition.LIFTED;
                 liftToPosition( LiftPosition.LIFTED, power, timeLimit );
+                currentLiftPosition = LiftPosition.LIFTED;
                 break;
             }
             case LOWERED:{
                 if( currentLiftPosition == LiftPosition.LOWERED )
                     break;
 
-                currentLiftPosition = LiftPosition.LOWERED;
                 liftToPosition( LiftPosition.LOWERED, power, timeLimit );
+                currentLiftPosition = LiftPosition.LOWERED;
                 break;
             }
         }
-
     }
 
+    /**
+     * Runs the goal lift in a new thread
+     * @param position position to move lift to
+     * @param power power at which to move the lift
+     * @param timeLimit limit of time after the command was issued before the motor turns off
+     */
     public void setGoalLiftPositionAsync( LiftPosition position, double power, long timeLimit ) {
-        new Thread(() -> setGoalLiftPosition(position, power, timeLimit)).start();
+        goalLiftThread = new Thread(() -> setGoalLiftPosition(position, power, timeLimit));
+        goalLiftThread.start();
+    }
+
+    public void stopGoalLift() {
+        if(goalLiftThread.isAlive()) {
+            goalLiftThread.interrupt();
+        }
+    }
+
+    public boolean goalLiftIsRunning() {
+        return goalLiftThread.isAlive();
     }
 
     public void setNumericalClawPosition( double position ) {

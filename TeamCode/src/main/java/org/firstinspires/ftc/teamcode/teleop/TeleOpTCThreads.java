@@ -58,10 +58,6 @@ public class TeleOpTCThreads extends LinearOpMode {
 
     private Thread shootPowershotThread;
 
-    private Thread liftGoalLiftThread;
-
-    private Thread lowerGoalLiftThread;
-
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -86,14 +82,6 @@ public class TeleOpTCThreads extends LinearOpMode {
             robot.shootAtTarget(FieldMap.ScoringGoals.RED_MIDDLE_POWERSHOT, false, false);
             robot.drive(robot.trajectoryBuilder().lineTo(new Vector2d(-13, -22.5)).build());
             robot.shootAtTarget(FieldMap.ScoringGoals.RED_RIGHT_POWERSHOT, true, false);
-        });
-
-        liftGoalLiftThread = new Thread(() -> {
-            robot.goalLift.setGoalLiftPositionAsync( GoalLift.LiftPosition.LIFTED, LIFT_POWER + 0.3, LIFT_TIME_LIMIT );
-        });
-
-        lowerGoalLiftThread = new Thread(() -> {
-            robot.goalLift.setGoalLiftPositionAsync(GoalLift.LiftPosition.LOWERED, LIFT_POWER, LOWER_TIME_LIMIT);
         });
 
         telemetry.addLine("Initialization Complete");
@@ -157,16 +145,30 @@ public class TeleOpTCThreads extends LinearOpMode {
 
             // goal lift
             if( gamepad1.y.onPress() ) {
-                if (liftGoalLiftThread.isAlive())
-                    liftGoalLiftThread.interrupt();
-                else
-                    liftGoalLiftThread.start();
+                //if the goal lift is running but hasn't been lowered all the way yet
+                if(robot.goalLift.goalLiftIsRunning() && robot.goalLift.getCurrentLiftPosition() == GoalLift.LiftPosition.LIFTED) {
+                    robot.goalLift.stopGoalLift();
+                    robot.goalLift.setGoalLiftPositionAsync( GoalLift.LiftPosition.LIFTED, LIFT_POWER + 0.3, LIFT_TIME_LIMIT );
+                }
+                else if(robot.goalLift.goalLiftIsRunning()) {
+                    robot.goalLift.stopGoalLift();
+                }
+                else {
+                    robot.goalLift.setGoalLiftPositionAsync( GoalLift.LiftPosition.LIFTED, LIFT_POWER + 0.3, LIFT_TIME_LIMIT );
+                }
             }
             if( gamepad1.a.onPress() ) {
-                if (lowerGoalLiftThread.isAlive())
-                    lowerGoalLiftThread.interrupt();
-                else
-                    lowerGoalLiftThread.start();
+                //if the goal lift is running but hasn't been raised all the way yet
+                if(robot.goalLift.goalLiftIsRunning() && robot.goalLift.getCurrentLiftPosition() == GoalLift.LiftPosition.LOWERED) {
+                    robot.goalLift.stopGoalLift();
+                    robot.goalLift.setGoalLiftPositionAsync(GoalLift.LiftPosition.LOWERED, LIFT_POWER, LOWER_TIME_LIMIT);
+                }
+                else if(robot.goalLift.goalLiftIsRunning()) {
+                    robot.goalLift.stopGoalLift();
+                }
+                else {
+                    robot.goalLift.setGoalLiftPositionAsync(GoalLift.LiftPosition.LOWERED, LIFT_POWER, LOWER_TIME_LIMIT);
+                }
             }
 
             // ring shooter = gamepad1.right_trigger
