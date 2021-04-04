@@ -74,6 +74,7 @@ public class ConceptSoundsSKYSTONE extends LinearOpMode {
         params.loopControl = 0;
         params.waitForNonLoopingSoundsToFinish = true;
 
+
         // In this sample, we will skip waiting for the user to press play, and start displaying sound choices right away
         while (!isStopRequested()) {
 
@@ -112,11 +113,13 @@ public class ConceptSoundsSKYSTONE extends LinearOpMode {
             was_dpad_down   = gamepad1.dpad_down;
 
             // Display the current sound choice, and the playing status.
-            telemetry.addData("", "Use DPAD up/down to choose sound.");
-            telemetry.addData("", "Press Right Bumper to play sound.");
-            telemetry.addData("", "");
-            telemetry.addData("Sound >", sounds[soundIndex]);
-            telemetry.addData("Status >", soundPlaying ? "Playing" : "Stopped");
+            telemetry.addLine( "Use DPAD up/down to choose sound.");
+            telemetry.addLine( "Press Right Bumper to play sound.");
+            telemetry.addLine();
+            telemetry.addLine("Sound > " + sounds[soundIndex]);
+            telemetry.addLine("Status > " + (soundPlaying ? "Playing" : "Stopped") );
+            telemetry.addLine();
+            telemetry.addLine( "appContext: " + myApp.getPackageResourcePath() );
             telemetry.update();
         }
     }

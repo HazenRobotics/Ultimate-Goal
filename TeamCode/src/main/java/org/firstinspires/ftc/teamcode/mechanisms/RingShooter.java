@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigu
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.utils.ShootingMath;
+import org.firstinspires.ftc.teamcode.utils.SoundLibrary;
 
 import java.util.Timer;
 
@@ -200,6 +201,7 @@ public class RingShooter {
 
     public void pushRing() {
         setPusherPosition(PusherPosition.PUSHED);
+        SoundLibrary.playRandomPew(); // play a random pew sound
         long currentTime = System.currentTimeMillis();
         while (System.currentTimeMillis() < currentTime + RING_PUSH_TIME);
         setPusherPosition(PusherPosition.RETRACTED);

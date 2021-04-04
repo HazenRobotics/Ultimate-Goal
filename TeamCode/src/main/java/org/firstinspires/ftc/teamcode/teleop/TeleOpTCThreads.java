@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -9,16 +11,18 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.mechanisms.GoalLift;
 import org.firstinspires.ftc.teamcode.road_runner.util.Encoder;
 import org.firstinspires.ftc.teamcode.robots.RobotTechnicolorRR;
+import org.firstinspires.ftc.teamcode.utils.FieldMap;
 import org.firstinspires.ftc.teamcode.utils.GamepadEvents;
+import org.firstinspires.ftc.teamcode.utils.SoundLibrary;
+import org.firstinspires.ftc.teamcode.utils.Vuforia;
+import org.firstinspires.ftc.teamcode.utils.VuforiaLocalization;
 
 import java.util.List;
 
-//@TeleOp (name = "TeleOpTCThreads", group = "Competition")
-public class TeleOpTCThreads extends OpMode {
+@TeleOp (name = "TeleOpTCThreads", group = "Competition")
+public class TeleOpTCThreads extends LinearOpMode {
 
     RobotTechnicolorRR robot;
-    Encoder parallelEncoder;
-    Encoder perpendicularEncoder;
 
     final double LIFT_POWER = 0.5;
     final double SHOOTER_POWER = 0.85;
@@ -27,34 +31,95 @@ public class TeleOpTCThreads extends OpMode {
     final double MAX_DRIVE_SPEED = 0.8;
     final double MIN_DRIVE_SPEED = 0.4;
 
-    private double sprintMult = MIN_DRIVE_SPEED;
+    final double MAX_TURN_SPEED = 0.35;
+    final double MIN_TURN_SPEED = 0.2;
+
+    final long LIFT_TIME_LIMIT = 500;
+    final long LOWER_TIME_LIMIT = 500;
+
+    private double driveMult = MIN_DRIVE_SPEED;
+    private double turnMult = MIN_TURN_SPEED;
 
     int negateIntake = 1;
 
-    double velocity = 10;
+    double velocity = 9.25 ;
     double velocityChange = 1;
+    double velocitySmallChange = 0.25;
 
-    GamepadEvents gamepad1;
+    double maxVelocity = 10.5;
+    double minVelocity = 9.25;
+
+    private GamepadEvents gamepad1;
+    private GamepadEvents gamepad2;
+    private Vuforia vuforia = Vuforia.getInstance();
+    private VuforiaLocalization vuforiaLocalizer;
+
+    private final String VUFORIA_TRACKABLES_ASSET_NAME = "UltimateGoal";
+
+    private Thread shootPowershotThread;
+
+    private Thread liftGoalLiftThread;
+
+    private Thread lowerGoalLiftThread;
 
     @Override
-    public void init() {
+    public void runOpMode() throws InterruptedException {
+
+        SoundLibrary.playStartup();
+
         robot = new RobotTechnicolorRR(hardwareMap, this);
         gamepad1 = new GamepadEvents(super.gamepad1);
-        robot.drive.setPoseEstimate(new Pose2d(0, 0, 0));
-        parallelEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "intake"));
-        perpendicularEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "goalLift"));
-    }
+        gamepad2 = new GamepadEvents(super.gamepad2);
+        if(!Vuforia.getInstance().isRunning()) {
+            Vuforia.getInstance().start();
+        }
+        vuforiaLocalizer = new VuforiaLocalization(VUFORIA_TRACKABLES_ASSET_NAME);
+        vuforiaLocalizer.activateTracking();
 
-    @Override
-    public void loop() {
+        shootPowershotThread = new Thread(() -> {
+            robot.setPosition(new Pose2d(63, 15, 0)); // 61, 14 if the robot is 18" wide: 70.125-robotwidth/2, 23.125-robotwidth/2
+            robot.driveAsync(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(-13, -7.5, 0), 0).build());
+            robot.ringShooter.setFlyWheelMotorVelocity(8, AngleUnit.RADIANS);
+            robot.drive.waitForIdle();
+            robot.shootAtTarget(FieldMap.ScoringGoals.RED_LEFT_POWERSHOT, false, false);
+            robot.drive(robot.trajectoryBuilder().lineTo(new Vector2d(-13, -15)).build());
+            robot.shootAtTarget(FieldMap.ScoringGoals.RED_MIDDLE_POWERSHOT, false, false);
+            robot.drive(robot.trajectoryBuilder().lineTo(new Vector2d(-13, -22.5)).build());
+            robot.shootAtTarget(FieldMap.ScoringGoals.RED_RIGHT_POWERSHOT, true, false);
+        });
 
-        //addControlTelemtry();
+        liftGoalLiftThread = new Thread(() -> {
+            robot.goalLift.setGoalLiftPositionAsync( GoalLift.LiftPosition.LIFTED, LIFT_POWER + 0.3, LIFT_TIME_LIMIT );
+        });
 
-        //Sprint control
+        lowerGoalLiftThread = new Thread(() -> {
+            robot.goalLift.setGoalLiftPositionAsync(GoalLift.LiftPosition.LOWERED, LIFT_POWER, LOWER_TIME_LIMIT);
+        });
+
+        telemetry.addLine("Initialization Complete");
+        telemetry.update();
+
+        waitForStart();
+
+        while (opModeIsActive() && !isStopRequested()) {
+            //addControlTelemtry();
+
+            //Sprint control
+        /*
         if(gamepad1.left_stick_button.onPress())
-            sprintMult = sprintMult < MAX_DRIVE_SPEED ? MAX_DRIVE_SPEED : MIN_DRIVE_SPEED;
+            driveMult = driveMult < MAX_DRIVE_SPEED ? MAX_DRIVE_SPEED : MIN_DRIVE_SPEED;
+        if(gamepad1.right_stick_button.onPress())
+            turnMult = turnMult < MAX_TURN_SPEED ? MAX_TURN_SPEED : MIN_TURN_SPEED;
+         */
+            driveMult = gamepad1.left_stick_button.getValue() ? MAX_DRIVE_SPEED : MIN_DRIVE_SPEED;
+            turnMult = gamepad1.right_stick_button.getValue() ? MAX_TURN_SPEED : MIN_TURN_SPEED;
 
-        robot.teleopDrive(-gamepad1.left_stick_y*sprintMult, gamepad1.left_stick_x*sprintMult, -gamepad1.right_stick_x*sprintMult);
+            robot.teleopDrive(-gamepad1.left_stick_y*driveMult, gamepad1.left_stick_x*driveMult, -gamepad1.right_stick_x*turnMult);
+
+            if( gamepad2.y.onPress() )
+                velocity = maxVelocity;
+            else if( gamepad2.a.onPress() )
+                velocity = minVelocity;
 
         /*
         //D-pad rotation control
@@ -69,50 +134,80 @@ public class TeleOpTCThreads extends OpMode {
         }
         */
 
-        // negate the intake direction on left trigger press
-        //if( gamepad1.left_trigger.onPress() ) negateIntake *= -1;
+            // negate the intake direction on left trigger press
+            //if( gamepad1.left_trigger.onPress() ) negateIntake *= -1;
 
-        // increases and decreases the velocity of the flyWheels
-        if( gamepad1.dpad_up.onPress() )
-            velocity += velocityChange;
-        else if( gamepad1.dpad_down.onPress() )
-            velocity -= velocityChange;
+            // increases and decreases the velocity of the flyWheels
+            if( gamepad1.dpad_up.onPress() )
+                velocity += velocityChange;
+            else if( gamepad1.dpad_down.onPress() )
+                velocity -= velocityChange;
+            else if( gamepad1.dpad_right.onPress() )
+                velocity += velocitySmallChange;
+            else if( gamepad1.dpad_left.onPress() )
+                velocity -= velocitySmallChange;
 
+            telemetry.addLine( "velocity: " + velocity );
 
-        telemetry.addLine( "velocity: " + velocity );
+            // claw position
+            if(gamepad1.x.onPress())
+                robot.goalLift.setClawPosition( GoalLift.ClawPosition.CLOSED );
+            if(gamepad1.b.onPress())
+                robot.goalLift.setClawPosition( GoalLift.ClawPosition.OPEN );
 
-        // claw position
-        if(gamepad1.x.onPress())
-            robot.goalLift.setClawPosition( GoalLift.ClawPosition.CLOSED );
-        if(gamepad1.b.onPress())
-            robot.goalLift.setClawPosition( GoalLift.ClawPosition.OPEN );
+            // goal lift
+            if( gamepad1.y.onPress() ) {
+                if (liftGoalLiftThread.isAlive())
+                    liftGoalLiftThread.interrupt();
+                else
+                    liftGoalLiftThread.start();
+            }
+            if( gamepad1.a.onPress() ) {
+                if (lowerGoalLiftThread.isAlive())
+                    lowerGoalLiftThread.interrupt();
+                else
+                    lowerGoalLiftThread.start();
+            }
 
-        // goal lift
-        if( gamepad1.y.onPress() )
-            robot.goalLift.setGoalLiftPosition( GoalLift.LiftPosition.LIFTED, LIFT_POWER + 0.3, 1000 );
-        if( gamepad1.a.onPress() )
-            robot.goalLift.setGoalLiftPosition( GoalLift.LiftPosition.LOWERED, LIFT_POWER, 1000 );
+            // ring shooter = gamepad1.right_trigger
+            robot.ringShooter.setFlyWheelMotorVelocity( gamepad1.right_trigger*velocity, AngleUnit.RADIANS );
+            //robot.ringShooter.setFlyWheelMotorPower( gamepad1.right_trigger*SHOOTER_POWER );
 
-        // ring shooter = gamepad1.right_trigger
-        robot.ringShooter.setFlyWheelMotorVelocity( gamepad1.right_trigger*velocity, AngleUnit.RADIANS );
-        //robot.ringShooter.setFlyWheelMotorPower( gamepad1.right_trigger*SHOOTER_POWER );
+            // ring pusher (servo) = gamepad1.left_bumper
+            if( gamepad1.left_bumper.onPress() ) {
+                robot.ringShooter.pushRing();
+            }
 
-        // ring pusher (servo) = gamepad1.left_bumper
-        if( gamepad1.left_bumper.onPress() ) {
-            robot.ringShooter.pushRing();
+            // intake = gamepad1.left_trigger
+            if(gamepad1.right_bumper.onPress() || gamepad2.right_bumper.onPress())
+                robot.ringShooter.setIntakeMotorPower( robot.ringShooter.getIntakePower() > 0 ? 0 : INTAKE_POWER);
+            else if(gamepad1.left_trigger > 0.2 || gamepad2.left_trigger > 0.2)
+                robot.ringShooter.setIntakeMotorPower(-INTAKE_POWER);
+            //robot.ringShooter.setIntakeMotorPower( gamepad1.left_trigger*INTAKE_POWER );
+
+            //addMotorInfoTelemtry();
+
+            if(gamepad1.back.onPress()) {
+                if(shootPowershotThread.isAlive())
+                    shootPowershotThread.interrupt();
+                else
+                    shootPowershotThread.start();
+            }
+
+            addControlTelemtry();
+
+            vuforiaLocalizer.updateRobotLocation();
+            telemetry.update();
+            gamepad1.update();
+            gamepad2.update();
+            robot.drive.update();
+
+            if(isStopRequested()) {
+                if(vuforia.isRunning()) {
+                    vuforia.close();
+                }
+            }
         }
-
-        // intake = gamepad1.left_trigger
-        if(gamepad1.right_bumper.onPress())
-            robot.ringShooter.setIntakeMotorPower( robot.ringShooter.getIntakePower() > 0 ? 0 : INTAKE_POWER);
-        //robot.ringShooter.setIntakeMotorPower( gamepad1.left_trigger*INTAKE_POWER );
-
-        //addMotorInfoTelemtry();
-
-        robot.drive.update();
-        telemetry.update();
-        gamepad1.update();
-        robot.drive.update();
     }
 
 
@@ -129,7 +224,10 @@ public class TeleOpTCThreads extends OpMode {
                 .addData("Ring Shooter", "Gp1: right trigger")
                 .addData("Ring Pusher ", "Gp1: left bumper")
                 .addData("Intake Toggle", "Gp1: right trigger")
-                .addData("Intake", "Gp1: left trigger");
+                .addData("Intake", "Gp1: left trigger")
+                .addData("Lifted Button", robot.goalLift.liftedButtonPressed())
+                .addData("Lowered Button", robot.goalLift.loweredButtonPressed())
+                .addData("Position Estimate", robot.drive.getPoseEstimate());
         addLine();
     }
 
@@ -185,11 +283,6 @@ public class TeleOpTCThreads extends OpMode {
         telemetry.addData( "leftRear", "Vel 1: " + velocities.get( 1 ) );
         telemetry.addData( "rightRear", "Vel 2: " + velocities.get( 2 ) );
         telemetry.addData( "rightFront", "Vel 3: " + velocities.get( 3 ) );
-
-        addLine();
-
-        telemetry.addData("Parallel Encoder", parallelEncoder.getCurrentPosition());
-        telemetry.addData("Perpendicular Encoder", perpendicularEncoder.getCurrentPosition());
 
         addLine();
 

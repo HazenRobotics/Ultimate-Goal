@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.mechanisms.GoalLift;
 import org.firstinspires.ftc.teamcode.robots.RobotTechnicolorRR;
 import org.firstinspires.ftc.teamcode.utils.FieldMap;
 import org.firstinspires.ftc.teamcode.utils.GamepadEvents;
+import org.firstinspires.ftc.teamcode.utils.SoundLibrary;
 import org.firstinspires.ftc.teamcode.utils.Vuforia;
 import org.firstinspires.ftc.teamcode.utils.VuforiaLocalization;
 
@@ -58,6 +59,9 @@ public class TeleOpTechnicolor extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+
+        SoundLibrary.playStartup();
+
         robot = new RobotTechnicolorRR(hardwareMap, this);
         gamepad1 = new GamepadEvents(super.gamepad1);
         gamepad2 = new GamepadEvents(super.gamepad2);
@@ -163,13 +167,10 @@ public class TeleOpTechnicolor extends LinearOpMode {
             //addMotorInfoTelemtry();
 
             if(gamepad1.back.onPress()) {
-                if(shootPowershotThread.isAlive()) {
+                if(shootPowershotThread.isAlive())
                     shootPowershotThread.interrupt();
-                }
-                else {
+                else
                     shootPowershotThread.start();
-                }
-
             }
 
             addControlTelemtry();

@@ -36,9 +36,9 @@ import java.util.ArrayList;
 
 public class SoundLibrary {
 
-    HardwareMap hardwareMap;
+    private static HardwareMap hardwareMap;
 
-    ArrayList<Audio> audioList;
+    private static ArrayList<Audio> audioList;
 
     public SoundLibrary( HardwareMap hw ) {
 
@@ -51,12 +51,22 @@ public class SoundLibrary {
 
     private void initSounds() {
 
-        audioList.add( new Audio("pew", hardwareMap) );
-        audioList.add( new Audio("gold", hardwareMap) );
+        // pews
+        audioList.add( new Audio("pewdefault", hardwareMap) );
 
+
+        // other audios
+        audioList.add( new Audio("psstartup", hardwareMap) );
+        audioList.add( new Audio("gold", hardwareMap) );
+        audioList.add( new Audio("silver", hardwareMap) );
+
+
+        // checks all of the sounds and removes the ones that aren't found
+        for( int i = 0; i < audioList.size(); i++ )
+            if( !audioList.get(i).exists() ) audioList.remove(i--);
     }
 
-    public String playAudio( String audioName ) {
+    public static String playAudio( String audioName ) {
         for( int i = 0; i < audioList.size(); i++ ) {
             if( audioList.get(i).getName().equals( audioName ) ) {
                 audioList.get(i).play();
@@ -66,5 +76,38 @@ public class SoundLibrary {
         return "Audio \"" + audioName + "\" :: not found";
     }
 
+    public static String playStartup() {
+        return playAudio( "psstartup" );
+    }
+
+    public static String playRandomSound() {
+        int randomPos = (int) (Math.random() * audioList.size());
+        return playAudio( audioList.get(randomPos).getName() );
+    }
+
+    public static String playRandomPew() {
+        int numPews = 0;
+        ArrayList<Audio> pewList = new ArrayList<Audio>();
+        for( int i = 0; i < audioList.size(); i++ ) {
+            if (audioList.get(i).getName().contains("pew")) {
+                numPews++;
+                pewList.add( /*numPews++,*/ audioList.get(i) );
+            }
+        }
+        if( !pewList.get(0).getName().contains("pew") )
+            return "No pew audio found";
+        int randomPos = (int) (Math.random() * numPews);
+        return playAudio( pewList.get(randomPos).getName() );
+
+    }
+
+    public static String getAudios() {
+        String audios = "";
+
+        for( int i = 0; i < audioList.size(); i++ )
+            audios += "- " + audioList.get(i).getName() + (i != audioList.size()-1 ? "\n" : "");
+
+        return audios;
+    }
 
 }
