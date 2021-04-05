@@ -40,8 +40,6 @@ public class TeleOpTechnicolor extends LinearOpMode {
     private double driveMult = MIN_DRIVE_SPEED;
     private double turnMult = MIN_TURN_SPEED;
 
-    int negateIntake = 1;
-
     double velocity = 9.25 ;
     double velocityChange = 1;
     double velocitySmallChange = 0.25;
@@ -93,12 +91,6 @@ public class TeleOpTechnicolor extends LinearOpMode {
             //addControlTelemtry();
 
             //Sprint control
-        /*
-        if(gamepad1.left_stick_button.onPress())
-            driveMult = driveMult < MAX_DRIVE_SPEED ? MAX_DRIVE_SPEED : MIN_DRIVE_SPEED;
-        if(gamepad1.right_stick_button.onPress())
-            turnMult = turnMult < MAX_TURN_SPEED ? MAX_TURN_SPEED : MIN_TURN_SPEED;
-         */
             driveMult = gamepad1.left_stick_button.getValue() ? MAX_DRIVE_SPEED : MIN_DRIVE_SPEED;
             turnMult = gamepad1.right_stick_button.getValue() ? MAX_TURN_SPEED : MIN_TURN_SPEED;
 
@@ -109,21 +101,18 @@ public class TeleOpTechnicolor extends LinearOpMode {
             else if( gamepad2.a.onPress() )
                 velocity = minVelocity;
 
-        /*
-        //D-pad rotation control
-        if(gamepad1.dpad_up.onPress()) {
-            robot.drive.turnToAsync(0);
-        } else if(gamepad1.dpad_down.onPress()) {
-            robot.drive.turnToAsync(Math.toRadians(180));
-        } else if(gamepad1.dpad_left.onPress()) {
-            robot.drive.turnToAsync(Math.toRadians(270));
-        } else if(gamepad1.dpad_right.onPress()) {
-            robot.drive.turnToAsync(Math.toRadians(90));
-        }
-        */
-
-            // negate the intake direction on left trigger press
-            //if( gamepad1.left_trigger.onPress() ) negateIntake *= -1;
+            /*
+            //D-pad rotation control
+            if(gamepad1.dpad_up.onPress()) {
+                robot.drive.turnToAsync(0);
+            } else if(gamepad1.dpad_down.onPress()) {
+                robot.drive.turnToAsync(Math.toRadians(180));
+            } else if(gamepad1.dpad_left.onPress()) {
+                robot.drive.turnToAsync(Math.toRadians(270));
+            } else if(gamepad1.dpad_right.onPress()) {
+                robot.drive.turnToAsync(Math.toRadians(90));
+            }
+            */
 
             // increases and decreases the velocity of the flyWheels
             if( gamepad1.dpad_up.onPress() )

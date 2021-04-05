@@ -52,13 +52,18 @@ public class SoundLibrary {
     private void initSounds() {
 
         // pews
-        audioList.add( new Audio("pewdefault", hardwareMap) );
+        audioList.add( new Audio("pew_default", hardwareMap) );
+        audioList.add( new Audio("pew_peck_deep", hardwareMap) );
+        audioList.add( new Audio("pew_peck_high", hardwareMap) );
 
 
         // other audios
-        audioList.add( new Audio("psstartup", hardwareMap) );
-        audioList.add( new Audio("gold", hardwareMap) );
-        audioList.add( new Audio("silver", hardwareMap) );
+        audioList.add( new Audio("ps_startup", hardwareMap) );
+        audioList.add( new Audio("slurp_yummy", hardwareMap) );
+        //audioList.add( new Audio("", hardwareMap) );
+
+        //audioList.add( new Audio("gold", hardwareMap) );
+        //audioList.add( new Audio("silver", hardwareMap) );
 
 
         // checks all of the sounds and removes the ones that aren't found

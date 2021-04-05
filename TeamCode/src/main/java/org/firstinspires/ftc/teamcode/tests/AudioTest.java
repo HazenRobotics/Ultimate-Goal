@@ -31,7 +31,7 @@ public class AudioTest extends OpMode {
     public void loop() {
 
         if( gamepad1.a.onPress() )
-            telemetry.addLine( library.playAudio("pewdefault") );
+            telemetry.addLine( library.playAudio("pew_default") );
 
         if( gamepad1.b.onPress() )
             telemetry.addLine( library.playRandomPew() );
@@ -40,7 +40,7 @@ public class AudioTest extends OpMode {
             telemetry.addLine( library.playRandomSound() );
 
         if( gamepad1.y.onPress() )
-            telemetry.addLine( library.playAudio("psstartup") );
+            telemetry.addLine( library.playAudio("ps_startup") );
 
         if( gamepad1.right_bumper.onPress() )
             showAudios = !showAudios;
