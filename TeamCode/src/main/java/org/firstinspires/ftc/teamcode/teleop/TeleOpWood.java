@@ -25,6 +25,9 @@ public class TeleOpWood extends OpMode {
 
     @Override
     public void init() {
+
+        Robot.createDefaultMatchLogFileName( this.getClass().getName() );
+
         robot = new RobotWood(hardwareMap, this);
 
         robot.goalLift.setClawPosition( GoalLift.ClawPosition.OPEN );

@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.R;
+import org.firstinspires.ftc.teamcode.robots.Robot;
 import org.firstinspires.ftc.teamcode.utils.FieldMap;
 import org.firstinspires.ftc.teamcode.utils.Vuforia;
 import org.firstinspires.ftc.teamcode.utils.VuforiaLocalization;
@@ -21,6 +22,9 @@ public class VuforiaTest extends OpMode {
 
     @Override
     public void init() {
+
+        Robot.createDefaultMatchLogFileName( this.getClass().getName() );
+
         final String VUFORIA_KEY = hardwareMap.appContext.getResources().getString(R.string.vuforiakey);
         vuforia.setParameters(VUFORIA_KEY, "webcam", true, hardwareMap);
         vuforia.start();

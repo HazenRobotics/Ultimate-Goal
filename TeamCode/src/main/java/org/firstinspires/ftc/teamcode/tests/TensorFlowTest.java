@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.teamcode.R;
+import org.firstinspires.ftc.teamcode.robots.Robot;
 import org.firstinspires.ftc.teamcode.utils.TensorFlow;
 import org.firstinspires.ftc.teamcode.utils.Vuforia;
 
@@ -23,6 +24,9 @@ public class TensorFlowTest extends OpMode {
     TensorFlow tensorFlow;
     @Override
     public void init() {
+
+        Robot.createDefaultMatchLogFileName( this.getClass().getName() );
+
         final String VUFORIA_KEY = hardwareMap.appContext.getResources().getString(R.string.vuforiakey);
         vuforia.setParameters(VUFORIA_KEY, "webcam", true, hardwareMap);
         vuforia.start();

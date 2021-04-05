@@ -19,8 +19,10 @@ public class AutonomousTest extends LinearOpMode
     RobotWood robotWood;
 
     @Override
-    public void runOpMode() throws InterruptedException
-    {
+    public void runOpMode() throws InterruptedException {
+
+        Robot.createDefaultMatchLogFileName( this.getClass().getName() );
+
         //robot = new RobotWood(hardwareMap, this);
         robotWood = new RobotWood(hardwareMap, this);
 

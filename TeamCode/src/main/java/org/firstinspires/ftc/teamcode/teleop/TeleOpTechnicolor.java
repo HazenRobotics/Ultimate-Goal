@@ -60,7 +60,15 @@ public class TeleOpTechnicolor extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        Robot.createDefaultMatchLogFileName( this.getClass().getName() );
+        telemetry.addLine( "getCanonicalName :: " + this.getClass().getCanonicalName() );
+        telemetry.addLine( "getName :: " + this.getClass().getName() );
+        telemetry.addLine( "getSimpleName :: " + this.getClass().getSimpleName() );
+        telemetry.addLine( "getName :: " + this.getClass().getName() );
+        telemetry.update();
+
+        waitForStart();
+
+        //Robot.createDefaultMatchLogFileName( this.getClass().getName() );
         // otherwise do Robot.createDefaultMatchLogFileName( "TeleOpTechnicolor" );
 
         robot = new RobotTechnicolorRR(hardwareMap, this);
@@ -87,13 +95,14 @@ public class TeleOpTechnicolor extends LinearOpMode {
             robot.shootAtTarget(FieldMap.ScoringGoals.RED_RIGHT_POWERSHOT, true, false);
         });
 
+        //Robot.writeToMatchDefaultFile( "Initialization Complete", true, true );
+
         telemetry.addLine("Initialization Complete");
         telemetry.update();
 
-        waitForStart();
+        //waitForStart();
 
         while (opModeIsActive() && !isStopRequested()) {
-            //addControlTelemtry();
 
             //Sprint control
             driveMult = gamepad1.left_stick_button.getValue() ? MAX_DRIVE_SPEED : MIN_DRIVE_SPEED;
@@ -194,7 +203,10 @@ public class TeleOpTechnicolor extends LinearOpMode {
                     shootPowershotThread.start();
             }
 
-            addControlTelemtry();
+            // addControlTelemtry();
+
+            telemetry.addLine( "TouchPad :: " + super.gamepad1.touchpad );
+            telemetry.addLine( "ps :: " + super.gamepad1.ps );
 
             vuforiaLocalizer.updateRobotLocation();
             telemetry.update();
@@ -220,13 +232,13 @@ public class TeleOpTechnicolor extends LinearOpMode {
                 .addData("Close Claw", "Gp1: x")
                 .addData("Lift Goal Lift ", "Gp1: y")
                 .addData("Lower Goal Lift", "Gp1: a")
-                .addData("Ring Shooter", "Gp1: right trigger")
-                .addData("Ring Pusher ", "Gp1: left bumper")
-                .addData("Intake Toggle", "Gp1: right trigger")
-                .addData("Intake", "Gp1: left trigger")
-                .addData("Lifted Button", robot.goalLift.liftedButtonPressed())
-                .addData("Lowered Button", robot.goalLift.loweredButtonPressed())
-                .addData("Position Estimate", robot.drive.getPoseEstimate());
+                .addData("Flywheels", "Gp1: right trigger")
+                .addData("Ring Pusher", "Gp1/Gp2: left bumper")
+                .addData("Intake Toggle", "Gp1/Gp2: right bumper")
+                .addData("Negate Intake", "Gp1/Gp2: left trigger")
+                .addData("+/- flywheel velocity by " + velocityChange, "Gp1: dpad up/down")
+                .addData("+/- flywheel velocity by " + velocitySmallChange, "Gp1: dpad right/left")
+                .addData(" ", " ");
         addLine();
     }
 

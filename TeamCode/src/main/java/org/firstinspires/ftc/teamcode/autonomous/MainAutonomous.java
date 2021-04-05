@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.drives.MecanumDrive;
+import org.firstinspires.ftc.teamcode.robots.Robot;
 import org.firstinspires.ftc.teamcode.robots.RobotWood;
 
 // autonomous program that drives bot forward a set distance, stops then
@@ -18,8 +19,10 @@ public class MainAutonomous extends LinearOpMode
     RobotWood robot;
 
     @Override
-    public void runOpMode() throws InterruptedException
-    {
+    public void runOpMode() throws InterruptedException {
+
+        Robot.createDefaultMatchLogFileName( this.getClass().getName() );
+
         robot = new RobotWood(hardwareMap, this);
         robot.driveTrain = new MecanumDrive(hardwareMap);
         robot.tensorFlowUtil.initTensorFlow();

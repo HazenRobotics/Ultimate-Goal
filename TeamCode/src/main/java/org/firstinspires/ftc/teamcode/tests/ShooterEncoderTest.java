@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.road_runner.util.Encoder;
+import org.firstinspires.ftc.teamcode.robots.Robot;
 import org.firstinspires.ftc.teamcode.robots.RobotTechnicolorRR;
 
 @TeleOp(name="Shooter Encoder Test", group="Test")
@@ -21,6 +22,9 @@ public class ShooterEncoderTest extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+
+        Robot.createDefaultMatchLogFileName( this.getClass().getName() );
+
         robot = new RobotTechnicolorRR(hardwareMap, this);
         batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
         robot.ringShooter.leftFlyWheelMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);

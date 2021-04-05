@@ -22,12 +22,13 @@ public class TwoWobbleGoals extends LinearOpMode {
     private TensorFlowUtil.Stack stack;
 
     private final boolean pickUpRing = true;
+    private final boolean expiramental = true;
 
     @Override
     public void runOpMode() throws InterruptedException {
 
-        Robot.createDefaultMatchLogFileName( this.getClass().getName() );
-        // otherwise do Robot.createDefaultMatchLogFileName( "TeleOpTechnicolor" );
+        //Robot.createDefaultMatchLogFileName( this.getClass().getName() );
+        // otherwise do Robot.createDefaultMatchLogFileName( "TwoWobbleGoals" );
 
         robot = new RobotTechnicolorRR(hardwareMap, this);
 
@@ -74,7 +75,7 @@ public class TwoWobbleGoals extends LinearOpMode {
         telemetry.update();
 
         //if there is one ring in the stack, pick up the ring and shoot
-        if(stack == TensorFlowUtil.Stack.SINGLE || stack == TensorFlowUtil.Stack.QUAD && pickUpRing) {
+        if((stack == TensorFlowUtil.Stack.SINGLE || stack == TensorFlowUtil.Stack.QUAD) && pickUpRing && !expiramental) {
             robot.ringShooter.setIntakeMotorPower(0.8);
             robot.driveAsync(robot.trajectoryBuilder().lineToConstantHeading(new Vector2d(-10, -36)).build());
             robot.ringShooter.setFlyWheelMotorVelocity(10, AngleUnit.RADIANS);
@@ -87,6 +88,23 @@ public class TwoWobbleGoals extends LinearOpMode {
                 robot.ringShooter.launchRingAngularVelocity(10, false, false);
             }
             robot.ringShooter.launchRingAngularVelocity(10, true, false);
+        }
+        else if((stack == TensorFlowUtil.Stack.SINGLE || stack == TensorFlowUtil.Stack.QUAD) && pickUpRing && expiramental) {
+            robot.ringShooter.setIntakeMotorPower(0.8);
+            robot.driveAsync(robot.trajectoryBuilder().lineToConstantHeading(new Vector2d(-10, -36)).build());
+            robot.ringShooter.setFlyWheelMotorVelocity(10, AngleUnit.RADIANS);
+            robot.drive.waitForIdle();
+            robot.driveAsync(robot.trajectoryBuilder().lineToConstantHeading(new Vector2d(-30, -36)).build());
+            long currentTime = System.currentTimeMillis();
+            while (System.currentTimeMillis() < currentTime + 200);
+            if(stack == TensorFlowUtil.Stack.QUAD) {
+                robot.ringShooter.launchRingAngularVelocity(10, false, false);
+                robot.ringShooter.launchRingAngularVelocity(10.1, false, false);
+                robot.ringShooter.launchRingAngularVelocity(10.2, false, false);
+            }
+            robot.ringShooter.launchRingAngularVelocity(10.2, true, false);
+            robot.drive.waitForIdle();
+            robot.ringShooter.setIntakeMotorPower(0);
         }
 
         //Move wobble goal to correct zone

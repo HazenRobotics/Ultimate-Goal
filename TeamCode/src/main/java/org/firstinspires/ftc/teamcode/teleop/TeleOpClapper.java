@@ -15,6 +15,9 @@ public class TeleOpClapper extends OpMode {
 
     @Override
     public void init() {
+
+        Robot.createDefaultMatchLogFileName( this.getClass().getName() );
+
         robot = new RobotClapper(hardwareMap, this);
         robot.driveTrain = new MecanumDrive(hardwareMap);
     }

@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.teamcode.road_runner.util.Encoder;
+import org.firstinspires.ftc.teamcode.robots.Robot;
 import org.firstinspires.ftc.teamcode.robots.RobotTechnicolorRR;
 import org.firstinspires.ftc.teamcode.utils.AveragedGyro;
 
@@ -18,6 +19,9 @@ public class EncoderTest extends OpMode {
     AveragedGyro imu;
     @Override
     public void init() {
+
+        //Robot.createDefaultMatchLogFileName( this.getClass().getName() );
+
         robot = new RobotTechnicolorRR(hardwareMap, this);
         parallelEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "intake"));
         perpendicularEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "goalLift"));
@@ -38,6 +42,7 @@ public class EncoderTest extends OpMode {
 
         telemetry.addData("Parallel Encoder", parallelEncoder.getCurrentPosition());
         telemetry.addData("Perpendicular Encoder", perpendicularEncoder.getCurrentPosition());
+        telemetry.addData("Drive Motor Encoders", robot.drive.getWheelPositions());
         telemetry.addData("Angle", imu.getAngularHeading());
         telemetry.update();
 

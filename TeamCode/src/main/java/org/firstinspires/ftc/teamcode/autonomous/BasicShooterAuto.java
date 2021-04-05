@@ -5,6 +5,7 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.robots.Robot;
 import org.firstinspires.ftc.teamcode.robots.RobotTechnicolorRR;
 import org.firstinspires.ftc.teamcode.utils.FieldMap;
 
@@ -15,6 +16,9 @@ public class BasicShooterAuto extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+
+        Robot.createDefaultMatchLogFileName( this.getClass().getName() );
+
         robot = new RobotTechnicolorRR(hardwareMap, this);
         robot.setPosition(new Pose2d(-60, -48));
 
