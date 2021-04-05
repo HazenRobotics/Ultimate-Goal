@@ -9,10 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.drives.Drive;
-import org.firstinspires.ftc.teamcode.utils.TensorFlow;
-import org.firstinspires.ftc.teamcode.utils.VuforiaLocalization;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -36,6 +33,7 @@ public abstract class Robot {
     public Drive driveTrain;
 
     private static final String DEFAULT_LOG_FILE_NAME = "*robotLog.txt";
+    private static String default_match_log_file_name = "defaultRobotLog.txt";
 
     /**
      * Creates a Robot
@@ -52,6 +50,29 @@ public abstract class Robot {
         for (LynxModule module : hw.getAll(LynxModule.class)) {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
+    }
+
+    public static void createDefaultMatchLogFileName( String className ) {
+
+        SimpleDateFormat dateFormatter = new SimpleDateFormat("MM-dd_HH:mm_");
+        Date date = new Date();
+        String time = dateFormatter.format(date) + " :: ";
+
+        // will look like: 04-05_15:11_TeleOpTechnicolor.txt
+
+        default_match_log_file_name = time + className + ".txt";
+        writeAFile(default_match_log_file_name, default_match_log_file_name + ": created", false, true );
+    }
+
+    /**
+     * writes to the default match file
+     * @param writeText what the method will write to the fill (plus the timeStamp if includeTimeStamp is true)
+     * @param isAppending true: will append to the file if it exists, false: will create a new file
+     * @param includeTimeStamp will include the timeStamp for when the method is called
+     */
+    public static void writeToMatchDefaultFile( String writeText, boolean isAppending, boolean includeTimeStamp ) {
+        Log.e( "|-|-|-|", writeText );
+        writeAFile(default_match_log_file_name, writeText, isAppending, includeTimeStamp );
     }
 
     /**
@@ -83,8 +104,8 @@ public abstract class Robot {
             time = dateFormatter.format(date) + " :: ";
         }
 
-        //".../Internal Storage/";
-        String path = Environment.getExternalStorageDirectory().getPath() + "/" + "FIRST" + "/";
+        //".../Internal Storage";
+        String path = Environment.getExternalStorageDirectory().getPath() + "/" + "FIRST" + "/" + "Logs" + "/";
 
         try {
             FileWriter writer = new FileWriter( new File( path + fileName ), isAppending );
@@ -100,7 +121,7 @@ public abstract class Robot {
 
     public void sleep(long millis){
         long startTime = System.currentTimeMillis();
-        while(System.currentTimeMillis() < startTime + millis);
+        while(System.currentTimeMillis() < startTime + millis && opModeIsActive());
     }
 
     /**

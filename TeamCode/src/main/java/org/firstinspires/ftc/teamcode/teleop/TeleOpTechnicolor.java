@@ -60,6 +60,9 @@ public class TeleOpTechnicolor extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
+        Robot.createDefaultMatchLogFileName( this.getClass().getName() );
+        // otherwise do Robot.createDefaultMatchLogFileName( "TeleOpTechnicolor" );
+
         robot = new RobotTechnicolorRR(hardwareMap, this);
 
         SoundLibrary.playStartup();

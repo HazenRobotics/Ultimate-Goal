@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.utils;
 
+import android.content.res.Resources;
+import android.util.Log;
+
 import com.qualcomm.ftccommon.SoundPlayer;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -50,8 +53,13 @@ public class Audio {
 
         // Determine if sound resources are found.
         // Note: Preloading is NOT required, but it's a good way to verify all your sounds are available before you run.
-        if (audioID != 0)
-            audioFound = SoundPlayer.getInstance().preload( hardwareMap.appContext, audioID );
+        try {
+            if (audioID != 0)
+                audioFound = SoundPlayer.getInstance().preload( hardwareMap.appContext, audioID );
+        } catch ( Resources.NotFoundException e ) {
+            Log.e( "|-|-|-|", e.getLocalizedMessage()   );
+            Robot.writeToDefaultFile( "NotFoundException :: " + e.getLocalizedMessage(), true, true );
+        }
 
         setMasterVolume( masterSound );
 
