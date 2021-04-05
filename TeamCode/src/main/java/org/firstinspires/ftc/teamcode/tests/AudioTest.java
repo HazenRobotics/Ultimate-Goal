@@ -9,7 +9,6 @@ import org.firstinspires.ftc.teamcode.utils.SoundLibrary;
 
 
 @TeleOp (name = "AudioTest", group = "Test")
-//@Disabled
 public class AudioTest extends OpMode {
 
     GamepadEvents gamepad1;

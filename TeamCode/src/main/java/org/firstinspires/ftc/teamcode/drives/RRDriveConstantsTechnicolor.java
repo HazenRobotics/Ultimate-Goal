@@ -67,7 +67,7 @@ public class RRDriveConstantsTechnicolor {
      */
     public static double MAX_VEL = 50;
     public static double MAX_ACCEL = 40;
-    public static double MAX_ANG_VEL = Math.toRadians(65);
+    public static double MAX_ANG_VEL = Math.toRadians(70);
     public static double MAX_ANG_ACCEL = Math.toRadians(40);
 
 

@@ -35,6 +35,7 @@ public class RingShooter {
     private static double launchAngle = 35; // degrees
 
     private static final double RING_PUSH_TIME = 800; // milliseconds
+    private static final double RING_RETRACT_TIME = 300;
 
     public enum PusherPosition {
         PUSHED,
@@ -205,6 +206,11 @@ public class RingShooter {
         long currentTime = System.currentTimeMillis();
         while (System.currentTimeMillis() < currentTime + RING_PUSH_TIME);
         setPusherPosition(PusherPosition.RETRACTED);
+        while (System.currentTimeMillis() < currentTime + RING_RETRACT_TIME);
+    }
+
+    public void pushRingAsync() {
+        new Thread(() -> pushRing()).start();
     }
 
     public double getPusherPosition() {

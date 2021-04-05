@@ -46,7 +46,7 @@ public class Audio {
         // Determine Resource IDs for sounds built into the RC application.
         audioID = hardwareMap.appContext.getResources().getIdentifier( audioName, "raw", hardwareMap.appContext.getPackageName() );
 
-        Robot.writeToDefaultFile( "" + audioID, true, true );
+        //Robot.writeToDefaultFile( "" + audioID, true, true );
 
         // Determine if sound resources are found.
         // Note: Preloading is NOT required, but it's a good way to verify all your sounds are available before you run.

@@ -66,6 +66,8 @@ public class GoalLift {
 
         //change this based on needed motor direction
         lift.setDirection( reverseMotor ? DcMotorSimple.Direction.REVERSE : DcMotorSimple.Direction.FORWARD );
+
+        goalLiftThread = new Thread();
     }
 
     /**

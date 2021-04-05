@@ -54,6 +54,7 @@ public class RobotTechnicolorRR {
         Vuforia.getInstance().setParameters(VUFORIA_KEY, "webcam", true, hw);
 
         batteryVoltageSensor = hw.voltageSensor.iterator().next();
+        new SoundLibrary(hw);
         //lights = hw.get(RevBlinkinLedDriver.class, "lights");
     }
 

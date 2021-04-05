@@ -51,8 +51,8 @@ public class SoundLibrary {
 
         // pews
         audioList.add( new Audio("pew_default", hardwareMap) );
-        audioList.add( new Audio("pew_peck_deep", hardwareMap) );
-        audioList.add( new Audio("pew_peck_high", hardwareMap) );
+        audioList.add( new Audio("pew_peck_deep", 10, hardwareMap) );
+        audioList.add( new Audio("pew_peck_high", 10, hardwareMap) );
 
 
         // other audios
