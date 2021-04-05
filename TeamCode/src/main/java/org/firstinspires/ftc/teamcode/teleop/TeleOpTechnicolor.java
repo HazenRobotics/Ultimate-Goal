@@ -82,6 +82,7 @@ public class TeleOpTechnicolor extends LinearOpMode {
             robot.shootAtTarget(FieldMap.ScoringGoals.RED_RIGHT_POWERSHOT, true, false);
         });
 
+        telemetry.addLine("this is here to see if code uploaded");
         telemetry.addLine("Initialization Complete");
         telemetry.update();
 

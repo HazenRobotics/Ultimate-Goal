@@ -29,10 +29,19 @@ public class Audio {
 
         hardwareMap = hw;
 
-        initSound();
+        initSound( 1 );
     }
 
-    public void initSound( ) {
+    public Audio(String name, float masterVolume, HardwareMap hw) {
+
+        audioName = name;
+
+        hardwareMap = hw;
+
+        initSound( masterVolume );
+    }
+
+    public void initSound( float masterSound ) {
 
         // Determine Resource IDs for sounds built into the RC application.
         audioID = hardwareMap.appContext.getResources().getIdentifier( audioName, "raw", hardwareMap.appContext.getPackageName() );
@@ -44,6 +53,8 @@ public class Audio {
         if (audioID != 0)
             audioFound = SoundPlayer.getInstance().preload( hardwareMap.appContext, audioID );
 
+        setMasterVolume( masterSound );
+
         playAudio = new Thread(() -> {
             SoundPlayer.getInstance().startPlaying( hardwareMap.appContext, audioID );
         });
@@ -53,14 +64,10 @@ public class Audio {
         String textToWrite = (audioFound ? "Successfully played" : "Failed to find & play") + " audio " + audioName;
         Robot.writeToDefaultFile( textToWrite, true, true);
 
-        //if(audioFound)
-            //SoundPlayer.getInstance().startPlaying( hardwareMap.appContext, audioID );
         if(playAudio.isAlive())
             playAudio.interrupt();
         else
             playAudio.start();
-
-        // playAudio.isAlive()) ? playAudio.interrupt() : playAudio.start();
     }
 
     public String getName() {
@@ -75,7 +82,17 @@ public class Audio {
         return audioFound;
     }
 
+    public float getMasterVolume() {
+        return SoundPlayer.getInstance().getMasterVolume();
+    }
 
+    public void setMasterVolume( float masterVolume ) {
+        SoundPlayer.getInstance().setMasterVolume(masterVolume);
+    }
+
+    public static void stopAllAudios() {
+        SoundPlayer.getInstance().stopPlayingAll();
+    }
 
 
 }

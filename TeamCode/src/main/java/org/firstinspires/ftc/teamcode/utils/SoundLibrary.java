@@ -38,13 +38,11 @@ public class SoundLibrary {
 
     private static HardwareMap hardwareMap;
 
-    private static ArrayList<Audio> audioList;
+    private static ArrayList<Audio> audioList = new ArrayList<>();
 
     public SoundLibrary( HardwareMap hw ) {
 
         hardwareMap = hw;
-
-        audioList = new ArrayList<>();
 
         initSounds();
     }
@@ -82,7 +80,7 @@ public class SoundLibrary {
     }
 
     public static String playStartup() {
-        return playAudio( "psstartup" );
+        return playAudio( "ps_startup" );
     }
 
     public static String playRandomSound() {
@@ -93,12 +91,9 @@ public class SoundLibrary {
     public static String playRandomPew() {
         int numPews = 0;
         ArrayList<Audio> pewList = new ArrayList<Audio>();
-        for( int i = 0; i < audioList.size(); i++ ) {
-            if (audioList.get(i).getName().contains("pew")) {
-                numPews++;
-                pewList.add( /*numPews++,*/ audioList.get(i) );
-            }
-        }
+        for( int i = 0; i < audioList.size(); i++ )
+            if (audioList.get(i).getName().contains("pew"))
+                pewList.add( numPews++, audioList.get(i) );
         if( !pewList.get(0).getName().contains("pew") )
             return "No pew audio found";
         int randomPos = (int) (Math.random() * numPews);
@@ -115,4 +110,7 @@ public class SoundLibrary {
         return audios;
     }
 
+    public static void stopAllAudios() {
+        Audio.stopAllAudios();
+    }
 }
