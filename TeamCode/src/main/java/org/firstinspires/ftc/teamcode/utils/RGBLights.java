@@ -24,7 +24,7 @@ public class RGBLights {
         blinkinLedDriver.setPattern(pattern);
     }
 
-    public void setStatus(StatusLights status) {
+    public void showStatus(StatusLights status) {
         switch (status) {
             case ERROR:
                 setPattern(BlinkinPattern.SHOT_RED);

@@ -5,10 +5,11 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.mechanisms.GoalLift;
+import org.firstinspires.ftc.teamcode.road_runner.util.Encoder;
 import org.firstinspires.ftc.teamcode.robots.RobotTechnicolorRR;
 import org.firstinspires.ftc.teamcode.utils.FieldMap;
 import org.firstinspires.ftc.teamcode.utils.GamepadEvents;
@@ -143,10 +144,32 @@ public class TeleOpTechnicolor extends LinearOpMode {
                 robot.goalLift.setClawPosition( GoalLift.ClawPosition.OPEN );
 
             // goal lift
-            if( gamepad1.y.onPress() )
-                robot.goalLift.setGoalLiftPositionAsync( GoalLift.LiftPosition.LIFTED, LIFT_POWER + 0.3, LIFT_TIME_LIMIT );
-            if( gamepad1.a.onPress() )
-                robot.goalLift.setGoalLiftPositionAsync( GoalLift.LiftPosition.LOWERED, LIFT_POWER, LOWER_TIME_LIMIT );
+            if( gamepad1.y.onPress() ) {
+                //if the goal lift is running but hasn't been lowered all the way yet
+                if(robot.goalLift.goalLiftIsRunning() && robot.goalLift.getCurrentLiftPosition() == GoalLift.LiftPosition.LIFTED) {
+                    robot.goalLift.stopGoalLift();
+                    robot.goalLift.setGoalLiftPositionAsync( GoalLift.LiftPosition.LIFTED, LIFT_POWER + 0.3, LIFT_TIME_LIMIT );
+                }
+                else if(robot.goalLift.goalLiftIsRunning()) {
+                    robot.goalLift.stopGoalLift();
+                }
+                else {
+                    robot.goalLift.setGoalLiftPositionAsync( GoalLift.LiftPosition.LIFTED, LIFT_POWER + 0.3, LIFT_TIME_LIMIT );
+                }
+            }
+            if( gamepad1.a.onPress() ) {
+                //if the goal lift is running but hasn't been raised all the way yet
+                if(robot.goalLift.goalLiftIsRunning() && robot.goalLift.getCurrentLiftPosition() == GoalLift.LiftPosition.LOWERED) {
+                    robot.goalLift.stopGoalLift();
+                    robot.goalLift.setGoalLiftPositionAsync(GoalLift.LiftPosition.LOWERED, LIFT_POWER, LOWER_TIME_LIMIT);
+                }
+                else if(robot.goalLift.goalLiftIsRunning()) {
+                    robot.goalLift.stopGoalLift();
+                }
+                else {
+                    robot.goalLift.setGoalLiftPositionAsync(GoalLift.LiftPosition.LOWERED, LIFT_POWER, LOWER_TIME_LIMIT);
+                }
+            }
 
             // ring shooter = gamepad1.right_trigger
             robot.ringShooter.setFlyWheelMotorVelocity( gamepad1.right_trigger*velocity, AngleUnit.RADIANS );
