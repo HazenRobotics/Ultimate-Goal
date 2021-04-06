@@ -23,7 +23,7 @@ public class ShooterEncoderTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        Robot.createDefaultMatchLogFileName( this.getClass().getName() );
+        Robot.createDefaultMatchLogFileName( this.getClass().getSimpleName() );
 
         robot = new RobotTechnicolorRR(hardwareMap, this);
         batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
@@ -32,8 +32,11 @@ public class ShooterEncoderTest extends LinearOpMode {
         robot.ringShooter.leftFlyWheelMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.ringShooter.rightFlyWheelMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.ringShooter.setFlyWheelPID(new PIDFCoefficients(6, 0, 3, 12 * 12 / batteryVoltageSensor.getVoltage()));
-
+        
+        Robot.writeToMatchDefaultFile( "Init Finished", true );
+        
         waitForStart();
+        
         robot.ringShooter.setFlyWheelMotorVelocity(3, AngleUnit.RADIANS);
         while (opModeIsActive() && !isStopRequested()) {
             telemetry.addData("Left Flywheel Position", robot.ringShooter.leftFlyWheelMotor.getCurrentPosition());

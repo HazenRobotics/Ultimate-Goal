@@ -16,12 +16,14 @@ public class BasicShooterAuto extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-
-        Robot.createDefaultMatchLogFileName( this.getClass().getName() );
+    
+        Robot.createDefaultMatchLogFileName( this.getClass().getSimpleName() );
 
         robot = new RobotTechnicolorRR(hardwareMap, this);
         robot.setPosition(new Pose2d(-60, -48));
 
+        Robot.writeToMatchDefaultFile( "Init Finished", true );
+        
         waitForStart();
 
 

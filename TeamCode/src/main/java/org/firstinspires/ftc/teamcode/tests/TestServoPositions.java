@@ -25,11 +25,13 @@ public class TestServoPositions extends OpMode {
     @Override
     public void init() {
 
-        Robot.createDefaultMatchLogFileName( this.getClass().getName() );
+        Robot.createDefaultMatchLogFileName( this.getClass().getSimpleName() );
 
         robot = new RobotTechnicolorRR(hardwareMap, this);
         gamepad1 = new GamepadEvents(super.gamepad1);
         robot.drive.setPoseEstimate(new Pose2d(0, 0, 0));
+    
+        Robot.writeToMatchDefaultFile( "Init Finished", true );
     }
 
     @Override

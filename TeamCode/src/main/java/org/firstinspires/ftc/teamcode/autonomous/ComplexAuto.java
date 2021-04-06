@@ -19,8 +19,8 @@ public class ComplexAuto extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-
-        Robot.createDefaultMatchLogFileName( this.getClass().getName() );
+    
+        Robot.createDefaultMatchLogFileName( this.getClass().getSimpleName() );
 
         robot = new RobotTechnicolorRR(hardwareMap, this);
         robot.setPosition(new Pose2d(-61, -48));
@@ -29,6 +29,8 @@ public class ComplexAuto extends LinearOpMode {
 
         telemetry.addLine("Initialization Complete");
         telemetry.update();
+    
+        Robot.writeToMatchDefaultFile( "Init Finished",  true );
 
         waitForStart();
 

@@ -27,9 +27,8 @@ public class TwoWobbleGoals extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        //Robot.createDefaultMatchLogFileName( this.getClass().getName() );
-        // otherwise do Robot.createDefaultMatchLogFileName( "TwoWobbleGoals" );
-
+        Robot.createDefaultMatchLogFileName( this.getClass().getSimpleName() );
+        
         robot = new RobotTechnicolorRR(hardwareMap, this);
 
         SoundLibrary.playStartup();
@@ -40,6 +39,8 @@ public class TwoWobbleGoals extends LinearOpMode {
  
         telemetry.addLine("Initialization Complete");
         telemetry.update();
+    
+        Robot.writeToMatchDefaultFile( "Init Finished", true );
 
         while(!isStarted()) {
             if(isStopRequested()) {

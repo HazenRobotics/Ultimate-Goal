@@ -16,10 +16,12 @@ public class TeleOpClapper extends OpMode {
     @Override
     public void init() {
 
-        Robot.createDefaultMatchLogFileName( this.getClass().getName() );
+        Robot.createDefaultMatchLogFileName( this.getClass().getSimpleName() );
 
         robot = new RobotClapper(hardwareMap, this);
         robot.driveTrain = new MecanumDrive(hardwareMap);
+        
+        Robot.writeToMatchDefaultFile( "Init Finished", true );
     }
 
     @Override

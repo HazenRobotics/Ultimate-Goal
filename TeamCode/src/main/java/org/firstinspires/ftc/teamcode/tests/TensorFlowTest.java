@@ -25,13 +25,15 @@ public class TensorFlowTest extends OpMode {
     @Override
     public void init() {
 
-        Robot.createDefaultMatchLogFileName( this.getClass().getName() );
+        Robot.createDefaultMatchLogFileName( this.getClass().getSimpleName() );
 
         final String VUFORIA_KEY = hardwareMap.appContext.getResources().getString(R.string.vuforiakey);
         vuforia.setParameters(VUFORIA_KEY, "webcam", true, hardwareMap);
         vuforia.start();
 
         tensorFlow = new TensorFlow(TENSOR_FLOW_MODEL_NAME, 0.8f, true, hardwareMap, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);
+    
+        Robot.writeToMatchDefaultFile( "Init Finished", true );
     }
 
     @Override

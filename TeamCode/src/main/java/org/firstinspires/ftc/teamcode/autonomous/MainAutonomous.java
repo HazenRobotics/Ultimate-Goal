@@ -21,15 +21,15 @@ public class MainAutonomous extends LinearOpMode
     @Override
     public void runOpMode() throws InterruptedException {
 
-        Robot.createDefaultMatchLogFileName( this.getClass().getName() );
+        Robot.createDefaultMatchLogFileName( this.getClass().getSimpleName() );
 
         robot = new RobotWood(hardwareMap, this);
         robot.driveTrain = new MecanumDrive(hardwareMap);
         robot.tensorFlowUtil.initTensorFlow();
 
         //telemetry.setAutoClear( false );
-
-        robot.writeToDefaultFile( "******** Init Finished ********", false, true );
+    
+        Robot.writeToMatchDefaultFile( "Init Finished", true );
 
         telemetry.addLine("init finished");
         telemetry.update();

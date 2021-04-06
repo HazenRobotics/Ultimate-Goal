@@ -50,14 +50,14 @@ public class SoundLibrary {
     private void initSounds() {
 
         // pews
-        audioList.add( new Audio("pew_default", hardwareMap) );
-        audioList.add( new Audio("pew_peck_deep", 20, hardwareMap) );
-        audioList.add( new Audio("pew_peck_high", 20, hardwareMap) );
+        audioList.add( new Audio("pew_default", 0.5f, hardwareMap) );
+        audioList.add( new Audio("pew_peck_deep", 1, hardwareMap) );
+        audioList.add( new Audio("pew_peck_high", 1, hardwareMap) );
 
 
         // other audios
-        audioList.add( new Audio("ps_startup", hardwareMap) );
-        audioList.add( new Audio("slurp_yummy", hardwareMap) );
+        audioList.add( new Audio("ps_startup", 0.5f,  hardwareMap) );
+        audioList.add( new Audio("slurp_yummy", 1, hardwareMap) );
         //audioList.add( new Audio("", hardwareMap) );
 
         //audioList.add( new Audio("gold", hardwareMap) );
@@ -102,10 +102,10 @@ public class SoundLibrary {
     }
 
     public static String getAudios() {
-        String audios = "";
+        String audios = "", listSeparater = "\n";
 
         for( int i = 0; i < audioList.size(); i++ )
-            audios += "- " + audioList.get(i).getName() + (i != audioList.size()-1 ? "\n" : "");
+            audios += "- " + audioList.get(i).getName() + (i != audioList.size()-1 ? listSeparater : "");
 
         return audios;
     }

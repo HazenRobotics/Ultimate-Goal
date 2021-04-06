@@ -19,10 +19,12 @@ public class ShooterVelocityTuner extends OpMode {
     @Override
     public void init() {
 
-        Robot.createDefaultMatchLogFileName( this.getClass().getName() );
+        Robot.createDefaultMatchLogFileName( this.getClass().getSimpleName() );
 
         robot = new RobotTechnicolorRR(hardwareMap, this);
         gamepad1 = new GamepadEvents(super.gamepad1);
+    
+        Robot.writeToMatchDefaultFile( "Init Finished", true );
     }
 
     @Override

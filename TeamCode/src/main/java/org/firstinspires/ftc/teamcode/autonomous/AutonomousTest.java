@@ -21,10 +21,10 @@ public class AutonomousTest extends LinearOpMode
     @Override
     public void runOpMode() throws InterruptedException {
 
-        Robot.createDefaultMatchLogFileName( this.getClass().getName() );
+        Robot.createDefaultMatchLogFileName( this.getClass().getSimpleName() );
 
         //robot = new RobotWood(hardwareMap, this);
-        robotWood = new RobotWood(hardwareMap, this);
+        //robotWood = new RobotWood(hardwareMap, this);
 
         robotWood.tensorFlowUtil.initTensorFlow();
 
@@ -33,7 +33,7 @@ public class AutonomousTest extends LinearOpMode
         //==========================================================================================
         //Official Start
 
-        robotWood.tensorFlowUtil.runStackDetection(500);
+        robotWood.tensorFlowUtil.runStackDetection(20000);
 
 
 

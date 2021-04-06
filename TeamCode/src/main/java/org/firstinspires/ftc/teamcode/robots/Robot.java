@@ -54,9 +54,9 @@ public abstract class Robot {
 
     public static void createDefaultMatchLogFileName( String className ) {
 
-        SimpleDateFormat dateFormatter = new SimpleDateFormat("MM-dd_HH:mm_");
+        SimpleDateFormat defaultMatchFormatter = new SimpleDateFormat("MM-dd_HH:mm_");
         Date date = new Date();
-        String time = dateFormatter.format(date) + " :: ";
+        String time = defaultMatchFormatter.format(date) + " :: ";
 
         // will look like: 04-05_15:11_TeleOpTechnicolor.txt
 
@@ -67,12 +67,11 @@ public abstract class Robot {
     /**
      * writes to the default match file
      * @param writeText what the method will write to the fill (plus the timeStamp if includeTimeStamp is true)
-     * @param isAppending true: will append to the file if it exists, false: will create a new file
      * @param includeTimeStamp will include the timeStamp for when the method is called
      */
-    public static void writeToMatchDefaultFile( String writeText, boolean isAppending, boolean includeTimeStamp ) {
+    public static void writeToMatchDefaultFile( String writeText, boolean includeTimeStamp ) {
         Log.e( "|-|-|-|", writeText );
-        writeAFile(default_match_log_file_name, writeText, isAppending, includeTimeStamp );
+        writeAFile(default_match_log_file_name, writeText, true, includeTimeStamp );
     }
 
     /**
@@ -117,7 +116,6 @@ public abstract class Robot {
         }
 
     }
-
 
     public void sleep(long millis){
         long startTime = System.currentTimeMillis();

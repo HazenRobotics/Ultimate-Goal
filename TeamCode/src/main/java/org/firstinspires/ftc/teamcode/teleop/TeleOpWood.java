@@ -16,32 +16,26 @@ public class TeleOpWood extends OpMode {
     //Robot robot;
     RobotWood robot;
 
-    // PIDCoefficients coefficients;
-    //GeneralPID pIDCorrections;
-
     GamepadEvents gamepad;
 
     public static boolean doTelemetry = true;
 
     @Override
     public void init() {
-
-        Robot.createDefaultMatchLogFileName( this.getClass().getName() );
+    
+        Robot.createDefaultMatchLogFileName( this.getClass().getSimpleName() );
 
         robot = new RobotWood(hardwareMap, this);
 
         robot.goalLift.setClawPosition( GoalLift.ClawPosition.OPEN );
         robot.ringShooter.setPusherPosition( RingShooter.PusherPosition.RETRACTED );
 
-        //coefficients = new PIDCoefficients( 0, 0, 0 );
-        //pIDCorrections = new GeneralPID(coefficients);
-
         gamepad = new GamepadEvents(super.gamepad1);
 
         telemetry.addLine("init finished");
         telemetry.update();
-
-        Robot.writeToDefaultFile( "*******INIT FINISHED********", false, true );
+    
+        Robot.writeToMatchDefaultFile( "Init Finished", true );
     }
 
     @Override
@@ -82,8 +76,6 @@ public class TeleOpWood extends OpMode {
 
 
         addInfoTelemetry();
-
-        //int testPID = generalPID
 
         telemetry.update();
         gamepad.update();

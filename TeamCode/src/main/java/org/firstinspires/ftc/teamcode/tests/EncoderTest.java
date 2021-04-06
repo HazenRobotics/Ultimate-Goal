@@ -20,7 +20,7 @@ public class EncoderTest extends OpMode {
     @Override
     public void init() {
 
-        //Robot.createDefaultMatchLogFileName( this.getClass().getName() );
+        Robot.createDefaultMatchLogFileName( this.getClass().getSimpleName() );
 
         robot = new RobotTechnicolorRR(hardwareMap, this);
         parallelEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "intake"));
@@ -28,6 +28,8 @@ public class EncoderTest extends OpMode {
         BNO055IMU.Parameters params = new BNO055IMU.Parameters();
         params.angleUnit = BNO055IMU.AngleUnit.RADIANS;
         imu = new AveragedGyro(hardwareMap, "imu", "imu2", params);
+    
+        Robot.writeToMatchDefaultFile( "Init Finished", true );
     }
 
     @Override

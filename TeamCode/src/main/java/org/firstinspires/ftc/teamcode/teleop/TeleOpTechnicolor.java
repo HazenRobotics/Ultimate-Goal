@@ -60,16 +60,7 @@ public class TeleOpTechnicolor extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        telemetry.addLine( "getCanonicalName :: " + this.getClass().getCanonicalName() );
-        telemetry.addLine( "getName :: " + this.getClass().getName() );
-        telemetry.addLine( "getSimpleName :: " + this.getClass().getSimpleName() );
-        telemetry.addLine( "getName :: " + this.getClass().getName() );
-        telemetry.update();
-
-        waitForStart();
-
-        //Robot.createDefaultMatchLogFileName( this.getClass().getName() );
-        // otherwise do Robot.createDefaultMatchLogFileName( "TeleOpTechnicolor" );
+        Robot.createDefaultMatchLogFileName( this.getClass().getSimpleName() );
 
         robot = new RobotTechnicolorRR(hardwareMap, this);
 
@@ -94,13 +85,13 @@ public class TeleOpTechnicolor extends LinearOpMode {
             robot.drive(robot.trajectoryBuilder().lineTo(new Vector2d(-13, -19)).build());
             robot.shootAtTarget(FieldMap.ScoringGoals.RED_RIGHT_POWERSHOT, true, false);
         });
-
-        //Robot.writeToMatchDefaultFile( "Initialization Complete", true, true );
+    
+        Robot.writeToMatchDefaultFile( "Init Finished", true );
 
         telemetry.addLine("Initialization Complete");
         telemetry.update();
 
-        //waitForStart();
+        waitForStart();
 
         while (opModeIsActive() && !isStopRequested()) {
 

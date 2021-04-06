@@ -28,13 +28,15 @@ public class TimedGoalLiftTest extends OpMode {
     @Override
     public void init() {
 
-        Robot.createDefaultMatchLogFileName( this.getClass().getName() );
+        Robot.createDefaultMatchLogFileName( this.getClass().getSimpleName() );
 
         robot = new RobotTechnicolorRR(hardwareMap, this);
         gamepad1 = new GamepadEvents(super.gamepad1);
 
         newLiftedButton = hardwareMap.touchSensor.get("liftedButton");
         newLoweredButton = hardwareMap.touchSensor.get("loweredButton");
+    
+        Robot.writeToMatchDefaultFile( "Init Finished", true );
     }
 
     @Override

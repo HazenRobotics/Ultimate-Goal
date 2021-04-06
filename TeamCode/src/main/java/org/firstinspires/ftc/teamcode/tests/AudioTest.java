@@ -20,13 +20,15 @@ public class AudioTest extends OpMode {
     @Override
     public void init() {
 
-        Robot.createDefaultMatchLogFileName( this.getClass().getName() );
+        Robot.createDefaultMatchLogFileName( this.getClass().getSimpleName() );
 
         gamepad1 = new GamepadEvents(super.gamepad1);
         library = new SoundLibrary( hardwareMap );
 
         telemetry.addLine("Initialization Complete");
         telemetry.update();
+    
+        Robot.writeToMatchDefaultFile( "Init Finished", true );
     }
 
     @Override
