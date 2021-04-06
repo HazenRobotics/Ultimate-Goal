@@ -30,7 +30,7 @@ public class TensorFlowUtil {
 
     TensorFlow tensorFlow;
 
-    int tempLoop = 0;
+    int totalLoops = 0;
     OpMode opMode;
     HardwareMap hardwareMap;
 
@@ -79,7 +79,7 @@ public class TensorFlowUtil {
         stackRecognitions = new Stack[loop];
         int singles = 0, quads = 0;
 
-        double startTime = opMode.getRuntime();
+        double startTime = System.nanoTime();//opMode.getRuntime();
 
         for( int i = 0; i < loop; i++ ) {
             if( stackRecognitions[i] != Stack.NONE) {
@@ -90,49 +90,47 @@ public class TensorFlowUtil {
                     quads++;
             }
 
-            opMode.telemetry.addLine( "stackRecognition #" + tempLoop + " : " + stackRecognitions[tempLoop] );
+            opMode.telemetry.addLine( "stackRecognition #" + totalLoops + " : " + stackRecognitions[totalLoops++] );
             opMode.telemetry.update();
-            Robot.writeToDefaultFile( "stackRecognition #" + tempLoop + " : " + stackRecognitions[tempLoop++], true, true);
 
             if( singles + quads >= 5 )
                 break;
         }
 
-        if( singles > quads ) {
+        if( singles > quads )
             setStack(Stack.SINGLE);
-            Robot.writeToDefaultFile( stack + "stack found", true, true );
-        } else if( quads > singles) {
+        else if( quads > singles)
             setStack(Stack.QUAD);
-            Robot.writeToDefaultFile( stack + "stack found", true, true );
-        } else {
+        else
             setStack(Stack.NONE);
-            Robot.writeToDefaultFile( stack + "stack found", true, true );
-        }
 
-        loopRunTime = opMode.getRuntime() - startTime;
+        //loopRunTime = opMode.getRuntime() - startTime;
+        //String writeText = stack + " stack found [in " + totalLoops + " loops & " + loopRunTime + " seconds]";
+        loopRunTime = System.nanoTime() - startTime;
 
-        Robot.writeToDefaultFile( "finished objectDeterminationLoop [in " + loopRunTime + "  seconds]", true, true);
+        String writeText = stack + " stack found [in " + totalLoops + " loops & " + loopRunTime + " milliseconds]";
+        Robot.writeToDefaultFile( writeText, true, true );
     }
 
     void objectDeterminationLoop() { Log.e( "|-|-|-| ", "objectDeterminationLoop2" );
 
         stackRecognitions2.add(identifyObjects() );
 
-        while( stackRecognitions2.get(tempLoop) == Stack.NONE ) {
-            opMode.telemetry.addLine( "stackRecognition #" + tempLoop + " : " + stackRecognitions2.get(tempLoop));
+        while( stackRecognitions2.get(totalLoops) == Stack.NONE ) {
+            opMode.telemetry.addLine( "stackRecognition #" + totalLoops + " : " + stackRecognitions2.get(totalLoops));
             opMode.telemetry.update();
-            Robot.writeToDefaultFile( "stackRecognition #" + tempLoop + " : " + stackRecognitions2.get(tempLoop++), true, true);
+            Robot.writeToDefaultFile( "stackRecognition #" + totalLoops + " : " + stackRecognitions2.get(totalLoops++), true, true);
             stackRecognitions2.add(identifyObjects() );
             //Robot.writeToDefaultFile( "stackRecognition #" + i + " : " + ( stackRecognitions[i] != Stack.NONE ? "" + stackRecognitions[i] : ""), true, true);
         }
-        opMode.telemetry.addLine( "stackRecognition #" + tempLoop + " : " + stackRecognitions2.get(tempLoop));
+        opMode.telemetry.addLine( "stackRecognition #" + totalLoops + " : " + stackRecognitions2.get(totalLoops));
         opMode.telemetry.update();
-        Robot.writeToDefaultFile( "stackRecognition #" + tempLoop + " : " + stackRecognitions2.get(tempLoop++), true, true);
+        Robot.writeToDefaultFile( "stackRecognition #" + totalLoops + " : " + stackRecognitions2.get(totalLoops++), true, true);
         stackRecognitions2.add(identifyObjects() );
 
         int nones = 0, singles = 0, quads = 0;
 
-        for( int i = 0; i < tempLoop; i++ ) {
+        for(int i = 0; i < totalLoops; i++ ) {
             switch( stackRecognitions2.get(i) ) {
                 case SINGLE:
                     singles++;
@@ -179,8 +177,6 @@ public class TensorFlowUtil {
         startTF();
 
         objectDeterminationLoop(loops);
-
-        Robot.writeToDefaultFile( "finished objectDeterminationLoop [in " + loopRunTime + "  seconds]", true, true);
 
         stopTF();
     }
