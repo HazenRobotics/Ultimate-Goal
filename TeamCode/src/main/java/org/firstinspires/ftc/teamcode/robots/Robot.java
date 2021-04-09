@@ -60,7 +60,7 @@ public abstract class Robot {
 
         SimpleDateFormat defaultMatchFormatter = new SimpleDateFormat("MM-dd_HH:mm_");
         Date date = new Date();
-        String time = defaultMatchFormatter.format(date) + " :: ";
+        String time = "";//defaultMatchFormatter.format(date) + " :: ";
 
         // will look like: 04-05_15:11_TeleOpTechnicolor.txt
 

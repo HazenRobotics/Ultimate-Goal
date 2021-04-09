@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.autonomous;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -22,7 +21,7 @@ public class TwoWobbleGoals extends LinearOpMode {
     private TensorFlowUtil.Stack stack;
 
     private final boolean pickUpRing = true;
-    private final boolean expiramental = true;
+    private final boolean experimental = false;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -76,7 +75,7 @@ public class TwoWobbleGoals extends LinearOpMode {
         telemetry.update();
 
         //if there is one ring in the stack, pick up the ring and shoot
-        if((stack == TensorFlowUtil.Stack.SINGLE || stack == TensorFlowUtil.Stack.QUAD) && pickUpRing && !expiramental) {
+        if((stack == TensorFlowUtil.Stack.SINGLE || stack == TensorFlowUtil.Stack.QUAD) && pickUpRing && !experimental) {
             robot.ringShooter.setIntakeMotorPower(0.8);
             robot.driveAsync(robot.trajectoryBuilder().lineToConstantHeading(new Vector2d(-10, -36)).build());
             robot.ringShooter.setFlyWheelMotorVelocity(10, AngleUnit.RADIANS);
@@ -90,7 +89,7 @@ public class TwoWobbleGoals extends LinearOpMode {
             }
             robot.ringShooter.launchRingAngularVelocity(10, true, false);
         }
-        else if((stack == TensorFlowUtil.Stack.SINGLE || stack == TensorFlowUtil.Stack.QUAD) && pickUpRing && expiramental) {
+        else if((stack == TensorFlowUtil.Stack.SINGLE || stack == TensorFlowUtil.Stack.QUAD) && pickUpRing && experimental) {
             robot.ringShooter.setIntakeMotorPower(0.8);
             robot.driveAsync(robot.trajectoryBuilder().lineToConstantHeading(new Vector2d(-10, -36)).build());
             robot.ringShooter.setFlyWheelMotorVelocity(10, AngleUnit.RADIANS);

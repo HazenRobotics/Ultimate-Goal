@@ -11,10 +11,10 @@ import org.firstinspires.ftc.teamcode.utils.TensorFlow;
 import org.firstinspires.ftc.teamcode.utils.Vuforia;
 
 @TeleOp(name="TensorFlow Test")
-@Disabled
+//@Disabled
 public class TensorFlowTest extends OpMode {
 
-    private final String TENSOR_FLOW_MODEL_NAME = "UltimateGoal";
+    private final String TENSOR_FLOW_MODEL_NAME = "UltimateGoal.tflite";
 
     private static final String LABEL_FIRST_ELEMENT = "Quad";
     private static final String LABEL_SECOND_ELEMENT = "Single";
@@ -34,6 +34,9 @@ public class TensorFlowTest extends OpMode {
         tensorFlow = new TensorFlow(TENSOR_FLOW_MODEL_NAME, 0.8f, true, hardwareMap, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);
     
         Robot.writeToMatchDefaultFile( "Init Finished", true );
+
+        telemetry.addLine( "Init finished" );
+        telemetry.update();
     }
 
     @Override
@@ -46,11 +49,10 @@ public class TensorFlowTest extends OpMode {
     public void loop() {
         if(tensorFlow.getRecognition() != null) {
             Recognition recognition = tensorFlow.getRecognition();
-            telemetry.addData(String.format("label (%d)"), recognition.getLabel());
-            telemetry.addData(String.format("  left,top (%d)"), "%.03f , %.03f",
-                    recognition.getLeft(), recognition.getTop());
-            telemetry.addData(String.format("  right,bottom (%d)"), "%.03f , %.03f",
-                    recognition.getRight(), recognition.getBottom());
+            //String.for
+            telemetry.addData(String.format("label (%d)", 0), recognition.getLabel());
+            telemetry.addData(String.format("  left,top (%d)", 0), "%.03f , %.03f", recognition.getLeft(), recognition.getTop());
+            telemetry.addData(String.format("  right,bottom (%d)", 0), "%.03f , %.03f", recognition.getRight(), recognition.getBottom());
         }
         else {
             telemetry.addData("No Recognitions", null);

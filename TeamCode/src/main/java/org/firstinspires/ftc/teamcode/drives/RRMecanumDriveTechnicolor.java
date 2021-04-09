@@ -35,6 +35,8 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
+import org.firstinspires.ftc.teamcode.road_runner.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.road_runner.drive.TwoWheelTrackingLocalizer;
 import org.firstinspires.ftc.teamcode.road_runner.util.DashboardUtil;
 import org.firstinspires.ftc.teamcode.road_runner.util.LynxModuleUtil;
 import org.firstinspires.ftc.teamcode.utils.AveragedGyro;
@@ -172,7 +174,7 @@ public class RRMecanumDriveTechnicolor extends MecanumDrive {
         // TODO: if desired, use setLocalizer() to change the localization method
         // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
 
-        //setLocalizer(new RRTwoWheelTrackingLocalizer(hardwareMap, this));
+        setLocalizer(new RRTwoWheelTrackingLocalizer(hardwareMap, this));
     }
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {

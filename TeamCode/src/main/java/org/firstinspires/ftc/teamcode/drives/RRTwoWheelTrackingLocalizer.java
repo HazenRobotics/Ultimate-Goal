@@ -35,22 +35,25 @@ import java.util.List;
  */
 @Config
 public class RRTwoWheelTrackingLocalizer extends TwoTrackingWheelLocalizer {
-    public static double TICKS_PER_REV = 250;
-    public static double WHEEL_RADIUS = 0.748; // in
-    public static double GEAR_RATIO = 0.25; // output (wheel) speed / input (encoder) speed
 
-    public static double PARALLEL_X = 3; // X is the up and down direction
+    public static double TICKS_PER_REV = 4000; // old = 250
+    public static double WHEEL_RADIUS = 1.4960629921 / 2; // odometry wheel 38mm // in // old = 0.748
+    public static double GEAR_RATIO = 4; // output (wheel) speed / input (encoder) speed
+
+    public static double PARALLEL_X = 3.25; // X is the up and down direction // old 3
     public static double PARALLEL_Y = -5.5; // Y is the strafe direction
 
     public static double PERPENDICULAR_X = -3.5;
-    public static double PERPENDICULAR_Y = -6;
+    public static double PERPENDICULAR_Y = -5.5; // old 6
 
-    public static double X_MULTIPLIER = 1; // Multiplier in the X direction
-    public static double Y_MULTIPLIER = 1; // Multiplier in the Y direction
+    // (90*3)/(89.69190072548207 + 89.83577948877036 + 89.19368620066722)
+    public static double X_MULTIPLIER = 1;//1.00475821; // Multiplier in the X direction
+    // (90*3)/(89.36874508971657 + 89.43101734156207 + 89.70519900055706)
+    public static double Y_MULTIPLIER = 1;//1.00556801; // Multiplier in the Y direction
 
-    // Parallel/Perpendicular to the forward axis
-    // Parallel wheel is parallel to the forward axis
-    // Perpendicular is perpendicular to the forward axis
+    //    // Parallel/Perpendicular to the forward axis
+    //    // Parallel wheel is parallel to the forward axis
+    //    // Perpendicular is perpendicular to the forward axisF
     private Encoder parallelEncoder, perpendicularEncoder;
 
     private RRMecanumDriveTechnicolor drive;
@@ -104,8 +107,8 @@ public class RRTwoWheelTrackingLocalizer extends TwoTrackingWheelLocalizer {
         //  compensation method
 
         return Arrays.asList(
-                encoderTicksToInches(parallelEncoder.getRawVelocity()),
-                encoderTicksToInches(perpendicularEncoder.getRawVelocity())
+                encoderTicksToInches(parallelEncoder.getRawVelocity() * X_MULTIPLIER ),
+                encoderTicksToInches(perpendicularEncoder.getRawVelocity() * Y_MULTIPLIER )
         );
     }
 }

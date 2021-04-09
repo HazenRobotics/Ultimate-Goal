@@ -5,6 +5,7 @@ import android.util.Log;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.apache.commons.math3.util.IterationListener;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.robots.Robot;
@@ -74,7 +75,7 @@ public class TensorFlowUtil {
         return Stack.NONE;
     }
 
-    void objectDeterminationLoop(int loop ) { Robot.writeToDefaultFile( "|-|-|-| objectDeterminationLoop", true, true );
+    void objectDeterminationLoop(int loop ) { Robot.writeToMatchDefaultFile( "objectDeterminationLoop", true );
 
         stackRecognitions = new Stack[loop];
         int singles = 0, quads = 0;
@@ -110,9 +111,10 @@ public class TensorFlowUtil {
 
         String writeText = stack + " stack found [in " + totalLoops + " loops & " + loopRunTime + " milliseconds]";
         Robot.writeToDefaultFile( writeText, true, true );
+        Robot.writeToMatchDefaultFile( writeText, true );
     }
 
-    void objectDeterminationLoop() { Log.e( "|-|-|-| ", "objectDeterminationLoop2" );
+    void objectDeterminationLoop() { Robot.writeToMatchDefaultFile( "objectDeterminationLoop2", true );
 
         stackRecognitions2.add(identifyObjects() );
 
