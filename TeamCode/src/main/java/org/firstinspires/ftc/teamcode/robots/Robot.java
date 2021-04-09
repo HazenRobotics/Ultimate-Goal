@@ -149,19 +149,16 @@ public abstract class Robot {
     public void sleepRobot(long delay)
     {
         long setTime = System.currentTimeMillis();
-        previousTime = opMode.getRuntime();
-
-        while( (System.currentTimeMillis() - setTime)*1000 < (delay) && opModeIsActive())
-            previousTime = opMode.getRuntime();
+        while( (System.currentTimeMillis() - setTime)*1000 < (delay) && opModeIsActive());
 
         telemetry.addData("Finished Sleep", "");
         telemetry.update();
     }
 
     public void sleepRobot2(long delay) {
-        double currTime = opMode.getRuntime();
-        double waitUntil = currTime + (double)(delay/1000);
-        while( opMode.getRuntime() < waitUntil ) {}
+        double curTime = opMode.getRuntime();
+        double waitUntil = curTime + (double)(delay/1000);
+        while( opMode.getRuntime() < waitUntil );
     }
 
 
