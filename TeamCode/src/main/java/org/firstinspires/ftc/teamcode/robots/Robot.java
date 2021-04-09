@@ -3,13 +3,17 @@ package org.firstinspires.ftc.teamcode.robots;
 import android.os.Environment;
 import android.util.Log;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.drives.Drive;
+import org.firstinspires.ftc.teamcode.utils.FieldMap;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -96,24 +100,27 @@ public abstract class Robot {
 
         // "\n" = System.lineSeparator()
 
-        String time = "";
-        if( includeTimeStamp ) {
-            SimpleDateFormat dateFormatter = new SimpleDateFormat("MM-dd HH:mm:ss");
-            Date date = new Date();
-            time = dateFormatter.format(date) + " :: ";
-        }
+        Thread fileWriter = new Thread(() -> {
+            String time = "";
+            if (includeTimeStamp) {
+                SimpleDateFormat dateFormatter = new SimpleDateFormat("MM-dd HH:mm:ss");
+                Date date = new Date();
+                time = dateFormatter.format(date) + " :: ";
+            }
 
-        //".../Internal Storage";
-        String path = Environment.getExternalStorageDirectory().getPath() + "/" + "FIRST" + "/" + "Logs" + "/";
+            //".../Internal Storage";
+            String path = Environment.getExternalStorageDirectory().getPath() + "/" + "FIRST" + "/" + "Logs" + "/";
 
-        try {
-            FileWriter writer = new FileWriter( new File( path + fileName ), isAppending );
-            writer.write( time + writeText + System.lineSeparator() );
-            writer.close();
-        } catch ( IOException e ) {
-            e.printStackTrace();
-            Robot.writeToDefaultFile( e.getStackTrace().toString(), true, true);
-        }
+            try {
+                FileWriter writer = new FileWriter(new File(path + fileName), isAppending);
+                writer.write(time + writeText + System.lineSeparator());
+                writer.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+                Robot.writeToDefaultFile(e.getStackTrace().toString(), true, true);
+            }
+        });
+        fileWriter.start();
 
     }
 

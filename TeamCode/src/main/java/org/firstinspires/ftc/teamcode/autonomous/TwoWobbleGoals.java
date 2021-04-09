@@ -54,7 +54,7 @@ public class TwoWobbleGoals extends LinearOpMode {
 
         //Detect stack
         robot.drive(robot.trajectoryBuilder().lineToConstantHeading(new Vector2d(-52, -40)).build());
-        robot.tfod.runStackDetection(115);
+        robot.tfod.runStackDetection(10000);
         stack = robot.tfod.getStack();
 
         //shoot
@@ -116,7 +116,7 @@ public class TwoWobbleGoals extends LinearOpMode {
         } else {
             robot.drive(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(33, -58, Math.toRadians(182)), 0).build());
             //robot.setPosition(new Pose2d(33, -56));
-            // off - puts wobble goal in center of square (4 rngs)
+            // off - puts wobble goal in center of square (4 rings)
         }
 
 
