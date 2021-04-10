@@ -56,6 +56,7 @@ public class TensorFlowUtil {
 
         tensorFlow = new TensorFlow(TENSOR_FLOW_MODEL_NAME, 0.8f, true, hardwareMap, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);
 
+
     }
 
     void startTF() {
@@ -80,7 +81,7 @@ public class TensorFlowUtil {
         stackRecognitions = new Stack[loop];
         int singles = 0, quads = 0;
 
-        double startTime = System.nanoTime();//opMode.getRuntime();
+        double startTime = opMode.getRuntime();//System.nanoTime();
 
         for( int i = 0; i < loop; i++ ) {
             if( stackRecognitions[i] != Stack.NONE) {
@@ -105,11 +106,10 @@ public class TensorFlowUtil {
         else
             setStack(Stack.NONE);
 
-        //loopRunTime = opMode.getRuntime() - startTime;
-        //String writeText = stack + " stack found [in " + totalLoops + " loops & " + loopRunTime + " seconds]";
-        loopRunTime = System.nanoTime() - startTime;
+        loopRunTime = opMode.getRuntime() - startTime;
+        //loopRunTime = System.nanoTime() - startTime;
 
-        String writeText = stack + " stack found [in " + totalLoops + " loops & " + loopRunTime + " milliseconds]";
+        String writeText = stack + " stack found [in " + totalLoops + " loops & " + loopRunTime + " seconds]";
         Robot.writeToDefaultFile( writeText, true, true );
         Robot.writeToMatchDefaultFile( writeText, true );
     }
@@ -174,7 +174,7 @@ public class TensorFlowUtil {
         stack = newStack;
     }
 
-    public void runStackDetection( int loops ) { Robot.writeToDefaultFile( "runStackDetection()", true, true );
+    public void runStackDetection( int loops ) { Robot.writeToMatchDefaultFile( "runStackDetection()", true );
 
         startTF();
 

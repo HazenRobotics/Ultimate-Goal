@@ -11,6 +11,8 @@ import org.firstinspires.ftc.teamcode.robots.Robot;
 import org.firstinspires.ftc.teamcode.robots.RobotTechnicolorRR;
 import org.firstinspires.ftc.teamcode.utils.AveragedGyro;
 
+import java.util.List;
+
 @TeleOp(name="Localization Encoder Test", group="Test")
 public class EncoderTest extends OpMode {
     RobotTechnicolorRR robot;
@@ -34,17 +36,24 @@ public class EncoderTest extends OpMode {
 
     @Override
     public void loop() {
+
+        double rotatePercent = 0.5;
+
         robot.drive.setWeightedDrivePower(
                 new Pose2d(
-                        -gamepad1.left_stick_y,
-                        -gamepad1.left_stick_x,
-                        -gamepad1.right_stick_x
+                        -gamepad1.left_stick_y*1,
+                        -gamepad1.left_stick_x*1,
+                        -gamepad1.right_stick_x*rotatePercent
                 )
         );
 
         telemetry.addData("Parallel Encoder", parallelEncoder.getCurrentPosition());
         telemetry.addData("Perpendicular Encoder", perpendicularEncoder.getCurrentPosition());
-        telemetry.addData("Drive Motor Encoders", robot.drive.getWheelPositions());
+        List<Double> motors = robot.drive.getWheelPositions();
+        telemetry.addData("Front Left Encoder", motors.get(0));
+        telemetry.addData("Back Left Encoder", motors.get(1));
+        telemetry.addData("Back Right Encoder", motors.get(2));
+        telemetry.addData("Front Right Encoder", motors.get(3));
         telemetry.addData("Angle", imu.getAngularHeading());
         telemetry.update();
 

@@ -4,17 +4,13 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.PIDCoefficients;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.utils.ShootingMath;
 import org.firstinspires.ftc.teamcode.utils.SoundLibrary;
-
-import java.util.Timer;
 
 /**
  * This class sets up and holds methods for using the ring shooter mechanism
@@ -138,7 +134,7 @@ public class RingShooter {
      */
     public void launchRingAngularVelocity(double velocity, DistanceUnit inputUnit) {
         setFlyWheelMotorVelocity(ShootingMath.velocityToAngularVelocity(inputUnit.toMeters(velocity), inputUnit.toMeters(flyWheelRadius)), AngleUnit.RADIANS);
-        pushRing();
+        pushRingTime();
         setFlyWheelMotorVelocity(0, AngleUnit.RADIANS);
     }
 
@@ -151,7 +147,7 @@ public class RingShooter {
      */
     public void launchRingAngularVelocity(double velocity, boolean setPowerZero, DistanceUnit inputUnit) {
         setFlyWheelMotorVelocity(ShootingMath.velocityToAngularVelocity(inputUnit.toMeters(velocity), inputUnit.toMeters(flyWheelRadius)), AngleUnit.RADIANS);
-        pushRing();
+        pushRingTime();
         if( setPowerZero )
             setFlyWheelMotorVelocity(0, AngleUnit.RADIANS);
     }
@@ -160,6 +156,7 @@ public class RingShooter {
      *
      * @param omega to shoot with in rad/s
      * @param setPowerZero set motor power zero afterwards
+     * @param speedUpTime wait 500 milliseconds before shooting
      */
     public void launchRingAngularVelocity(double omega, boolean setPowerZero, boolean speedUpTime) {
         setFlyWheelMotorVelocity(omega, AngleUnit.RADIANS);
@@ -167,7 +164,39 @@ public class RingShooter {
             long currentTime = System.currentTimeMillis();
             while (System.currentTimeMillis() < currentTime + 500) ;
         }
-        pushRing();
+        pushRingTime();
+        if (setPowerZero)
+            setFlyWheelMotorVelocity(0, AngleUnit.RADIANS);
+    }
+
+    /**
+     *
+     * @param omega to shoot with in rad/s
+     * @param setPowerZero set motor power zero afterwards
+     * @param speedUpTime time to wait before shooting in milliseconds
+     */
+    public void launchRingAngularVelocity(double omega, boolean setPowerZero, long speedUpTime) {
+        setFlyWheelMotorVelocity(omega, AngleUnit.RADIANS);
+        long currentTime = System.currentTimeMillis();
+        while (System.currentTimeMillis() < currentTime + speedUpTime);
+
+        pushRingTime();
+        if (setPowerZero)
+            setFlyWheelMotorVelocity(0, AngleUnit.RADIANS);
+    }
+
+    /**
+     *
+     * @param omega to shoot with in rad/s
+     * @param setPowerZero set motor power zero afterwards
+     * @param speedUpTime time to wait before shooting in milliseconds
+     */
+    public void launchRingPositionAngularVelocity(double omega, boolean setPowerZero, long speedUpTime) {
+        setFlyWheelMotorVelocity(omega, AngleUnit.RADIANS);
+        long currentTime = System.currentTimeMillis();
+        while (System.currentTimeMillis() < currentTime + speedUpTime);
+
+        pushRingPosition();
         if (setPowerZero)
             setFlyWheelMotorVelocity(0, AngleUnit.RADIANS);
     }
@@ -179,7 +208,7 @@ public class RingShooter {
      */
     public void launchRingPower( double power ) {
         setFlyWheelMotorPower(power);
-        pushRing();
+        pushRingTime();
         setFlyWheelMotorPower(0);
     }
 
@@ -200,7 +229,7 @@ public class RingShooter {
         }
     }
 
-    public void pushRing() {
+    public void pushRingTime() {
         setPusherPosition(PusherPosition.PUSHED);
         SoundLibrary.playRandomPew(); // play a random pew sound
         long currentTime = System.currentTimeMillis();
@@ -209,8 +238,21 @@ public class RingShooter {
         while (System.currentTimeMillis() < currentTime + RING_RETRACT_TIME);
     }
 
-    public void pushRingAsync() {
-        new Thread(() -> pushRing()).start();
+    public void pushRingPosition() {
+        setPusherPosition(PusherPosition.PUSHED);
+        SoundLibrary.playRandomPew(); // play a random pew sound
+        long currentTime = System.currentTimeMillis();
+        while (getPusherPosition() != pushedPosition);
+        setPusherPosition(PusherPosition.RETRACTED);
+        while (getPusherPosition() != retractedPosition);
+    }
+
+    public void pushRingTimeAsync() {
+        new Thread(() -> pushRingTime()).start();
+    }
+
+    public void pushRingPositionAsync() {
+        new Thread(() -> pushRingPosition()).start();
     }
 
     public double getPusherPosition() {

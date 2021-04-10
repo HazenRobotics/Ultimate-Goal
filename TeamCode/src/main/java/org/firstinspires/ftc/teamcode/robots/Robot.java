@@ -20,6 +20,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
 
 /**
  * This class sets up and manages a robot
@@ -59,6 +60,7 @@ public abstract class Robot {
     public static void createDefaultMatchLogFileName( String className ) {
 
         SimpleDateFormat defaultMatchFormatter = new SimpleDateFormat("MM-dd_HH'h'mm'm'_");
+        defaultMatchFormatter.setTimeZone(TimeZone.getDefault());
         Date date = new Date();
         String time = defaultMatchFormatter.format(date);
 
@@ -133,8 +135,7 @@ public abstract class Robot {
      * opMode version of LinearOpmode's opModeIsActive
      * @return
      */
-    public boolean opModeIsActive()
-    {
+    public boolean opModeIsActive() {
         try {
             return ((LinearOpMode) opMode).opModeIsActive();
         } catch (ClassCastException e){
@@ -146,13 +147,9 @@ public abstract class Robot {
      *
      * @param delay - delay/wait time in SECONDS
      */
-    public void sleepRobot(long delay)
-    {
+    public void sleepRobot(long delay) {
         long setTime = System.currentTimeMillis();
         while( (System.currentTimeMillis() - setTime)*1000 < (delay) && opModeIsActive());
-
-        telemetry.addData("Finished Sleep", "");
-        telemetry.update();
     }
 
     public void sleepRobot2(long delay) {

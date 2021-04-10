@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
-import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -9,13 +7,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.mechanisms.GoalLift;
 import org.firstinspires.ftc.teamcode.robots.Robot;
 import org.firstinspires.ftc.teamcode.robots.RobotTechnicolorRR;
-import org.firstinspires.ftc.teamcode.utils.FieldMap;
 import org.firstinspires.ftc.teamcode.utils.GamepadEvents;
 import org.firstinspires.ftc.teamcode.utils.SoundLibrary;
-import org.firstinspires.ftc.teamcode.utils.Vuforia;
-import org.firstinspires.ftc.teamcode.utils.VuforiaLocalization;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @TeleOp (name = "TechnicolorDrive", group = "Competition")
@@ -134,7 +128,7 @@ public class TeleOpTechnicolorDrive extends LinearOpMode {
 
             // ring pusher (servo) = gamepad1.left_bumper
             if( gamepad1.left_bumper.onPress() || gamepad2.left_bumper.onPress() ) {
-                robot.ringShooter.pushRingAsync();
+                robot.ringShooter.pushRingTimeAsync();
             }
 
             // intake = gamepad1.left_trigger
@@ -148,7 +142,7 @@ public class TeleOpTechnicolorDrive extends LinearOpMode {
 
             // addControlTelemtry();
 
-            // addDriveMotorTelemetry();
+            addDriveMotorTelemetry();
 
             telemetry.update();
             gamepad1.update();
@@ -161,9 +155,7 @@ public class TeleOpTechnicolorDrive extends LinearOpMode {
         List<Double> positions = robot.drive.getWheelPositions();
         List<Double> velocities = robot.drive.getWheelVelocities();
         for( int i = 0; i < positions.size(); i++)
-            telemetry.addLine( " positions[" + i + "] = " + positions.get(i) );
-        for( int i = 0; i < velocities.size(); i++)
-            telemetry.addLine( " velocities[" + i + "] = " + velocities.get(i) );
+            telemetry.addLine( " motor " + i + " :: " + positions.get(i) + " ticks, " + velocities.get(i) + " ticks/s" );
     }
 
 

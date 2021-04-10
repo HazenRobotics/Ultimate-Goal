@@ -66,7 +66,7 @@ public class TeleOpWood extends OpMode {
 
         // ring pusher (servo) = gamepad1.left_bumper
         if( gamepad.left_bumper.onPress() )
-            robot.ringShooter.pushRing();
+            robot.ringShooter.pushRingTime();
 
         // intake = gamepad1.left_trigger
         double intakePower = 1;

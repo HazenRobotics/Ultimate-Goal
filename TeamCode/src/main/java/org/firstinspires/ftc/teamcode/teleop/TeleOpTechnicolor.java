@@ -3,13 +3,10 @@ package org.firstinspires.ftc.teamcode.teleop;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.mechanisms.GoalLift;
-import org.firstinspires.ftc.teamcode.road_runner.util.Encoder;
 import org.firstinspires.ftc.teamcode.robots.Robot;
 import org.firstinspires.ftc.teamcode.robots.RobotTechnicolorRR;
 import org.firstinspires.ftc.teamcode.utils.FieldMap;
@@ -175,7 +172,7 @@ public class TeleOpTechnicolor extends LinearOpMode {
 
             // ring pusher (servo) = gamepad1.left_bumper
             if( gamepad1.left_bumper.onPress() || gamepad2.left_bumper.onPress() ) {
-                robot.ringShooter.pushRingAsync();
+                robot.ringShooter.pushRingPositionAsync();
             }
 
             // intake = gamepad1.left_trigger
