@@ -58,11 +58,11 @@ public abstract class Robot {
 
     public static void createDefaultMatchLogFileName( String className ) {
 
-        SimpleDateFormat defaultMatchFormatter = new SimpleDateFormat("MM-dd_HH:mm_");
+        SimpleDateFormat defaultMatchFormatter = new SimpleDateFormat("MM-dd_HH'h'mm'm'_");
         Date date = new Date();
-        String time = "";//defaultMatchFormatter.format(date) + " :: ";
+        String time = defaultMatchFormatter.format(date);
 
-        // will look like: 04-05_15:11_TeleOpTechnicolor.txt
+        // will look like: 04-05_15h11m_TeleOpTechnicolor.txt
 
         default_match_log_file_name = time + className + ".txt";
         writeAFile(default_match_log_file_name, default_match_log_file_name + ": created", false, true );
