@@ -23,7 +23,7 @@ public class TeleOpWood extends OpMode {
     @Override
     public void init() {
     
-        Robot.createDefaultMatchLogFileName( this.getClass().getSimpleName() );
+        Robot.createMatchLogFile( this.getClass().getSimpleName() );
 
         robot = new RobotWood(hardwareMap, this);
 
@@ -35,7 +35,7 @@ public class TeleOpWood extends OpMode {
         telemetry.addLine("init finished");
         telemetry.update();
     
-        Robot.writeToMatchDefaultFile( "Init Finished", true );
+        Robot.writeToMatchFile( "Init Finished", true );
     }
 
     @Override

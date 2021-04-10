@@ -46,7 +46,7 @@ public class TeleOpTechnicolorDrive extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        Robot.createDefaultMatchLogFileName( this.getClass().getSimpleName() );
+        Robot.createMatchLogFile( this.getClass().getSimpleName() );
 
         robot = new RobotTechnicolorRR(hardwareMap, this);
 
@@ -55,7 +55,7 @@ public class TeleOpTechnicolorDrive extends LinearOpMode {
         gamepad1 = new GamepadEvents(super.gamepad1);
         gamepad2 = new GamepadEvents(super.gamepad2);
 
-        Robot.writeToMatchDefaultFile( "Initialization Complete", true );
+        Robot.writeToMatchFile( "Initialization Complete", true );
 
         telemetry.addLine("Initialization Complete");
         telemetry.update();

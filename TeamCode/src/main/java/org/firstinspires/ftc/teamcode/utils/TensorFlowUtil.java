@@ -1,11 +1,8 @@
 package org.firstinspires.ftc.teamcode.utils;
 
-import android.util.Log;
-
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.apache.commons.math3.util.IterationListener;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.robots.Robot;
@@ -18,20 +15,26 @@ public class TensorFlowUtil {
 
     private static final String LABEL_FIRST_ELEMENT = "Quad";
     private static final String LABEL_SECOND_ELEMENT = "Single";
-
-    private Stack[] stackRecognitions;
-    private ArrayList<Stack> stackRecognitions2 = new ArrayList<Stack>();
-
+    
     private Vuforia vuforia = Vuforia.getInstance();
-
-    public double loopRunTime = 0;
+    
+    // class specific
+    private Stack[] stackRecognitions;
+    private ArrayList<Stack> infiniteStackRecognitions;
+    
+    private boolean continueStackRecognition = true;
+    private int defaultLoops = 20000, totalLoops = 0;
+    private double loopRunTime = 0;
+    
+    // Asynchronous Threads
+    Thread dOLoopAsync = new Thread(() -> determineObjectLoop()); // technically do the same thing on init
+    Thread dOLoopNumAsync = new Thread(() -> determineObjectLoop(defaultLoops)); // technically do the same thing on init but can be changed later
+    Thread dOWhileLoopAsync = new Thread(() -> determineObjectWhileLoop());
 
     // # of rings in starting stack
     Stack stack;
 
     TensorFlow tensorFlow;
-
-    int totalLoops = 0;
     OpMode opMode;
     HardwareMap hardwareMap;
 
@@ -75,65 +78,66 @@ public class TensorFlowUtil {
         }
         return Stack.NONE;
     }
+    
+    void determineObjectLoop() {
+        determineObjectLoop( defaultLoops );
+    }
 
-    void objectDeterminationLoop(int loop ) { Robot.writeToMatchDefaultFile( "objectDeterminationLoop", true );
+    void determineObjectLoop( int loops ) { Robot.writeToMatchFile( "objectDeterminationLoop", true );
 
-        stackRecognitions = new Stack[loop];
+        stackRecognitions = new Stack[loops];
         int singles = 0, quads = 0;
+        
+        totalLoops = 0;
+        double startTime = opMode.getRuntime();
 
-        double startTime = opMode.getRuntime();//System.nanoTime();
+        for( int i = 0; i < loops; i++ ) {
+            stackRecognitions[i] = identifyObjects();
+            if( stackRecognitions[i] == Stack.SINGLE)
+                singles++;
+            else if( stackRecognitions[i] == Stack.QUAD)
+                quads++;
 
-        for( int i = 0; i < loop; i++ ) {
-            if( stackRecognitions[i] != Stack.NONE) {
-                stackRecognitions[i] = identifyObjects();
-                if( stackRecognitions[i] == Stack.SINGLE)
-                    singles++;
-                else if( stackRecognitions[i] == Stack.QUAD)
-                    quads++;
-            }
-
-            opMode.telemetry.addLine( "stackRecognition #" + totalLoops + " : " + stackRecognitions[totalLoops++] );
+            opMode.telemetry.addLine( "stackRecognition #" + (totalLoops = i) + " : " + stackRecognitions[i] );
             opMode.telemetry.update();
 
             if( singles + quads >= 5 )
                 break;
         }
-
+    
+        setStack(Stack.NONE);
         if( singles > quads )
             setStack(Stack.SINGLE);
         else if( quads > singles)
             setStack(Stack.QUAD);
-        else
-            setStack(Stack.NONE);
 
         loopRunTime = opMode.getRuntime() - startTime;
-        //loopRunTime = System.nanoTime() - startTime;
 
-        String writeText = stack + " stack found [in " + totalLoops + " loops & " + loopRunTime + " seconds]";
-        Robot.writeToDefaultFile( writeText, true, true );
-        Robot.writeToMatchDefaultFile( writeText, true );
+        logAndPrint( stack + " stack found [in " + totalLoops + " loops & " + loopRunTime + " seconds]", true );
     }
 
-    void objectDeterminationLoop() { Robot.writeToMatchDefaultFile( "objectDeterminationLoop2", true );
-
-        stackRecognitions2.add(identifyObjects() );
-
-        while( stackRecognitions2.get(totalLoops) == Stack.NONE ) {
-            opMode.telemetry.addLine( "stackRecognition #" + totalLoops + " : " + stackRecognitions2.get(totalLoops));
-            opMode.telemetry.update();
-            Robot.writeToDefaultFile( "stackRecognition #" + totalLoops + " : " + stackRecognitions2.get(totalLoops++), true, true);
-            stackRecognitions2.add(identifyObjects() );
-            //Robot.writeToDefaultFile( "stackRecognition #" + i + " : " + ( stackRecognitions[i] != Stack.NONE ? "" + stackRecognitions[i] : ""), true, true);
+    void determineObjectWhileLoop() { Robot.writeToMatchFile( "objectDeterminationWhileLoop", true );
+    
+        infiniteStackRecognitions = new ArrayList<Stack>();
+        
+        totalLoops = 0;
+        double startTime = opMode.getRuntime();
+        
+        while( continueStackRecognition ) {
+    
+            infiniteStackRecognitions.add(identifyObjects() );
+            if( totalLoops++ >= defaultLoops ) {
+                infiniteStackRecognitions.remove( 0 );
+                totalLoops--;
+            }
         }
-        opMode.telemetry.addLine( "stackRecognition #" + totalLoops + " : " + stackRecognitions2.get(totalLoops));
-        opMode.telemetry.update();
-        Robot.writeToDefaultFile( "stackRecognition #" + totalLoops + " : " + stackRecognitions2.get(totalLoops++), true, true);
-        stackRecognitions2.add(identifyObjects() );
 
-        int nones = 0, singles = 0, quads = 0;
+        int singles = 0, quads = 0;
 
         for(int i = 0; i < totalLoops; i++ ) {
-            switch( stackRecognitions2.get(i) ) {
+            opMode.telemetry.addLine( "stackRecognition #" + i + " : " + infiniteStackRecognitions.get(i));
+            opMode.telemetry.update();
+            switch( infiniteStackRecognitions.get(i) ) {
                 case SINGLE:
                     singles++;
                     break;
@@ -142,16 +146,58 @@ public class TensorFlowUtil {
                     break;
             }
         }
-
-        if( nones > singles && nones > quads )
-            setStack( Stack.NONE );
-        else if( singles > nones && singles > quads )
-            setStack( Stack.SINGLE );
-        else if( quads > singles && quads > nones )
-            setStack( Stack.QUAD );
-        else
-            setStack( Stack.NONE );
-        Robot.writeToDefaultFile( "finished objectDeterminationLoop2", true, true);
+    
+        setStack(Stack.NONE);
+        if( singles > quads )
+            setStack(Stack.SINGLE);
+        else if( quads > singles)
+            setStack(Stack.QUAD);
+    
+        loopRunTime = opMode.getRuntime() - startTime;
+    
+        logAndPrint( stack + " stack found [in " + totalLoops + " loops & " + loopRunTime + " seconds]", true );
+    }
+    
+    /**
+     * runs determineObjectLoop() asynchronously (on another thread)
+     * @return whether any object detection loops are running
+     */
+    public boolean determineObjectLoopAsync() {
+        boolean threadsActive = tensorFlowUtilThreadsActive();
+        if( !threadsActive )
+            dOLoopAsync.start();
+        return threadsActive;
+    }
+    
+    /**
+     * runs determineObjectLoop() asynchronously (on another thread)
+     * @param loops how many times to loop scanning the ring stack
+     * @return whether any object detection loops are running
+     */
+    public boolean determineObjectLoopAsync( int loops ) {
+        boolean threadsActive = tensorFlowUtilThreadsActive();
+        if( !threadsActive )
+            (dOLoopNumAsync = new Thread(() -> determineObjectLoop( loops ))).start();
+        return threadsActive;
+    }
+    
+    /**
+     * runs determineObjectWhileLoop() asynchronously (on another thread)
+     * @return whether any object detection loops are running
+     */
+    public boolean determineObjectWhileLoopAsync() {
+        boolean threadsActive = tensorFlowUtilThreadsActive();
+        if( !threadsActive )
+            dOWhileLoopAsync.start();
+        return threadsActive;
+    }
+    
+    /**
+     *
+     * @return whether any object detection loops are running
+     */
+    public boolean tensorFlowUtilThreadsActive() { // returns if any of them are active
+        return dOWhileLoopAsync.isAlive() || dOLoopAsync.isAlive() || !dOLoopNumAsync.isAlive();
     }
 
     void stopTF() {
@@ -162,25 +208,59 @@ public class TensorFlowUtil {
         stopTF();
     }
 
-    /**
-     *
-     * @return the type of stack identified
-     */
-    public Stack getStack() {
-        return this.stack;
-    }
-
     public void setStack( Stack newStack ) {
         stack = newStack;
     }
+    
+    public Stack getStack() {
+        return this.stack;
+    }
+    
+    public void setContinueStackRecognition( boolean keepLooping ) {
+        continueStackRecognition = keepLooping;
+    }
+    
+    public boolean getContinueStackRecognition() {
+        return continueStackRecognition;
+    }
+    
+    public void setDefaultLoops(int newLoop  ) {
+        defaultLoops = newLoop;
+    }
+    
+    public int getDefaultLoops() {
+        return defaultLoops;
+    }
+    
+    public int getTotalLoops() {
+        return totalLoops;
+    }
 
-    public void runStackDetection( int loops ) { Robot.writeToMatchDefaultFile( "runStackDetection()", true );
+    public void runStackDetection( int loops ) { Robot.writeToMatchFile( "runStackDetection()", true );
 
         startTF();
 
-        objectDeterminationLoop(loops);
+        determineObjectLoop(loops);
 
         stopTF();
+    }
+    
+    public void runWhileStackDetection() { Robot.writeToMatchFile( "runStackDetection()", true );
+        
+        startTF();
+        
+        setContinueStackRecognition( true );
+        
+        determineObjectWhileLoopAsync();
+        
+        stopTF();
+    }
+    
+    public void logAndPrint( String text, boolean includeTimeStamp ) {
+        
+        Robot.writeToMatchFile( text, includeTimeStamp );
+        opMode.telemetry.addLine(text);
+        opMode.telemetry.update();
     }
 
 }

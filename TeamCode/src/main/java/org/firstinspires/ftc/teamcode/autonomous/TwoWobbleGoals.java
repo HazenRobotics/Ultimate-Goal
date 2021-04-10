@@ -5,6 +5,7 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.mechanisms.GoalLift;
 import org.firstinspires.ftc.teamcode.robots.Robot;
@@ -23,11 +24,12 @@ public class TwoWobbleGoals extends LinearOpMode {
     private final boolean pickUpRing = true;
     private final boolean experimental = false;
     private final boolean alternateQuadRoute = true;
+    private final boolean scanRingsDuringInit = false;
 
     @Override
     public void runOpMode() throws InterruptedException {
 
-        Robot.createDefaultMatchLogFileName( this.getClass().getSimpleName() );
+        Robot.createMatchLogFile( this.getClass().getSimpleName() );
         
         robot = new RobotTechnicolorRR(hardwareMap, this);
 
@@ -40,8 +42,11 @@ public class TwoWobbleGoals extends LinearOpMode {
         telemetry.addLine("Initialization Complete");
         telemetry.update();
     
-        Robot.writeToMatchDefaultFile( "Init Finished", true );
-
+        Robot.writeToMatchFile( "Init Finished", true );
+        
+        if( scanRingsDuringInit )
+            robot.tfod.runWhileStackDetection();
+        
         while(!isStarted()) {
             if(isStopRequested()) {
                 robot.tfod.deactivateTensorFlow();
@@ -51,11 +56,16 @@ public class TwoWobbleGoals extends LinearOpMode {
         }
 
         waitForStart();
-
+        
         //Detect stack
-        detectStack();
+        if( scanRingsDuringInit ) {
+            robot.tfod.setContinueStackRecognition( false ); // should force runWhileStackDetection() to exit the while loop, count the stacks, and set the stack value
+            stack = robot.tfod.getStack();
+        }
+        else
+            detectStack();
 
-        if( alternateQuadRoute && stack == TensorFlowUtil.Stack.QUAD ) {
+        if( alternateQuadRoute && stack == robot.STACK_QUAD ) {
             // move out of way of rings
             robot.drive(robot.trajectoryBuilder().lineToConstantHeading(new Vector2d(-45, -57)).build());
 
@@ -111,7 +121,7 @@ public class TwoWobbleGoals extends LinearOpMode {
 
     private void park() {
 
-        if(stack == TensorFlowUtil.Stack.NONE)
+        if(stack == robot.STACK_NONE)
             robot.driveAsync(robot.trajectoryBuilder().strafeRight(8).splineToConstantHeading( new Vector2d(10, -36), 0).build());
         else
             robot.driveAsync(robot.trajectoryBuilder().lineTo(new Vector2d(8, -36)).build());
@@ -120,9 +130,9 @@ public class TwoWobbleGoals extends LinearOpMode {
 
     private void moveWobbleGoalTwo() {
 
-        if(stack == TensorFlowUtil.Stack.NONE) {
+        if(stack == robot.STACK_NONE) {
             robot.drive(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(-15, -53, Math.toRadians(180)), 0).build());
-        } else if(stack == TensorFlowUtil.Stack.SINGLE) {
+        } else if(stack == robot.STACK_SINGLE) {
             robot.drive(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(10, -36, Math.toRadians(177)), 0).build());
         } else {
             robot.drive(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(33, -53, Math.toRadians(175)), 0).build());
@@ -135,7 +145,7 @@ public class TwoWobbleGoals extends LinearOpMode {
         robot.goalLift.setGoalLiftPositionAsync(GoalLift.LiftPosition.LIFTED, 0.6, 700);
         robot.drive.waitForIdle();
         robot.goalLift.setGoalLiftPositionAsync(GoalLift.LiftPosition.LOWERED, 0.6, 500);
-        double radianSplice = stack == TensorFlowUtil.Stack.QUAD ? 10 : 6;
+        double radianSplice = stack == robot.STACK_QUAD ? 10 : 6;
         robot.drive(robot.trajectoryBuilder().lineToLinearHeading(new Pose2d(-25.625-1.5, -30.5, Math.toRadians(radianSplice))).build());
 
         sleep(300);
@@ -154,9 +164,9 @@ public class TwoWobbleGoals extends LinearOpMode {
 
     private void moveWobbleGoalOne() {
 
-        if(stack == TensorFlowUtil.Stack.NONE) {
+        if(stack == robot.STACK_NONE) {
             robot.drive(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(-15, -60, Math.toRadians(182)), 0).build());
-        } else if(stack == TensorFlowUtil.Stack.SINGLE) {
+        } else if(stack == robot.STACK_SINGLE) {
             robot.drive(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(20, -36, Math.toRadians(182)), 0).build());
         } else {
             robot.drive(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(33, -58, Math.toRadians(182)), 0).build());
@@ -167,7 +177,7 @@ public class TwoWobbleGoals extends LinearOpMode {
     }
 
     private void pickUpStackAndShoot() {
-        if ((stack == TensorFlowUtil.Stack.SINGLE || stack == TensorFlowUtil.Stack.QUAD) && pickUpRing) {
+        if ((stack == robot.STACK_SINGLE || stack == robot.STACK_QUAD) && pickUpRing) {
 
             /* see you later
             double ringPosX = -35.375;
@@ -182,7 +192,7 @@ public class TwoWobbleGoals extends LinearOpMode {
                 robot.drive(robot.trajectoryBuilder().lineToConstantHeading(new Vector2d(-24, ringPosX)).build());
                 sleep(500);
                 robot.ringShooter.setIntakeMotorPower(0);
-                if (stack == TensorFlowUtil.Stack.QUAD) {
+                if (stack == robot.STACK_QUAD) {
                     robot.ringShooter.launchRingAngularVelocity(10, false, false);
                     robot.ringShooter.launchRingAngularVelocity(10, false, false);
                 }
@@ -193,7 +203,7 @@ public class TwoWobbleGoals extends LinearOpMode {
                 robot.driveAsync(robot.trajectoryBuilder().lineToConstantHeading(new Vector2d(-30, ringPosX)).build());
                 long currentTime = System.currentTimeMillis();
                 while (System.currentTimeMillis() < currentTime + 200) ;
-                if (stack == TensorFlowUtil.Stack.QUAD) {
+                if (stack == robot.STACK_QUAD) {
                     robot.ringShooter.launchRingAngularVelocity(10, false, false);
                     robot.ringShooter.launchRingAngularVelocity(10.1, false, false);
                     robot.ringShooter.launchRingAngularVelocity(10.2, false, false);
@@ -203,8 +213,6 @@ public class TwoWobbleGoals extends LinearOpMode {
                 robot.ringShooter.setIntakeMotorPower(0);
 
             }
-        }
-
              */
 
             double ringPosX = -35.375;
@@ -215,34 +223,63 @@ public class TwoWobbleGoals extends LinearOpMode {
             robot.ringShooter.setFlyWheelMotorVelocity(10, AngleUnit.RADIANS);
             robot.driveAsync(robot.trajectoryBuilder().lineToConstantHeading(new Vector2d(-7, ringPosX)).build());
             robot.drive.waitForIdle();
-
-            robot.driveAsync(robot.trajectoryBuilder().lineToConstantHeading(new Vector2d(-17, ringPosX)).build()); // pick up ring 1
-            robot.drive.waitForIdle();
+            
             logAndPrint(this.getRuntime() - initialTime + " shoot ring 1");
-            robot.ringShooter.launchRingAngularVelocity(10.075, false, 250);
-            if (stack == TensorFlowUtil.Stack.QUAD) {
-                robot.driveAsync(robot.trajectoryBuilder().lineToConstantHeading(new Vector2d(-21, ringPosX)).build()); // pick up ring 2
+            driveWaitShoot( -17, ringPosX, 10.075, 250 );
+    
+            if (stack == robot.STACK_QUAD) {
+    
                 logAndPrint(this.getRuntime() - initialTime + " shoot ring 2");
-                robot.drive.waitForIdle();
-                robot.ringShooter.launchRingAngularVelocity(10.1, false, 0);
-                robot.driveAsync(robot.trajectoryBuilder().lineToConstantHeading(new Vector2d(-26, ringPosX)).build()); // pick up ring 3
+                driveWaitShoot( -21, ringPosX, 10.1, 0 );
+                
                 logAndPrint(this.getRuntime() - initialTime + " shoot ring 3");
-                robot.drive.waitForIdle();
-                robot.ringShooter.launchRingAngularVelocity(10.3, false, 0);
-                robot.driveAsync(robot.trajectoryBuilder().lineToConstantHeading(new Vector2d(-31, ringPosX)).build()); // pick up ring 4
+                driveWaitShoot( -26, ringPosX, 10.3, 0 );
+    
                 logAndPrint(this.getRuntime() - initialTime + " shoot ring 4");
-                robot.drive.waitForIdle();
-                robot.ringShooter.launchRingAngularVelocity(10.3, false, 0);
+                driveWaitShoot( -31, ringPosX, 10.3, 0 );
+        
                 robot.ringShooter.launchRingAngularVelocity(10.3, false, 250);
             }
             logAndPrint(this.getRuntime() - initialTime + " set powers zero");
             robot.ringShooter.setFlyWheelMotorPower(0);
+
+            /*
+            robot.driveAsync(robot.trajectoryBuilder().lineToConstantHeading(new Vector2d(-17, ringPosX)).build()); // pick up ring 1
+            logAndPrint(this.getRuntime() - initialTime + " shoot ring 1");
+            robot.drive.waitForIdle();
+            robot.ringShooter.launchRingAngularVelocity(10.075, false, 250);
+            
+            if (stack == robot.STACK_QUAD) {
+                robot.driveAsync(robot.trajectoryBuilder().lineToConstantHeading(new Vector2d(-21, ringPosX)).build()); // pick up ring 2
+                logAndPrint(this.getRuntime() - initialTime + " shoot ring 2");
+                robot.drive.waitForIdle();
+                robot.ringShooter.launchRingAngularVelocity(10.1, false, 0);
+                
+                robot.driveAsync(robot.trajectoryBuilder().lineToConstantHeading(new Vector2d(-26, ringPosX)).build()); // pick up ring 3
+                logAndPrint(this.getRuntime() - initialTime + " shoot ring 3");
+                robot.drive.waitForIdle();
+                robot.ringShooter.launchRingAngularVelocity(10.3, false, 0);
+                
+                robot.driveAsync(robot.trajectoryBuilder().lineToConstantHeading(new Vector2d(-31, ringPosX)).build()); // pick up ring 4
+                logAndPrint(this.getRuntime() - initialTime + " shoot ring 4");
+                robot.drive.waitForIdle();
+                robot.ringShooter.launchRingAngularVelocity(10.3, false, 0);
+                
+                robot.ringShooter.launchRingAngularVelocity(10.3, false, 250);
+            }
+             */
         }
 
     }
+    
+    public void driveWaitShoot( double posX, double posY, double omega, long speedUpTime ) {
+        robot.driveAsync(robot.trajectoryBuilder().lineToConstantHeading(new Vector2d(posX, posY)).build());
+        robot.drive.waitForIdle();
+        robot.ringShooter.launchRingAngularVelocity(omega, false, speedUpTime);
+    }
 
     public void logAndPrint( String text ) {
-        Robot.writeToMatchDefaultFile( text, false );
+        Robot.writeToMatchFile( text, false );
         telemetry.addLine(text);
         telemetry.update();
     }
@@ -250,21 +287,45 @@ public class TwoWobbleGoals extends LinearOpMode {
     private void shootRings() {
 
         double shootX = -13;
-
+    
         robot.driveAsync(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(shootX, -4.875, 0), 0).build());
         robot.ringShooter.setFlyWheelMotorVelocity(9.75, AngleUnit.RADIANS);
         telemetry.addData("Fly Wheel Speed", robot.ringShooter.rightFlyWheelMotor.getVelocity(AngleUnit.RADIANS));
         telemetry.update();
         robot.drive.waitForIdle();
+    
+        shootAndPrint( shootX, -19.875, FieldMap.ScoringGoals.RED_LEFT_POWERSHOT, false );
+        
+        shootAndPrint( shootX, -12.375, FieldMap.ScoringGoals.RED_MIDDLE_POWERSHOT, false );
+        
+        shootAndPrint( shootX, -19.875, FieldMap.ScoringGoals.RED_RIGHT_POWERSHOT, true );
+        
+        /* old
+        robot.driveAsync(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(shootX, -4.875, 0), 0).build());
+        robot.ringShooter.setFlyWheelMotorVelocity(9.75, AngleUnit.RADIANS);
+        telemetry.addData("Fly Wheel Speed", robot.ringShooter.rightFlyWheelMotor.getVelocity(AngleUnit.RADIANS));
+        telemetry.update();
+        robot.drive.waitForIdle();
+        
         robot.shootAtTarget(FieldMap.ScoringGoals.RED_LEFT_POWERSHOT, false, false);
         telemetry.addData("Fly Wheel Speed", robot.ringShooter.rightFlyWheelMotor.getVelocity(AngleUnit.RADIANS));
         telemetry.update();
+        
         robot.drive(robot.trajectoryBuilder().lineToLinearHeading(new Pose2d(shootX, -12.375, 0)).build());
         robot.shootAtTarget(FieldMap.ScoringGoals.RED_MIDDLE_POWERSHOT, false, false);
         telemetry.addData("Fly Wheel Speed", robot.ringShooter.rightFlyWheelMotor.getVelocity(AngleUnit.RADIANS));
         telemetry.update();
+        
         robot.drive(robot.trajectoryBuilder().lineToLinearHeading(new Pose2d(shootX, -19.875, 0)).build());
         robot.shootAtTarget(FieldMap.ScoringGoals.RED_RIGHT_POWERSHOT, true, false);
+        telemetry.addData("Fly Wheel Speed", robot.ringShooter.rightFlyWheelMotor.getVelocity(AngleUnit.RADIANS));
+        telemetry.update();
+         */
+    }
+    
+    public void shootAndPrint( double posX, double posY, OpenGLMatrix target, boolean setPowerZero ) {
+        robot.drive(robot.trajectoryBuilder().lineToLinearHeading(new Pose2d(posX, posY, 0)).build());
+        robot.shootAtTarget(FieldMap.ScoringGoals.RED_RIGHT_POWERSHOT, setPowerZero, false);
         telemetry.addData("Fly Wheel Speed", robot.ringShooter.rightFlyWheelMotor.getVelocity(AngleUnit.RADIANS));
         telemetry.update();
     }

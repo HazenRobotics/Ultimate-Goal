@@ -57,7 +57,7 @@ public class TeleOpTechnicolor extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        Robot.createDefaultMatchLogFileName( this.getClass().getSimpleName() );
+        Robot.createMatchLogFile( this.getClass().getSimpleName() );
 
         robot = new RobotTechnicolorRR(hardwareMap, this);
 
@@ -83,7 +83,7 @@ public class TeleOpTechnicolor extends LinearOpMode {
             robot.shootAtTarget(FieldMap.ScoringGoals.RED_RIGHT_POWERSHOT, true, false);
         });
 
-        Robot.writeToMatchDefaultFile( "Initialization Complete", true );
+        Robot.writeToMatchFile( "Initialization Complete", true );
 
         telemetry.addLine("Initialization Complete");
         telemetry.update();

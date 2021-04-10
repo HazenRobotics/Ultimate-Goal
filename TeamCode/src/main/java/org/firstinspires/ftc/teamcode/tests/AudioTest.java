@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.tests;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -20,7 +19,7 @@ public class AudioTest extends OpMode {
     @Override
     public void init() {
 
-        Robot.createDefaultMatchLogFileName( this.getClass().getSimpleName() );
+        Robot.createMatchLogFile( this.getClass().getSimpleName() );
 
         gamepad1 = new GamepadEvents(super.gamepad1);
         library = new SoundLibrary( hardwareMap );
@@ -28,7 +27,7 @@ public class AudioTest extends OpMode {
         telemetry.addLine("Initialization Complete");
         telemetry.update();
     
-        Robot.writeToMatchDefaultFile( "Init Finished", true );
+        Robot.writeToMatchFile( "Init Finished", true );
     }
 
     @Override

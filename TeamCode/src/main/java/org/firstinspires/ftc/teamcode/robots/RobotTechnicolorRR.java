@@ -44,6 +44,10 @@ public class RobotTechnicolorRR {
 
     public static boolean REVERSE_LIFT_DIRECTION = false ;
     public static boolean REVERSE_SHOOTER_DIRECTION = false;
+    
+    public static final TensorFlowUtil.Stack STACK_NONE = TensorFlowUtil.Stack.NONE;
+    public static final TensorFlowUtil.Stack STACK_SINGLE = TensorFlowUtil.Stack.SINGLE;
+    public static final TensorFlowUtil.Stack  STACK_QUAD = TensorFlowUtil.Stack.QUAD;
 
     public RobotTechnicolorRR(HardwareMap hw, OpMode op) {
         drive = new RRMecanumDriveTechnicolor(hw);
@@ -58,9 +62,7 @@ public class RobotTechnicolorRR {
         new SoundLibrary(hw);
         //lights = hw.get(RevBlinkinLedDriver.class, "lights");
     }
-
-
-
+    
     public void sleepRobot(long delay) {
         long setTime = System.currentTimeMillis();
         while( (System.currentTimeMillis() - setTime)*1000 < (delay) );

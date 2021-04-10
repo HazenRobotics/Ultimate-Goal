@@ -3,17 +3,13 @@ package org.firstinspires.ftc.teamcode.robots;
 import android.os.Environment;
 import android.util.Log;
 
-import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.drives.Drive;
-import org.firstinspires.ftc.teamcode.utils.FieldMap;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -38,7 +34,8 @@ public abstract class Robot {
     public Drive driveTrain;
 
     private static final String DEFAULT_LOG_FILE_NAME = "*robotLog.txt";
-    private static String default_match_log_file_name = "defaultRobotLog.txt";
+    private static final String DEFAULT_MATCH_LOG_FILE_NAME = "defaultRobotLog.txt";
+    private static String matchLogFileName = DEFAULT_MATCH_LOG_FILE_NAME;
 
     /**
      * Creates a Robot
@@ -57,17 +54,17 @@ public abstract class Robot {
         }
     }
 
-    public static void createDefaultMatchLogFileName( String className ) {
+    public static void createMatchLogFile( String className ) {
 
-        SimpleDateFormat defaultMatchFormatter = new SimpleDateFormat("MM-dd_HH'h'mm'm'_");
-        defaultMatchFormatter.setTimeZone(TimeZone.getDefault());
+        SimpleDateFormat matchFormatter = new SimpleDateFormat("MM-dd_HH'h'mm'm'_");
+        matchFormatter.setTimeZone(TimeZone.getDefault());
         Date date = new Date();
-        String time = defaultMatchFormatter.format(date);
+        String time = matchFormatter.format(date);
 
         // will look like: 04-05_15h11m_TeleOpTechnicolor.txt
-
-        default_match_log_file_name = time + className + ".txt";
-        writeAFile(default_match_log_file_name, default_match_log_file_name + ": created", false, true );
+    
+        matchLogFileName = time + className + ".txt";
+        writeAFile( matchLogFileName, matchLogFileName + ": created", false, true );
     }
 
     /**
@@ -75,9 +72,9 @@ public abstract class Robot {
      * @param writeText what the method will write to the fill (plus the timeStamp if includeTimeStamp is true)
      * @param includeTimeStamp will include the timeStamp for when the method is called
      */
-    public static void writeToMatchDefaultFile( String writeText, boolean includeTimeStamp ) {
+    public static void writeToMatchFile( String writeText, boolean includeTimeStamp ) {
         Log.e( "|-|-|-|", writeText );
-        writeAFile(default_match_log_file_name, writeText, true, includeTimeStamp );
+        writeAFile( matchLogFileName, writeText, true, includeTimeStamp );
     }
 
     /**

@@ -11,13 +11,9 @@ import org.firstinspires.ftc.teamcode.utils.*;
 public class RobotWood extends Robot {
 
     public MecanumDrive mecanumDrive;
-
     public GoalLift goalLift;
-
     public RingShooter ringShooter;
-
     public Tracking tracker;
-
     public TensorFlowUtil tensorFlowUtil;
 
     public static double MIN_POWER = 0.1;
@@ -38,13 +34,15 @@ public class RobotWood extends Robot {
 
     public static final GoalLift.LiftPosition LIFT_LIFTED = GoalLift.LiftPosition.LIFTED;
     public static final GoalLift.LiftPosition LIFT_LOWERED = GoalLift.LiftPosition.LOWERED;
+    
+    final double WHEEL_DIAMETER = 1.4960629921; // odometry wheel 38mm
 
     public RobotWood(HardwareMap hw, OpMode op){
         super(hw, op);
 
         super.driveTrain = new MecanumDrive(hw);
         mecanumDrive = (MecanumDrive) driveTrain;
-        tracker = new Tracking(mecanumDrive, hw);
+        tracker = new Tracking(hw, false);
         goalLift = new GoalLift(hw, OPEN_POSTITION, CLOSED_POSTITION, REVERSE_LIFT_DIRECTION);
         ringShooter = new RingShooter(hw, FLY_WHEEL_RADIUS, PUSHED_POSTITION, RETRACTED_POSTITION, REVERSE_SHOOTER_DIRECTION);
         tensorFlowUtil = new TensorFlowUtil(hw, op);

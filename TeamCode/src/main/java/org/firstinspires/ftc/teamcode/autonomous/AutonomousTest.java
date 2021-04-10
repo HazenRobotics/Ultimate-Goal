@@ -27,7 +27,7 @@ public class AutonomousTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        Robot.createDefaultMatchLogFileName( this.getClass().getSimpleName() );
+        Robot.createMatchLogFile( this.getClass().getSimpleName() );
 
         robot = new RobotTechnicolorRR(hardwareMap, this);
 
@@ -39,7 +39,7 @@ public class AutonomousTest extends LinearOpMode {
         telemetry.addLine("Init Finished");
         telemetry.update();
 
-        Robot.writeToMatchDefaultFile( "Init Finished", true );
+        Robot.writeToMatchFile( "Init Finished", true );
 
         waitForStart();
 
@@ -98,7 +98,7 @@ public class AutonomousTest extends LinearOpMode {
 
 
     public void logAndPrint( String text ) {
-        Robot.writeToMatchDefaultFile( text, false );
+        Robot.writeToMatchFile( text, false );
         addLine(text);
     }
 

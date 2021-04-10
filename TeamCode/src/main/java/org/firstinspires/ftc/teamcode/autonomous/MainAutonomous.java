@@ -21,7 +21,7 @@ public class MainAutonomous extends LinearOpMode
     @Override
     public void runOpMode() throws InterruptedException {
 
-        Robot.createDefaultMatchLogFileName( this.getClass().getSimpleName() );
+        Robot.createMatchLogFile( this.getClass().getSimpleName() );
 
         robot = new RobotWood(hardwareMap, this);
         robot.driveTrain = new MecanumDrive(hardwareMap);
@@ -29,7 +29,7 @@ public class MainAutonomous extends LinearOpMode
 
         //telemetry.setAutoClear( false );
     
-        Robot.writeToMatchDefaultFile( "Init Finished", true );
+        Robot.writeToMatchFile( "Init Finished", true );
 
         telemetry.addLine("init finished");
         telemetry.update();

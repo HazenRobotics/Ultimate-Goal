@@ -23,7 +23,7 @@ public class VuforiaTest extends OpMode {
     @Override
     public void init() {
 
-        Robot.createDefaultMatchLogFileName( this.getClass().getSimpleName() );
+        Robot.createMatchLogFile( this.getClass().getSimpleName() );
 
         final String VUFORIA_KEY = hardwareMap.appContext.getResources().getString(R.string.vuforiakey);
         vuforia.setParameters(VUFORIA_KEY, "webcam", true, hardwareMap);
@@ -31,7 +31,7 @@ public class VuforiaTest extends OpMode {
 
         vuforiaLocalization = new VuforiaLocalization(VUFORIA_TRACKABLES_ASSET_NAME);
     
-        Robot.writeToMatchDefaultFile( "Init Finished", true );
+        Robot.writeToMatchFile( "Init Finished", true );
     }
     @Override
     public void start(){
