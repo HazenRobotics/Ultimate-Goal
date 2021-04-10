@@ -34,7 +34,6 @@ public class AutonomousTest extends LinearOpMode
         SoundLibrary.playStartup();
 
         robot.setPosition(new Pose2d(-62, -48));
-        robot.goalLift.setClawPosition(GoalLift.ClawPosition.CLOSED);
         robot.tfod.initTensorFlow();
 
         telemetry.addLine("Initialization Complete");
@@ -55,6 +54,8 @@ public class AutonomousTest extends LinearOpMode
         //==========================================================================================
         //Official Start
 
+        // starts at -62, -48
+        // scans at -52, -40
         robot.tfod.runStackDetection(20000);
 
 
