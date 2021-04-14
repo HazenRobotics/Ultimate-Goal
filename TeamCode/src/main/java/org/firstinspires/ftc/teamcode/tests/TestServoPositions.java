@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.robots.RobotTechnicolorRR;
 import org.firstinspires.ftc.teamcode.utils.GamepadEvents;
 
 @TeleOp (name = "TestServoPositions", group = "Competition")
-@Disabled
+//@Disabled
 public class TestServoPositions extends OpMode {
 
     RobotTechnicolorRR robot;
@@ -51,14 +51,15 @@ public class TestServoPositions extends OpMode {
         if( gamepad1.right_bumper.onPress() )
             robot.ringShooter.pusher.setPosition( position );
         if( gamepad1.left_bumper.onPress() )
-            robot.goalLift.claw.setPosition( positionChange );
+            robot.goalLift.claw.setPosition( position );
+        if( gamepad1.right_trigger > 0.1 )
+            robot.ringBlocker.setNumericalBlockerPosition( position );
 
         robot.drive.update();
         telemetry.update();
         gamepad1.update();
         robot.drive.update();
     }
-
 
     public void addControlTelemtry() {
 
@@ -75,35 +76,6 @@ public class TestServoPositions extends OpMode {
                 .addData("Intake Toggle", "Gp1: right trigger")
                 .addData("Intake", "Gp1: left trigger");
         addLine();
-    }
-
-    public void addInfoTelemetry() {
-
-        telemetry.addLine("left_stick_y  = " + gamepad1.left_stick_y );
-        telemetry.addLine("left_stick_x  = " + gamepad1.left_stick_x );
-        telemetry.addLine("right_stick_x = " + gamepad1.right_stick_x );
-        addLine();
-
-        //telemetry.addLine("longitudinal position = " + robot.tracker.getLongitudinalPosition() + " (ticks), " + robot.mecanumDrive.convertTicksDist( robot.tracker.getLongitudinalPosition()) + " (in)" );
-        //telemetry.addLine("lateral position = " + robot.tracker.getLateralPosition() + " (ticks), " + robot.mecanumDrive.convertTicksDist( robot.tracker.getLateralPosition()) + " (in)" );
-        addLine();
-
-        telemetry.addLine( "Claw Position = " + robot.goalLift.getClawLocation() + " :: "  + robot.goalLift.getClawPosition() );
-        telemetry.addLine( "Lift Position = " + robot.goalLift.getCurrentLiftPosition() + " :: " + robot.goalLift.getLiftPower() );
-        addLine();
-
-        telemetry.addLine( "Shooter Power = " + robot.ringShooter.getFlyWheelPower() );
-        addLine();
-
-        telemetry.addLine( "Pusher Position = " + robot.ringShooter.getPusherLocation() + " :: " + robot.ringShooter.getPusherPosition() );
-        addLine();
-
-        telemetry.addLine( "Intake Power = " + robot.ringShooter.getIntakePower() );
-        addLine();
-
-        //telemetry.addLine("getGyroHeading    = " + robot.tracker.getGyroHeading() );
-        //telemetry.addLine("get360GyroHeading = " + robot.tracker.get360GyroHeading() );
-
     }
 
     public void addLine() {

@@ -88,6 +88,8 @@ public class TeleOpTechnicolor extends LinearOpMode {
         telemetry.addLine("Initialization Complete");
         telemetry.update();
 
+        robot.initTeleop();
+
         waitForStart();
 
         while (opModeIsActive() && !isStopRequested()) {
@@ -104,6 +106,11 @@ public class TeleOpTechnicolor extends LinearOpMode {
                 velocity = maxVelocity;
             else if( gamepad2.a.onPress() )
                 velocity = minVelocity;
+
+            if( gamepad2.x.onPress() )
+                robot.ringBlocker.setBlockerPositionAsync( Robot.BLOCKER_BLOCKED );
+            else if( gamepad2.b.onPress() )
+                robot.ringBlocker.setBlockerPositionAsync( Robot.BLOCKER_RETRACTED );
 
             /*
             //D-pad rotation control
@@ -192,9 +199,6 @@ public class TeleOpTechnicolor extends LinearOpMode {
             }
 
             // addControlTelemtry();
-
-            telemetry.addLine( "TouchPad :: " + super.gamepad1.touchpad );
-            telemetry.addLine( "ps :: " + super.gamepad1.ps );
 
             vuforiaLocalizer.updateRobotLocation();
             telemetry.update();

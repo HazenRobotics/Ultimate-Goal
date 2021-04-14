@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.robots.Robot;
+import org.firstinspires.ftc.teamcode.utils.GamepadEvents;
 import org.firstinspires.ftc.teamcode.utils.TensorFlow;
 import org.firstinspires.ftc.teamcode.utils.Vuforia;
 
@@ -13,16 +14,23 @@ import org.firstinspires.ftc.teamcode.utils.Vuforia;
 //@Disabled
 public class TensorFlowTest extends OpMode {
 
-    private final String TENSOR_FLOW_MODEL_NAME = "UltimateGoal.tflite";
+    private static final String TENSOR_FLOW_MODEL_NAME = "UltimateGoal.tflite";
 
     private static final String LABEL_FIRST_ELEMENT = "Quad";
     private static final String LABEL_SECOND_ELEMENT = "Single";
 
     private Vuforia vuforia = Vuforia.getInstance();
+    
+    GamepadEvents gamepad1;
 
     TensorFlow tensorFlow;
+    
+    private double zoom = 1;
+    
     @Override
     public void init() {
+    
+        gamepad1 = new GamepadEvents(super.gamepad1);
 
         Robot.createMatchLogFile( this.getClass().getSimpleName() );
 
@@ -56,6 +64,16 @@ public class TensorFlowTest extends OpMode {
         else {
             telemetry.addData("No Recognitions", null);
         }
+        if( gamepad1.dpad_right.onPress() )
+            zoom += 0.5;
+        else if( gamepad1.dpad_left.onPress() )
+            zoom -= 0.5;
+
+        telemetry.addLine( "Zoom :: " + zoom );
+
+        tensorFlow.setZoom(zoom, 16.0/9.0);
+        gamepad1.update();
+        telemetry.update();
     }
 
     @Override

@@ -68,6 +68,10 @@ public class TensorFlow {
         tfod.shutdown();
     }
 
+    public void setZoom( double zoom, double aspectRatio ) {
+        tfod.setZoom( zoom, aspectRatio );
+    }
+
     /**
      * Tells if object recognition is currently running
      * @return whether Tensor Flow is active or not

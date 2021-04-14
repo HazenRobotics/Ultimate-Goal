@@ -6,6 +6,7 @@ import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
@@ -15,6 +16,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.drives.RRMecanumDriveTechnicolor;
 import org.firstinspires.ftc.teamcode.mechanisms.GoalLift;
+import org.firstinspires.ftc.teamcode.mechanisms.RingBlocker;
 import org.firstinspires.ftc.teamcode.mechanisms.RingShooter;
 import org.firstinspires.ftc.teamcode.utils.FieldMap;
 import org.firstinspires.ftc.teamcode.utils.SoundLibrary;
@@ -29,6 +31,7 @@ public class RobotTechnicolorRR {
 
     public GoalLift goalLift;
     public RingShooter ringShooter;
+    public RingBlocker ringBlocker;
     public TensorFlowUtil tfod;
 
     private RevBlinkinLedDriver lights;
@@ -39,21 +42,40 @@ public class RobotTechnicolorRR {
     public static double PUSHED_POSTITION = 0.2 ;
     public static double RETRACTED_POSTITION = 0.0;
 
+    public static double BLOCKED_POSITION = 0.0 ;
+    public static double BLOCKER_RETRACTED_POSTITION = 0.5;
+
     public static double OPEN_POSTITION = 0.0;
     public static double CLOSED_POSTITION = 1.0;
 
     public static boolean REVERSE_LIFT_DIRECTION = false ;
     public static boolean REVERSE_SHOOTER_DIRECTION = false;
-    
+
+    /*
     public static final TensorFlowUtil.Stack STACK_NONE = TensorFlowUtil.Stack.NONE;
     public static final TensorFlowUtil.Stack STACK_SINGLE = TensorFlowUtil.Stack.SINGLE;
     public static final TensorFlowUtil.Stack  STACK_QUAD = TensorFlowUtil.Stack.QUAD;
+
+    public static final RingShooter.PusherPosition PUSHER_PUSHED = RingShooter.PusherPosition.PUSHED;
+    public static final RingShooter.PusherPosition PUSHER_RETRACTED = RingShooter.PusherPosition.RETRACTED;
+
+    public static final RingBlocker.BlockerPosition BLOCKER_BLOCKED = RingBlocker.BlockerPosition.BLOCKED;
+    public static final RingBlocker.BlockerPosition BLOCKER_RETRACTED = RingBlocker.BlockerPosition.RETRACTED;
+
+    public static final GoalLift.ClawPosition CLAW_OPEN = GoalLift.ClawPosition.OPEN;
+    public static final GoalLift.ClawPosition CLAW_CLOSED = GoalLift.ClawPosition.CLOSED;
+
+    public static final GoalLift.LiftPosition LIFT_LIFTED = GoalLift.LiftPosition.LIFTED;
+    public static final GoalLift.LiftPosition LIFT_LOWERED = GoalLift.LiftPosition.LOWERED;
+    */
 
     public RobotTechnicolorRR(HardwareMap hw, OpMode op) {
         drive = new RRMecanumDriveTechnicolor(hw);
         goalLift = new GoalLift(hw, OPEN_POSTITION, CLOSED_POSTITION, REVERSE_LIFT_DIRECTION);
         ringShooter = new RingShooter(hw, FLY_WHEEL_RADIUS, PUSHED_POSTITION, RETRACTED_POSTITION, REVERSE_SHOOTER_DIRECTION);
+        //ringBlocker = new RingBlocker(hw, BLOCKED_POSITION, BLOCKER_RETRACTED_POSTITION);
         tfod = new TensorFlowUtil(hw, op);
+
 
         final String VUFORIA_KEY = hw.appContext.getResources().getString(R.string.vuforiakey);
         Vuforia.getInstance().setParameters(VUFORIA_KEY, "webcam", true, hw);
@@ -129,6 +151,10 @@ public class RobotTechnicolorRR {
         double backRightPower  = forwardPower + strafePower + turnPower;
 
         drive.setMotorPowers( frontLeftPower, backLeftPower, backRightPower, frontRightPower );
+    }
+    
+    public void initTeleop() {
+        drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
 }

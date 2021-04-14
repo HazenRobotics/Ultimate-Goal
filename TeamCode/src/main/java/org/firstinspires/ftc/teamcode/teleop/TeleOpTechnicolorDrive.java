@@ -57,8 +57,10 @@ public class TeleOpTechnicolorDrive extends LinearOpMode {
 
         Robot.writeToMatchFile( "Initialization Complete", true );
 
-        telemetry.addLine("Initialization Complete");
-        telemetry.update();
+        //telemetry.addLine("Initialization Complete");
+        //telemetry.update();
+        
+        robot.initTeleop();
 
         waitForStart();
 
@@ -70,11 +72,15 @@ public class TeleOpTechnicolorDrive extends LinearOpMode {
 
                 robot.teleopDrive(-gamepad1.left_stick_y*driveMult, gamepad1.left_stick_x*driveMult, -gamepad1.right_stick_x*turnMult);
 
-
             if( gamepad2.y.onPress() )
                 velocity = maxVelocity;
             else if( gamepad2.a.onPress() )
                 velocity = minVelocity;
+
+            if( gamepad2.x.onPress() )
+                robot.ringBlocker.setBlockerPositionAsync( Robot.BLOCKER_BLOCKED );
+            else if( gamepad2.b.onPress() )
+                robot.ringBlocker.setBlockerPositionAsync( Robot.BLOCKER_RETRACTED );
 
             // increases and decreases the velocity of the flyWheels
             if( gamepad1.dpad_up.onPress() || gamepad2.dpad_up.onPress() )
@@ -90,35 +96,35 @@ public class TeleOpTechnicolorDrive extends LinearOpMode {
 
             // claw position
             if(gamepad1.x.onPress())
-                robot.goalLift.setClawPosition( GoalLift.ClawPosition.CLOSED );
+                robot.goalLift.setClawPosition( Robot.CLAW_CLOSED );
             if(gamepad1.b.onPress())
-                robot.goalLift.setClawPosition( GoalLift.ClawPosition.OPEN );
+                robot.goalLift.setClawPosition( Robot.CLAW_OPEN );
 
             // goal lift
             if( gamepad1.y.onPress() ) {
                 //if the goal lift is running but hasn't been lowered all the way yet
                 if(robot.goalLift.goalLiftIsRunning() && robot.goalLift.getCurrentLiftPosition() == GoalLift.LiftPosition.LIFTED) {
                     robot.goalLift.stopGoalLift();
-                    robot.goalLift.setGoalLiftPositionAsync( GoalLift.LiftPosition.LIFTED, LIFT_POWER + 0.3, LIFT_TIME_LIMIT );
+                    robot.goalLift.setGoalLiftPositionAsync( Robot.LIFT_LIFTED, LIFT_POWER + 0.3, LIFT_TIME_LIMIT );
                 }
                 else if(robot.goalLift.goalLiftIsRunning()) {
                     robot.goalLift.stopGoalLift();
                 }
                 else {
-                    robot.goalLift.setGoalLiftPositionAsync( GoalLift.LiftPosition.LIFTED, LIFT_POWER + 0.3, LIFT_TIME_LIMIT );
+                    robot.goalLift.setGoalLiftPositionAsync( Robot.LIFT_LIFTED, LIFT_POWER + 0.3, LIFT_TIME_LIMIT );
                 }
             }
             if( gamepad1.a.onPress() ) {
                 //if the goal lift is running but hasn't been raised all the way yet
                 if(robot.goalLift.goalLiftIsRunning() && robot.goalLift.getCurrentLiftPosition() == GoalLift.LiftPosition.LOWERED) {
                     robot.goalLift.stopGoalLift();
-                    robot.goalLift.setGoalLiftPositionAsync(GoalLift.LiftPosition.LOWERED, LIFT_POWER, LOWER_TIME_LIMIT);
+                    robot.goalLift.setGoalLiftPositionAsync(Robot.LIFT_LOWERED, LIFT_POWER, LOWER_TIME_LIMIT);
                 }
                 else if(robot.goalLift.goalLiftIsRunning()) {
                     robot.goalLift.stopGoalLift();
                 }
                 else {
-                    robot.goalLift.setGoalLiftPositionAsync(GoalLift.LiftPosition.LOWERED, LIFT_POWER, LOWER_TIME_LIMIT);
+                    robot.goalLift.setGoalLiftPositionAsync(Robot.LIFT_LOWERED, LIFT_POWER, LOWER_TIME_LIMIT);
                 }
             }
 

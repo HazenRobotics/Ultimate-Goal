@@ -10,6 +10,10 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.drives.Drive;
+import org.firstinspires.ftc.teamcode.mechanisms.GoalLift;
+import org.firstinspires.ftc.teamcode.mechanisms.RingBlocker;
+import org.firstinspires.ftc.teamcode.mechanisms.RingShooter;
+import org.firstinspires.ftc.teamcode.utils.TensorFlowUtil;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -36,6 +40,22 @@ public abstract class Robot {
     private static final String DEFAULT_LOG_FILE_NAME = "*robotLog.txt";
     private static final String DEFAULT_MATCH_LOG_FILE_NAME = "defaultRobotLog.txt";
     private static String matchLogFileName = DEFAULT_MATCH_LOG_FILE_NAME;
+
+    public static final TensorFlowUtil.Stack STACK_NONE = TensorFlowUtil.Stack.NONE;
+    public static final TensorFlowUtil.Stack STACK_SINGLE = TensorFlowUtil.Stack.SINGLE;
+    public static final TensorFlowUtil.Stack STACK_QUAD = TensorFlowUtil.Stack.QUAD;
+
+    public static final RingShooter.PusherPosition PUSHER_PUSHED = RingShooter.PusherPosition.PUSHED;
+    public static final RingShooter.PusherPosition PUSHER_RETRACTED = RingShooter.PusherPosition.RETRACTED;
+
+    public static final RingBlocker.BlockerPosition BLOCKER_BLOCKED = RingBlocker.BlockerPosition.BLOCKED;
+    public static final RingBlocker.BlockerPosition BLOCKER_RETRACTED = RingBlocker.BlockerPosition.RETRACTED;
+
+    public static final GoalLift.ClawPosition CLAW_OPEN = GoalLift.ClawPosition.OPEN;
+    public static final GoalLift.ClawPosition CLAW_CLOSED = GoalLift.ClawPosition.CLOSED;
+
+    public static final GoalLift.LiftPosition LIFT_LIFTED = GoalLift.LiftPosition.LIFTED;
+    public static final GoalLift.LiftPosition LIFT_LOWERED = GoalLift.LiftPosition.LOWERED;
 
     /**
      * Creates a Robot

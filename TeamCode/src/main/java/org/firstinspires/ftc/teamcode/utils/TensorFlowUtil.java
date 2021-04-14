@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.utils;
 
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -21,8 +22,7 @@ public class TensorFlowUtil {
     // class specific
     private Stack[] stackRecognitions;
     private ArrayList<Stack> infiniteStackRecognitions;
-    
-    private boolean continueStackRecognition = true;
+
     private int defaultLoops = 20000, totalLoops = 0;
     private double loopRunTime = 0;
     
@@ -58,8 +58,6 @@ public class TensorFlowUtil {
         }
 
         tensorFlow = new TensorFlow(TENSOR_FLOW_MODEL_NAME, 0.8f, true, hardwareMap, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);
-
-
     }
 
     void startTF() {
@@ -122,8 +120,8 @@ public class TensorFlowUtil {
         
         totalLoops = 0;
         double startTime = opMode.getRuntime();
-        
-        while( continueStackRecognition ) {
+
+        while( !((LinearOpMode)opMode).isStarted() || totalLoops < defaultLoops ) {
     
             infiniteStackRecognitions.add(identifyObjects() );
             if( totalLoops++ >= defaultLoops ) {
@@ -200,6 +198,10 @@ public class TensorFlowUtil {
         return dOWhileLoopAsync.isAlive() || dOLoopAsync.isAlive() || !dOLoopNumAsync.isAlive();
     }
 
+    public void waitForIdle() {
+
+    }
+
     void stopTF() {
         tensorFlow.shutdown();
     }
@@ -209,21 +211,13 @@ public class TensorFlowUtil {
     }
 
     public void setStack( Stack newStack ) {
-        stack = newStack;
+        this.stack = newStack;
     }
     
     public Stack getStack() {
         return this.stack;
     }
-    
-    public void setContinueStackRecognition( boolean keepLooping ) {
-        continueStackRecognition = keepLooping;
-    }
-    
-    public boolean getContinueStackRecognition() {
-        return continueStackRecognition;
-    }
-    
+
     public void setDefaultLoops(int newLoop  ) {
         defaultLoops = newLoop;
     }
@@ -236,6 +230,14 @@ public class TensorFlowUtil {
         return totalLoops;
     }
 
+    public void setZoom( double zoom, double aspectRatio ) {
+        tensorFlow.setZoom( zoom, aspectRatio );
+    }
+
+    public void setZoom( double zoom ) {
+        tensorFlow.setZoom( zoom, 16.0/9.0 );
+    }
+
     public void runStackDetection( int loops ) { Robot.writeToMatchFile( "runStackDetection()", true );
 
         startTF();
@@ -244,14 +246,14 @@ public class TensorFlowUtil {
 
         stopTF();
     }
-    
+
     public void runWhileStackDetection() { Robot.writeToMatchFile( "runStackDetection()", true );
         
         startTF();
-        
-        setContinueStackRecognition( true );
-        
-        determineObjectWhileLoopAsync();
+
+        //determineObjectWhileLoopAsync();
+
+        determineObjectWhileLoop();
         
         stopTF();
     }

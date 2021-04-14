@@ -34,7 +34,7 @@ public class RRDriveConstantsTechnicolor {
      * Set the value of MOTOR_VELO_PID to `new PIDCoefficients(kP, kI, kD);`
      */
     public static final boolean RUN_USING_ENCODER = true;
-    public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(19, 0, 1, 14.37044936057213);
+    public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(50, 0, 27, 15);
 
     /*
      * These are physical constants that can be determined from your robot (including the track
@@ -46,7 +46,7 @@ public class RRDriveConstantsTechnicolor {
      */
     public static double WHEEL_RADIUS = 1.9685; // in
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (motor) speed
-    public static double TRACK_WIDTH = 15.3; // in
+    public static double TRACK_WIDTH = 14.5; // in
 
     /*
      * These are the feedforward parameters used to model the drive motor behavior. If you are using
@@ -65,8 +65,8 @@ public class RRDriveConstantsTechnicolor {
      * small and gradually increase them later after everything is working. All distance units are
      * inches.
      */
-    public static double MAX_VEL = 0.95 * 67.03387219453849; // calculated using MaxVelocityTuner.java
-    public static double MAX_ACCEL = 50; // 40
+    public static double MAX_VEL = 50; // calculated using MaxVelocityTuner.java
+    public static double MAX_ACCEL = 40; // 40
     public static double MAX_ANG_VEL = Math.toRadians(70);
     public static double MAX_ANG_ACCEL = Math.toRadians(40);
 
