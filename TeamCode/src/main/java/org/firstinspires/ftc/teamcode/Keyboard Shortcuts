@@ -1,0 +1,12 @@
+Ctrl + C            :: Copy
+Ctrl + X            :: Cut
+Ctrl + V            :: Paste
+(Double tap) Ctrl   :: Run anything
+Ctrl + /            :: Comment line(s) out
+Ctrl + shift + /    :: Comment selected out
+Ctrl + Alt + L      :: Auto - indent code
+Shift + F6          :: Rename
+Ctrl + F            :: Find in window
+Ctrl + Shift + F    :: Find in project
+
+
