@@ -4,7 +4,6 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -12,22 +11,20 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.drives.RRMecanumDriveTechnicolor;
 import org.firstinspires.ftc.teamcode.mechanisms.GoalLift;
 import org.firstinspires.ftc.teamcode.mechanisms.RingBlocker;
 import org.firstinspires.ftc.teamcode.mechanisms.RingShooter;
-import org.firstinspires.ftc.teamcode.utils.FieldMap;
 import org.firstinspires.ftc.teamcode.utils.SoundLibrary;
 import org.firstinspires.ftc.teamcode.utils.TensorFlowUtil;
 import org.firstinspires.ftc.teamcode.utils.Vuforia;
-import org.firstinspires.ftc.teamcode.utils.VuforiaLocalization;
 import org.jetbrains.annotations.NotNull;
 
 public class RobotTechnicolorRR {
 
     public RRMecanumDriveTechnicolor drive;
+    public OpMode opMode;
 
     public GoalLift goalLift;
     public RingShooter ringShooter;
@@ -58,6 +55,7 @@ public class RobotTechnicolorRR {
         //ringBlocker = new RingBlocker(hw, BLOCKED_POSITION, BLOCKER_RETRACTED_POSTITION);
         tfod = new TensorFlowUtil(hw, op);
 
+        opMode = op;
 
         final String VUFORIA_KEY = hw.appContext.getResources().getString(R.string.vuforiakey);
         Vuforia.getInstance().setParameters(VUFORIA_KEY, "webcam", true, hw);
@@ -65,6 +63,28 @@ public class RobotTechnicolorRR {
         batteryVoltageSensor = hw.voltageSensor.iterator().next();
         new SoundLibrary(hw);
         //lights = hw.get(RevBlinkinLedDriver.class, "lights");
+    }
+
+    public void addline() {
+        addline( "" );
+    }
+
+    public void addline( String writeText ) {
+        opMode.telemetry.addLine( writeText );
+    }
+
+    public void updateTelemetry() {
+        opMode.telemetry.update();
+    }
+
+    public void logAndPrint( String writeText ) {
+        logAndPrint( writeText, false );
+    }
+
+    public void logAndPrint( String writeText, boolean includeTimeStamp ) {
+        Robot.writeToMatchFile( writeText, includeTimeStamp );
+        addline( writeText );
+        updateTelemetry();
     }
     
     public void sleepRobot(long delay) {
