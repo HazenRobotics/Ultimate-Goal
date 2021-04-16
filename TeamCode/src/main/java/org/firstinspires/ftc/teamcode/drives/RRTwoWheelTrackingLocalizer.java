@@ -44,12 +44,12 @@ public class RRTwoWheelTrackingLocalizer extends TwoTrackingWheelLocalizer {
     public static double PARALLEL_Y = -5.5; // Y is the strafe direction
 
     public static double PERPENDICULAR_X = -3.5;
-    public static double PERPENDICULAR_Y = -5.5; // old 6
+    public static double PERPENDICULAR_Y = -5.25; // old 6
 
     // (90*3)/(89.69190072548207 + 89.83577948877036 + 89.19368620066722)
-    public static double X_MULTIPLIER = 0.992258;//1.00475821; // Multiplier in the X direction
+    public static double X_MULTIPLIER = 1;//1.00475821; // Multiplier in the X direction
     // (90*3)/(89.36874508971657 + 89.43101734156207 + 89.70519900055706)
-    public static double Y_MULTIPLIER = 0.9984687010652338;//1.00556801; // Multiplier in the Y direction
+    public static double Y_MULTIPLIER = 1;//1.00556801; // Multiplier in the Y direction
 
     //    // Parallel/Perpendicular to the forward axis
     //    // Parallel wheel is parallel to the forward axis

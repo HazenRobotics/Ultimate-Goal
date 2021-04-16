@@ -52,8 +52,8 @@ public class TestServoPositions extends OpMode {
             robot.ringShooter.pusher.setPosition( position );
         if( gamepad1.left_bumper.onPress() )
             robot.goalLift.claw.setPosition( position );
-        if( gamepad1.right_trigger > 0.1 )
-            robot.ringBlocker.setNumericalBlockerPosition( position );
+        /*if( gamepad1.right_trigger > 0.1 )
+            robot.ringBlocker.setNumericalBlockerPosition( position );*/
 
         robot.drive.update();
         telemetry.update();

@@ -39,8 +39,8 @@ public class RobotTechnicolorRR {
 
     private final double FLY_WHEEL_RADIUS = 4; //in inches
 
-    public static double PUSHED_POSTITION = 0.2 ;
-    public static double RETRACTED_POSTITION = 0.0;
+    public static double PUSHED_POSTITION = 0.4 ;
+    public static double RETRACTED_POSTITION = 0.18;
 
     public static double BLOCKED_POSITION = 0.0 ;
     public static double BLOCKER_RETRACTED_POSTITION = 0.5;

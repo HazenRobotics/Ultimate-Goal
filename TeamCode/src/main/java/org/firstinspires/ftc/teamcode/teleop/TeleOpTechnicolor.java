@@ -179,7 +179,7 @@ public class TeleOpTechnicolor extends LinearOpMode {
 
             // ring pusher (servo) = gamepad1.left_bumper
             if( gamepad1.left_bumper.onPress() || gamepad2.left_bumper.onPress() ) {
-                robot.ringShooter.pushRingPositionAsync();
+                robot.ringShooter.pushRingTimeAsync();
             }
 
             // intake = gamepad1.left_trigger

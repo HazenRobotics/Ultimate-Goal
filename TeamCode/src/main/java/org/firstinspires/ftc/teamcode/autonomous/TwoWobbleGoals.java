@@ -92,7 +92,7 @@ public class TwoWobbleGoals extends LinearOpMode {
             // middle of stack and wobble goal is (-34.75, -30)
 
             //shoot
-            robot.drive(robot.trajectoryBuilder().splineToConstantHeading(new Vector2d(-36, -36), 90).splineToConstantHeading(new Vector2d(-13, -4), 90).build());
+            robot.drive(robot.trajectoryBuilder().splineToConstantHeading(new Vector2d(-45, -52), 0).splineToConstantHeading(new Vector2d(-36, -36), 90).splineToConstantHeading(new Vector2d(-13, -4), 90).build());
             shootRings();
 
             //if there is one ring in the stack, pick up the ring and shoot
@@ -142,9 +142,9 @@ public class TwoWobbleGoals extends LinearOpMode {
         if(stack == Robot.STACK_NONE) {
             robot.drive(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(-15, -53, Math.toRadians(180)), 0).build());
         } else if(stack == Robot.STACK_SINGLE) {
-            robot.drive(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(10, -36, Math.toRadians(177)), 0).build());
+            robot.drive(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(10, -36, Math.toRadians(180)), 0).build());
         } else {
-            robot.drive(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(33, -53, Math.toRadians(175)), 0).build());
+            robot.drive(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(33, -53, Math.toRadians(180)), 0).build());
         }
     }
 
@@ -155,7 +155,7 @@ public class TwoWobbleGoals extends LinearOpMode {
         robot.drive.waitForIdle();
         robot.goalLift.setGoalLiftPositionAsync(GoalLift.LiftPosition.LOWERED, 0.6, 500);
         double radianSplice = stack == Robot.STACK_QUAD ? 10 : 6;
-        robot.drive(robot.trajectoryBuilder().lineToLinearHeading(new Pose2d(-25.625-1.5, -30.5, Math.toRadians(radianSplice))).build());
+        robot.drive(robot.trajectoryBuilder().lineToLinearHeading(new Pose2d(-25.625-1.5, -30.5, Math.toRadians(0/*radianSplice*/))).build());
 
         sleep(300);
         robot.goalLift.setClawPosition(Robot.CLAW_CLOSED);
@@ -174,11 +174,11 @@ public class TwoWobbleGoals extends LinearOpMode {
     private void moveWobbleGoalOne() {
 
         if(stack == Robot.STACK_NONE) {
-            robot.drive(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(-15, -60, Math.toRadians(182)), 0).build());
+            robot.drive(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(-15, -60, Math.toRadians(180)), 90).build());
         } else if(stack == Robot.STACK_SINGLE) {
-            robot.drive(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(20, -36, Math.toRadians(182)), 0).build());
+            robot.drive(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(20, -36, Math.toRadians(180)), 90).build());
         } else {
-            robot.drive(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(33, -58, Math.toRadians(182)), 0).build());
+            robot.drive(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(33, -58, Math.toRadians(180)), 90).build());
             //robot.setPosition(new Pose2d(33, -56));
             // off - puts wobble goal in center of square (4 rings)
         }
@@ -191,7 +191,7 @@ public class TwoWobbleGoals extends LinearOpMode {
         telemetry.update();
         if ((stack == Robot.STACK_SINGLE || stack == Robot.STACK_QUAD) && pickUpRing) {
 
-            double ringPosX = -35.375;
+            double ringPosX = -36;
 
             /* see you later
 
