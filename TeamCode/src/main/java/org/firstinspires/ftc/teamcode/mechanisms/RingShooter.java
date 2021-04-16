@@ -271,8 +271,12 @@ public class RingShooter {
         return intakeMotor.getPower();
     }
 
-    public double getFlyWheelPower() {
-        return leftFlyWheelMotor.getPower();
+    public double getFlyWheelPower( boolean getLeftFlyWheel ) {
+        return getLeftFlyWheel ? leftFlyWheelMotor.getPower() : rightFlyWheelMotor.getVelocity();
+    }
+
+    public double getFlyWheelVelocity( boolean getLeftFlyWheel ) {
+        return getLeftFlyWheel ? leftFlyWheelMotor.getVelocity( AngleUnit.RADIANS ) : rightFlyWheelMotor.getVelocity( AngleUnit.RADIANS );
     }
 
     public void setFlyWheelPID( PIDFCoefficients coeffs ) {

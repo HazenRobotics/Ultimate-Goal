@@ -26,11 +26,11 @@ public class TeleOpTechnicolor extends LinearOpMode {
     final double SHOOTER_POWER = 0.85;
     final double INTAKE_POWER = 1.0;
 
-    final double MAX_DRIVE_SPEED = 0.8;
-    final double MIN_DRIVE_SPEED = 0.4;
+    final double MAX_DRIVE_SPEED = 1.0;
+    final double MIN_DRIVE_SPEED = 0.7;
 
-    final double MAX_TURN_SPEED = 0.35;
-    final double MIN_TURN_SPEED = 0.2;
+    final double MAX_TURN_SPEED = 0.65;
+    final double MIN_TURN_SPEED = 0.4;
 
     final long LIFT_TIME_LIMIT = 500;
     final long LOWER_TIME_LIMIT = 500;
@@ -38,12 +38,12 @@ public class TeleOpTechnicolor extends LinearOpMode {
     private double driveMult = MIN_DRIVE_SPEED;
     private double turnMult = MIN_TURN_SPEED;
 
-    double velocity = 9.25 ;
+    double velocity = 10;
     double velocityChange = 0.25;
     double velocitySmallChange = 0.1;
 
-    double maxVelocity = 10.5;
-    double minVelocity = 9.25;
+    double maxVelocity = 9.9;
+    double minVelocity = 9.35;
 
     private GamepadEvents gamepad1;
     private GamepadEvents gamepad2;
@@ -71,6 +71,9 @@ public class TeleOpTechnicolor extends LinearOpMode {
         vuforiaLocalizer = new VuforiaLocalization(VUFORIA_TRACKABLES_ASSET_NAME);
         vuforiaLocalizer.activateTracking();
 
+        robot.ringShooter.setPusherPosition(Robot.PUSHER_RETRACTED);
+        robot.goalLift.setClawPosition(Robot.CLAW_OPEN);
+
         shootPowershotThread = new Thread(() -> {
             robot.setPosition(new Pose2d(0, 14, 0)); // 61, 14 if the robot is 18" wide: 70.125-robotwidth/2, 23.125-robotwidth/2
             robot.driveAsync(robot.trajectoryBuilder().lineToLinearHeading(new Pose2d(-13, -5, 0)).build());
@@ -88,7 +91,7 @@ public class TeleOpTechnicolor extends LinearOpMode {
         telemetry.addLine("Initialization Complete");
         telemetry.update();
 
-        robot.initTeleop();
+        robot.initTeleOp();
 
         waitForStart();
 
@@ -98,32 +101,20 @@ public class TeleOpTechnicolor extends LinearOpMode {
             driveMult = gamepad1.left_stick_button.getValue() ? MAX_DRIVE_SPEED : MIN_DRIVE_SPEED;
             turnMult = gamepad1.right_stick_button.getValue() ? MAX_TURN_SPEED : MIN_TURN_SPEED;
 
-            if(!shootPowershotThread.isAlive()) {
-                robot.teleopDrive(-gamepad1.left_stick_y*driveMult, gamepad1.left_stick_x*driveMult, -gamepad1.right_stick_x*turnMult);
-            }
+            if(!shootPowershotThread.isAlive())
+                robot.teleOpDrive(-gamepad1.left_stick_y*driveMult, gamepad1.left_stick_x*driveMult, -gamepad1.right_stick_x*turnMult);
 
             if( gamepad2.y.onPress() )
                 velocity = maxVelocity;
             else if( gamepad2.a.onPress() )
                 velocity = minVelocity;
 
+            /*
             if( gamepad2.x.onPress() )
                 robot.ringBlocker.setBlockerPositionAsync( Robot.BLOCKER_BLOCKED );
             else if( gamepad2.b.onPress() )
                 robot.ringBlocker.setBlockerPositionAsync( Robot.BLOCKER_RETRACTED );
-
-            /*
-            //D-pad rotation control
-            if(gamepad1.dpad_up.onPress()) {
-                robot.drive.turnToAsync(0);
-            } else if(gamepad1.dpad_down.onPress()) {
-                robot.drive.turnToAsync(Math.toRadians(180));
-            } else if(gamepad1.dpad_left.onPress()) {
-                robot.drive.turnToAsync(Math.toRadians(270));
-            } else if(gamepad1.dpad_right.onPress()) {
-                robot.drive.turnToAsync(Math.toRadians(90));
-            }
-            */
+             */
 
             // increases and decreases the velocity of the flyWheels
             if( gamepad1.dpad_up.onPress() || gamepad2.dpad_up.onPress() )
@@ -172,24 +163,20 @@ public class TeleOpTechnicolor extends LinearOpMode {
             }
 
             // ring shooter = gamepad1.right_trigger
-            if(!shootPowershotThread.isAlive()) {
+            if(!shootPowershotThread.isAlive())
                 robot.ringShooter.setFlyWheelMotorVelocity( (gamepad1.right_trigger + gamepad2.right_trigger)*velocity, AngleUnit.RADIANS );
-            }
             //robot.ringShooter.setFlyWheelMotorPower( gamepad1.right_trigger*SHOOTER_POWER );
 
             // ring pusher (servo) = gamepad1.left_bumper
-            if( gamepad1.left_bumper.onPress() || gamepad2.left_bumper.onPress() ) {
+            if( gamepad1.left_bumper.onPress() || gamepad2.left_bumper.onPress() )
                 robot.ringShooter.pushRingTimeAsync();
-            }
 
             // intake = gamepad1.left_trigger
             if(gamepad1.right_bumper.onPress() || gamepad2.right_bumper.onPress())
                 robot.ringShooter.setIntakeMotorPower( robot.ringShooter.getIntakePower() > 0 ? 0 : INTAKE_POWER);
             else if(gamepad1.left_trigger > 0.2 || gamepad2.left_trigger > 0.2)
                 robot.ringShooter.setIntakeMotorPower(-INTAKE_POWER);
-            //robot.ringShooter.setIntakeMotorPower( gamepad1.left_trigger*INTAKE_POWER );
-
-            //addMotorInfoTelemtry();
+            // robot.ringShooter.setIntakeMotorPower( gamepad1.left_trigger*INTAKE_POWER );
 
             if(gamepad1.back.onPress()) {
                 if(shootPowershotThread.isAlive())
@@ -198,23 +185,28 @@ public class TeleOpTechnicolor extends LinearOpMode {
                     shootPowershotThread.start();
             }
 
-            // addControlTelemtry();
+            // addMotorInfoTelemetry();
+
+            // addControlTelemetry();
+
+            // addDriveInfoTelemetry();
+
+            telemetry.addLine( "Left Fly Wheel Velocity  = " + robot.ringShooter.getFlyWheelVelocity( true ) );
+            telemetry.addLine( "Right Fly Wheel Velocity = " + robot.ringShooter.getFlyWheelVelocity( false ) );
 
             vuforiaLocalizer.updateRobotLocation();
             telemetry.update();
             gamepad1.update();
             gamepad2.update();
 
-            if(isStopRequested()) {
-                if(vuforia.isRunning()) {
+            if(isStopRequested())
+                if(vuforia.isRunning())
                     vuforia.close();
-                }
-            }
         }
     }
 
 
-    public void addControlTelemtry() {
+    public void addControlTelemetry() {
 
         telemetry.addLine("            Controls:");
         telemetry.addData("Drive ", "Gp1: left stick y (axis)")
@@ -249,7 +241,7 @@ public class TeleOpTechnicolor extends LinearOpMode {
         telemetry.addLine( "Lift Position = " + robot.goalLift.getCurrentLiftPosition() + " :: " + robot.goalLift.getLiftPower() );
         addLine();
 
-        telemetry.addLine( "Shooter Power = " + robot.ringShooter.getFlyWheelPower() );
+        telemetry.addLine( "Average Shooter Power = " + (robot.ringShooter.getFlyWheelPower(true)+robot.ringShooter.getFlyWheelPower(false))/2 );
         addLine();
 
         telemetry.addLine( "Pusher Position = " + robot.ringShooter.getPusherLocation() + " :: " + robot.ringShooter.getPusherPosition() );
@@ -267,7 +259,7 @@ public class TeleOpTechnicolor extends LinearOpMode {
         telemetry.addLine();
     }
 
-    public void addMotorInfoTelemtry() {
+    public void addMotorInfoTelemetry() {
 
         //(leftFront, leftRear, rightRear, rightFront)
 
@@ -288,6 +280,26 @@ public class TeleOpTechnicolor extends LinearOpMode {
         telemetry.addData( "rightFront", "Vel 3: " + velocities.get( 3 ) );
 
         addLine();
+
+    }
+
+    public void addDriveInfoTelemetry() {
+
+        telemetry.addLine( "Gp1: left_stick_x :: " + gamepad1.left_stick_x );
+        telemetry.addLine( "Gp1: left_stick_y :: " + gamepad1.left_stick_y );
+        telemetry.addLine( "Gp1: right_stick_y :: " + gamepad1.right_stick_y );
+
+        addLine();
+
+        telemetry.addLine( "drive multiplier " + driveMult );
+        telemetry.addLine( "turn multiplier " + turnMult );
+
+        addLine();
+
+        telemetry.addLine( "drive input :: " + -gamepad1.left_stick_y*driveMult );
+        telemetry.addLine( "strafe input :: " + gamepad1.left_stick_x*driveMult );
+        telemetry.addLine( "rotate input :: " + -gamepad1.right_stick_x*turnMult );
+
 
     }
 

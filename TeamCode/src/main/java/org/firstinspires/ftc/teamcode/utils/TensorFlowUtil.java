@@ -115,7 +115,7 @@ public class TensorFlowUtil {
 
             infiniteStackRecognitions.add(identifyObjects() );
             adjustStackCounts(infiniteStackRecognitions.get(totalLoops), 1);
-            if( ++totalLoops >= defaultLoops ) {
+            if( totalLoops++ >= defaultLoops ) {
                 adjustStackCounts(infiniteStackRecognitions.get(0), -1);
                 totalLoops--;
                 infiniteStackRecognitions.remove( 0 );
@@ -138,10 +138,13 @@ public class TensorFlowUtil {
         while( !((LinearOpMode)opMode).isStarted() || totalLoops < defaultLoops ) {
 
             infiniteStackRecognitions.add(identifyObjects() );
-            if( ++totalLoops >= defaultLoops ) {
+            if( totalLoops++ >= defaultLoops ) {
                 infiniteStackRecognitions.remove( 0 );
                 totalLoops--;
             }
+
+            opMode.telemetry.addLine( "Total Loops: " + totalLoops);
+            opMode.telemetry.update();
         }
 
         for(int i = 0; i < totalLoops; i++ ) {

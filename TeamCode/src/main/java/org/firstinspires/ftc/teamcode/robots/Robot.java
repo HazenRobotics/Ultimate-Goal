@@ -48,8 +48,8 @@ public abstract class Robot {
     public static final RingShooter.PusherPosition PUSHER_PUSHED = RingShooter.PusherPosition.PUSHED;
     public static final RingShooter.PusherPosition PUSHER_RETRACTED = RingShooter.PusherPosition.RETRACTED;
 
-    public static final RingBlocker.BlockerPosition BLOCKER_BLOCKED = RingBlocker.BlockerPosition.BLOCKED;
-    public static final RingBlocker.BlockerPosition BLOCKER_RETRACTED = RingBlocker.BlockerPosition.RETRACTED;
+    //public static final RingBlocker.BlockerPosition BLOCKER_BLOCKED = RingBlocker.BlockerPosition.BLOCKED;
+    //public static final RingBlocker.BlockerPosition BLOCKER_RETRACTED = RingBlocker.BlockerPosition.RETRACTED;
 
     public static final GoalLift.ClawPosition CLAW_OPEN = GoalLift.ClawPosition.OPEN;
     public static final GoalLift.ClawPosition CLAW_CLOSED = GoalLift.ClawPosition.CLOSED;

@@ -116,7 +116,7 @@ public class TeleOpWood extends OpMode {
         telemetry.addLine( "Lift Position = " + robot.goalLift.getCurrentLiftPosition() + " :: " + robot.goalLift.getLiftPower() );
         addLine();
 
-        telemetry.addLine( "Shooter Power = " + robot.ringShooter.getFlyWheelPower() );
+        telemetry.addLine( "Average Shooter Power = " + (robot.ringShooter.getFlyWheelPower(true)+robot.ringShooter.getFlyWheelPower(false))/2 );
         addLine();
 
         telemetry.addLine( "Pusher Position = " + robot.ringShooter.getPusherLocation() + " :: " + robot.ringShooter.getPusherPosition() );

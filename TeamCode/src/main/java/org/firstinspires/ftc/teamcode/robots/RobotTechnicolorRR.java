@@ -51,24 +51,6 @@ public class RobotTechnicolorRR {
     public static boolean REVERSE_LIFT_DIRECTION = false ;
     public static boolean REVERSE_SHOOTER_DIRECTION = false;
 
-    /*
-    public static final TensorFlowUtil.Stack STACK_NONE = TensorFlowUtil.Stack.NONE;
-    public static final TensorFlowUtil.Stack STACK_SINGLE = TensorFlowUtil.Stack.SINGLE;
-    public static final TensorFlowUtil.Stack  STACK_QUAD = TensorFlowUtil.Stack.QUAD;
-
-    public static final RingShooter.PusherPosition PUSHER_PUSHED = RingShooter.PusherPosition.PUSHED;
-    public static final RingShooter.PusherPosition PUSHER_RETRACTED = RingShooter.PusherPosition.RETRACTED;
-
-    public static final RingBlocker.BlockerPosition BLOCKER_BLOCKED = RingBlocker.BlockerPosition.BLOCKED;
-    public static final RingBlocker.BlockerPosition BLOCKER_RETRACTED = RingBlocker.BlockerPosition.RETRACTED;
-
-    public static final GoalLift.ClawPosition CLAW_OPEN = GoalLift.ClawPosition.OPEN;
-    public static final GoalLift.ClawPosition CLAW_CLOSED = GoalLift.ClawPosition.CLOSED;
-
-    public static final GoalLift.LiftPosition LIFT_LIFTED = GoalLift.LiftPosition.LIFTED;
-    public static final GoalLift.LiftPosition LIFT_LOWERED = GoalLift.LiftPosition.LOWERED;
-    */
-
     public RobotTechnicolorRR(HardwareMap hw, OpMode op) {
         drive = new RRMecanumDriveTechnicolor(hw);
         goalLift = new GoalLift(hw, OPEN_POSTITION, CLOSED_POSTITION, REVERSE_LIFT_DIRECTION);
@@ -101,7 +83,7 @@ public class RobotTechnicolorRR {
         //assuming we are now lined up for the shot
         //shoot using velocity required to hit the target
         // backup shoot using power ringShooter.launchRingPower(0.85);
-        ringShooter.launchRingAngularVelocity( 9.3, setSpeedZero, speedUpTime );
+        ringShooter.launchRingAngularVelocity( 9.3, setSpeedZero, speedUpTime ); // was 9.3
         //ringShooter.launchRingVelocity(ShootingMath.getVelocityToTarget(FieldMap.RobotInfo.getRingLaunchPointPosition().toVector(), target.toVector(), ringShooter.getLaunchAngle()), DistanceUnit.MM);
     }
 
@@ -143,7 +125,7 @@ public class RobotTechnicolorRR {
         drive.setPoseEstimate(currentPosition);
     }
 
-    public void teleopDrive(double forwardPower, double strafePower, double turnPower) {
+    public void teleOpDrive(double forwardPower, double strafePower, double turnPower) {
         // You might have to play with the + or - depending on how your motors are installed
         double frontLeftPower  = forwardPower + strafePower - turnPower;
         double backLeftPower   = forwardPower - strafePower - turnPower;
@@ -153,7 +135,7 @@ public class RobotTechnicolorRR {
         drive.setMotorPowers( frontLeftPower, backLeftPower, backRightPower, frontRightPower );
     }
     
-    public void initTeleop() {
+    public void initTeleOp() {
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 

@@ -39,6 +39,8 @@ public class GoalLift {
 
     private Thread goalLiftThread;
 
+    private Thread clawThread;
+
     /**
      * Creates a GoalLift with the default name for the motor
      * @param hw robot's hardware map
@@ -68,6 +70,7 @@ public class GoalLift {
         lift.setDirection( reverseMotor ? DcMotorSimple.Direction.REVERSE : DcMotorSimple.Direction.FORWARD );
 
         goalLiftThread = new Thread();
+        clawThread = new Thread();
     }
 
     /**
@@ -119,6 +122,16 @@ public class GoalLift {
     public void stopGoalLift() {
         if(goalLiftThread.isAlive()) {
             goalLiftThread.interrupt();
+        }
+    }
+    public void setClawPositionAsync( ClawPosition position) {
+        clawThread = new Thread(() -> setClawPosition(position));
+        clawThread.start();
+    }
+
+    public void stopClaw() {
+        if(clawThread.isAlive()) {
+            clawThread.interrupt();
         }
     }
 
