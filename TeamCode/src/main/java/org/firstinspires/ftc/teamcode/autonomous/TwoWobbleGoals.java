@@ -57,7 +57,7 @@ public class TwoWobbleGoals extends LinearOpMode {
         vuforiaStop.start();
 
         if( scanRingsDuringInit )
-            robot.tfod.runWhileStackDetection();
+            robot.tfod.runWhileNotStartedStackDetection();
 
         waitForStart();
 

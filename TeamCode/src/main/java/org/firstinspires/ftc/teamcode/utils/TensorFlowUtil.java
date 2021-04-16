@@ -23,13 +23,14 @@ public class TensorFlowUtil {
     private Stack[] stackRecognitions;
     private ArrayList<Stack> infiniteStackRecognitions;
 
+    // the default loops and how many loops we've done
     private int defaultLoops = 20000, totalLoops = 0;
-    private double loopRunTime = 0;
-    
-    // Asynchronous Threads
-    Thread dOLoopAsync = new Thread(() -> determineObjectLoop()); // technically do the same thing on init
-    Thread dOLoopNumAsync = new Thread(() -> determineObjectLoop(defaultLoops)); // technically do the same thing on init but can be changed later
-    Thread dOWhileLoopAsync = new Thread(() -> determineObjectWhileLoop());
+
+    // how many of each stack type there are
+    private int singles = 0, quads = 0;
+
+    // the start time of the stack detection method, and the final time it takes to loop through them
+    private double startTime = 0, loopRunTime = 0;
 
     // # of rings in starting stack
     Stack stack;
@@ -68,26 +69,20 @@ public class TensorFlowUtil {
         Recognition recognition = tensorFlow.getRecognition();
         if(recognition != null) {
             switch (recognition.getLabel()) {
-                case "Single":
+                case LABEL_SECOND_ELEMENT: // "Single"
                     return Stack.SINGLE;
-                case "Quad":
+                case LABEL_FIRST_ELEMENT: // "Quad"
                     return Stack.QUAD;
             }
         }
         return Stack.NONE;
     }
-    
-    void determineObjectLoop() {
-        determineObjectLoop( defaultLoops );
-    }
 
     void determineObjectLoop( int loops ) { Robot.writeToMatchFile( "objectDeterminationLoop", true );
 
         stackRecognitions = new Stack[loops];
-        int singles = 0, quads = 0;
-        
-        totalLoops = 0;
-        double startTime = opMode.getRuntime();
+
+        resetLoopsAndCounters();
 
         for( int i = 0; i < loops; i++ ) {
             stackRecognitions[i] = identifyObjects();
@@ -102,104 +97,92 @@ public class TensorFlowUtil {
             if( singles + quads >= 5 )
                 break;
         }
-    
-        setStack(Stack.NONE);
-        if( singles > quads )
-            setStack(Stack.SINGLE);
-        else if( quads > singles)
-            setStack(Stack.QUAD);
+
+        determineStackFromCounts();
 
         loopRunTime = opMode.getRuntime() - startTime;
 
         logAndPrint( stack + " stack found [in " + totalLoops + " loops & " + loopRunTime + " seconds]", true );
     }
 
-    void determineObjectWhileLoop() { Robot.writeToMatchFile( "objectDeterminationWhileLoop", true );
-    
+    void determineObjectWhileNotStartedSpeed() { Robot.writeToMatchFile( "objectDeterminationWhileLoop", true );
+
         infiniteStackRecognitions = new ArrayList<Stack>();
-        
-        totalLoops = 0;
-        double startTime = opMode.getRuntime();
+
+        resetLoopsAndCounters();
 
         while( !((LinearOpMode)opMode).isStarted() || totalLoops < defaultLoops ) {
-    
+
             infiniteStackRecognitions.add(identifyObjects() );
-            if( totalLoops++ >= defaultLoops ) {
+            adjustStackCounts(infiniteStackRecognitions.get(totalLoops), 1);
+            if( ++totalLoops >= defaultLoops ) {
+                adjustStackCounts(infiniteStackRecognitions.get(0), -1);
+                totalLoops--;
+                infiniteStackRecognitions.remove( 0 );
+            }
+        }
+
+        determineStackFromCounts();
+
+        loopRunTime = opMode.getRuntime() - startTime;
+
+        logAndPrint( stack + " stack found [in " + totalLoops + " loops & " + loopRunTime + " seconds]", true );
+    }
+
+    void determineObjectWhileNotStarted() { Robot.writeToMatchFile( "objectDeterminationWhileLoop", true );
+
+        infiniteStackRecognitions = new ArrayList<Stack>();
+
+        resetLoopsAndCounters();
+
+        while( !((LinearOpMode)opMode).isStarted() || totalLoops < defaultLoops ) {
+
+            infiniteStackRecognitions.add(identifyObjects() );
+            if( ++totalLoops >= defaultLoops ) {
                 infiniteStackRecognitions.remove( 0 );
                 totalLoops--;
             }
         }
 
-        int singles = 0, quads = 0;
-
         for(int i = 0; i < totalLoops; i++ ) {
+            adjustStackCounts(infiniteStackRecognitions.get(i), 1);
             opMode.telemetry.addLine( "stackRecognition #" + i + " : " + infiniteStackRecognitions.get(i));
             opMode.telemetry.update();
-            switch( infiniteStackRecognitions.get(i) ) {
-                case SINGLE:
-                    singles++;
-                    break;
-                case QUAD:
-                    quads++;
-                    break;
-            }
         }
-    
+
+        determineStackFromCounts();
+
+        loopRunTime = opMode.getRuntime() - startTime;
+
+        logAndPrint( stack + " stack found [in " + totalLoops + " loops & " + loopRunTime + " seconds]", true );
+    }
+
+    private void resetLoopsAndCounters() {
+
+        totalLoops = 0;
+        singles = 0;
+        quads = 0;
+
+        startTime = opMode.getRuntime();
+    }
+
+    private void adjustStackCounts( Stack curStack, int adjustment ) {
+        switch( curStack ) {
+            case SINGLE:
+                singles += adjustment;
+                break;
+            case QUAD:
+                quads += adjustment;
+                break;
+        }
+    }
+
+    private void determineStackFromCounts() {
         setStack(Stack.NONE);
         if( singles > quads )
             setStack(Stack.SINGLE);
         else if( quads > singles)
             setStack(Stack.QUAD);
-    
-        loopRunTime = opMode.getRuntime() - startTime;
-    
-        logAndPrint( stack + " stack found [in " + totalLoops + " loops & " + loopRunTime + " seconds]", true );
-    }
-    
-    /**
-     * runs determineObjectLoop() asynchronously (on another thread)
-     * @return whether any object detection loops are running
-     */
-    public boolean determineObjectLoopAsync() {
-        boolean threadsActive = tensorFlowUtilThreadsActive();
-        if( !threadsActive )
-            dOLoopAsync.start();
-        return threadsActive;
-    }
-    
-    /**
-     * runs determineObjectLoop() asynchronously (on another thread)
-     * @param loops how many times to loop scanning the ring stack
-     * @return whether any object detection loops are running
-     */
-    public boolean determineObjectLoopAsync( int loops ) {
-        boolean threadsActive = tensorFlowUtilThreadsActive();
-        if( !threadsActive )
-            (dOLoopNumAsync = new Thread(() -> determineObjectLoop( loops ))).start();
-        return threadsActive;
-    }
-    
-    /**
-     * runs determineObjectWhileLoop() asynchronously (on another thread)
-     * @return whether any object detection loops are running
-     */
-    public boolean determineObjectWhileLoopAsync() {
-        boolean threadsActive = tensorFlowUtilThreadsActive();
-        if( !threadsActive )
-            dOWhileLoopAsync.start();
-        return threadsActive;
-    }
-    
-    /**
-     *
-     * @return whether any object detection loops are running
-     */
-    public boolean tensorFlowUtilThreadsActive() { // returns if any of them are active
-        return dOWhileLoopAsync.isAlive() || dOLoopAsync.isAlive() || !dOLoopNumAsync.isAlive();
-    }
-
-    public void waitForIdle() {
-
     }
 
     void stopTF() {
@@ -238,7 +221,12 @@ public class TensorFlowUtil {
         tensorFlow.setZoom( zoom, 16.0/9.0 );
     }
 
-    public void runStackDetection( int loops ) { Robot.writeToMatchFile( "runStackDetection()", true );
+    public void runStackDetection( ) { Robot.writeToMatchFile( "runStackDetection()", true );
+
+        runStackDetection( defaultLoops );
+    }
+
+    public void runStackDetection( int loops ) { Robot.writeToMatchFile( "runStackDetection( " + loops + " )", true );
 
         startTF();
 
@@ -247,17 +235,15 @@ public class TensorFlowUtil {
         stopTF();
     }
 
-    public void runWhileStackDetection() { Robot.writeToMatchFile( "runStackDetection()", true );
+    public void runWhileNotStartedStackDetection() { Robot.writeToMatchFile( "runWhileNotStartedStackDetection()", true );
         
         startTF();
 
-        //determineObjectWhileLoopAsync();
-
-        determineObjectWhileLoop();
+        determineObjectWhileNotStarted();
         
         stopTF();
     }
-    
+
     public void logAndPrint( String text, boolean includeTimeStamp ) {
         
         Robot.writeToMatchFile( text, includeTimeStamp );
