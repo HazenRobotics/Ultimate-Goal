@@ -30,8 +30,8 @@ public class RingShooter {
     private double flyWheelRadius;
     private static double launchAngle = 35; // degrees
 
-    private static final double RING_PUSH_TIME = 200; // milliseconds
-    private static final double RING_RETRACT_TIME = 200;
+    private static final double RING_PUSH_TIME = 300; // milliseconds
+    private static final double RING_RETRACT_TIME = 300;
 
     public enum PusherPosition {
         PUSHED,
