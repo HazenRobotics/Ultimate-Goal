@@ -25,7 +25,6 @@ public class AutonomousTest extends LinearOpMode {
 
     double initialTime = 0;
 
-
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -37,7 +36,7 @@ public class AutonomousTest extends LinearOpMode {
 
         //==========================================================================================
 
-        testTensorFlowInit();
+        //testTensorFlowInit();
 
         // testQuadShooting();
 
@@ -52,10 +51,10 @@ public class AutonomousTest extends LinearOpMode {
         robot.logAndPrint("Init Finished", true);
 
         new Thread(() -> {
-            while( !isStarted() ) {
-                if( isStopRequested() ) {
+            while (!isStarted()) {
+                if (isStopRequested()) {
                     robot.tfod.deactivateTensorFlow();
-                    if( Vuforia.getInstance().isRunning() )
+                    if (Vuforia.getInstance().isRunning())
                         Vuforia.getInstance().close();
                 }
             }
@@ -68,7 +67,7 @@ public class AutonomousTest extends LinearOpMode {
         //Detect stack
         stack = robot.tfod.getStack();
 
-        robot.logAndPrint( " Stack :: " + stack );
+        robot.logAndPrint(" Stack :: " + stack);
     }
 
     private void testQuadShooting() {
@@ -96,7 +95,7 @@ public class AutonomousTest extends LinearOpMode {
         robot.drive.waitForIdle();
         robot.logAndPrint(this.getRuntime() - initialTime + " shoot ring 1");
         robot.ringShooter.launchRingAngularVelocity(10.075, false, 250);
-        if( stack == TensorFlowUtil.Stack.QUAD ) {
+        if (stack == TensorFlowUtil.Stack.QUAD) {
             robot.driveAsync(robot.trajectoryBuilder().lineToConstantHeading(new Vector2d(-21, ringPosX)).build()); // pick up ring 2
             robot.logAndPrint(this.getRuntime() - initialTime + " shoot ring 2");
             robot.drive.waitForIdle();
@@ -135,10 +134,10 @@ public class AutonomousTest extends LinearOpMode {
     private void driveToCenter(boolean goBack) {
         robot.drive(robot.trajectoryBuilder().lineToConstantHeading(new Vector2d(0, 0)).build());
 
-        if( goBack ) {
+        if (goBack) {
             double delay = 2 * 1000;
             double waitUntil = getRuntime() + (double) (delay / 1000);
-            while( getRuntime() < waitUntil ) ;
+            while (getRuntime() < waitUntil) ;
 
             robot.drive(robot.trajectoryBuilder().lineToConstantHeading(new Vector2d(-61.125, -41.875)).build());
         }

@@ -86,10 +86,11 @@ public class RobotTechnicolorRR {
         addline( writeText );
         updateTelemetry();
     }
-    
+
+    // add thingy here for milliseconds
     public void sleepRobot(long delay) {
-        long setTime = System.currentTimeMillis();
-        while( (System.currentTimeMillis() - setTime)*1000 < (delay) );
+        long startTime = System.currentTimeMillis();
+        while( System.currentTimeMillis() < startTime + delay ) ;
     }
 
     /**

@@ -58,7 +58,7 @@ public class TensorFlowUtil {
 
     public void initTensorFlow() {
 
-        if( !vuforia.isRunning() ) {
+        if (!vuforia.isRunning()) {
             final String VUFORIA_KEY = hardwareMap.appContext.getResources().getString(R.string.vuforiakey);
             vuforia.setParameters(VUFORIA_KEY, "webcam", true, hardwareMap);
             vuforia.start();
@@ -73,8 +73,8 @@ public class TensorFlowUtil {
 
     Stack identifyObjects() {
         Recognition recognition = tensorFlow.getRecognition();
-        if( recognition != null ) {
-            switch( recognition.getLabel() ) {
+        if (recognition != null) {
+            switch (recognition.getLabel()) {
                 case LABEL_SECOND_ELEMENT: // "Single"
                     return Stack.SINGLE;
                 case LABEL_FIRST_ELEMENT: // "Quad"
@@ -91,17 +91,17 @@ public class TensorFlowUtil {
 
         resetLoopsAndCounters();
 
-        for( int i = 0; i < loops; i++ ) {
+        for (int i = 0; i < loops; i++) {
             stackRecognitions[i] = identifyObjects();
-            if( stackRecognitions[i] == Stack.SINGLE )
+            if (stackRecognitions[i] == Stack.SINGLE)
                 singles++;
-            else if( stackRecognitions[i] == Stack.QUAD )
+            else if (stackRecognitions[i] == Stack.QUAD)
                 quads++;
 
             opMode.telemetry.addLine("stackRecognition #" + (totalLoops = i) + " : " + stackRecognitions[i]);
             opMode.telemetry.update();
 
-            if( singles + quads >= 5 )
+            if (singles + quads >= 5)
                 break;
         }
 
@@ -119,14 +119,13 @@ public class TensorFlowUtil {
 
         resetLoopsAndCounters();
 
-        while( !((LinearOpMode) opMode).isStarted() || totalLoops < defaultLoops ) {
+        while (!((LinearOpMode) opMode).isStarted() || totalLoops < defaultLoops) {
 
             infiniteStackRecognitions.add(identifyObjects());
             adjustStackCounts(infiniteStackRecognitions.get(totalLoops), 1);
-            if( ++totalLoops > defaultLoops ) {
+            if (++totalLoops > defaultLoops) {
                 adjustStackCounts(infiniteStackRecognitions.remove(0), -1);
                 totalLoops--;
-                //infiniteStackRecognitions.remove( 0 );
             }
         }
 
@@ -144,10 +143,10 @@ public class TensorFlowUtil {
 
         resetLoopsAndCounters();
 
-        while( !((LinearOpMode) opMode).isStarted() || totalLoops < defaultLoops ) {
+        while (!((LinearOpMode) opMode).isStarted() || totalLoops < defaultLoops) {
 
             infiniteStackRecognitions.add(identifyObjects());
-            if( ++totalLoops > defaultLoops ) {
+            if (++totalLoops > defaultLoops) {
                 infiniteStackRecognitions.remove(0);
                 totalLoops--;
             }
@@ -156,7 +155,7 @@ public class TensorFlowUtil {
             opMode.telemetry.update();
         }
 
-        for( int i = 0; i < totalLoops; i++ ) {
+        for (int i = 0; i < totalLoops; i++) {
             adjustStackCounts(infiniteStackRecognitions.get(i), 1);
             opMode.telemetry.addLine("stackRecognition #" + i + " : " + infiniteStackRecognitions.get(i));
             opMode.telemetry.update();
@@ -179,7 +178,7 @@ public class TensorFlowUtil {
     }
 
     private void adjustStackCounts(Stack curStack, int adjustment) {
-        switch( curStack ) {
+        switch (curStack) {
             case SINGLE:
                 singles += adjustment;
                 break;
@@ -191,9 +190,9 @@ public class TensorFlowUtil {
 
     private void determineStackFromCounts() {
         setStack(Stack.NONE);
-        if( singles > quads )
+        if (singles > quads)
             setStack(Stack.SINGLE);
-        else if( quads > singles )
+        else if (quads > singles)
             setStack(Stack.QUAD);
     }
 
@@ -264,7 +263,7 @@ public class TensorFlowUtil {
 
         startTF();
 
-        determineObjectWhileNotStarted();
+        determineObjectWhileNotStartedSpeed();
 
         stopTF();
     }
