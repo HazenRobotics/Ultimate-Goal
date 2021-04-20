@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.tests;
+package org.firstinspires.ftc.teamcode.autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -39,12 +39,11 @@ public class DeactivateTensorFlow extends LinearOpMode {
         telemetry.addLine( "Init finished" );
         telemetry.update();
 
-        waitForStart();
+        tensorFlow.activate();
         
         tensorFlow.shutdown();
         if(vuforia.isRunning())
             vuforia.close();
-
     }
 
 

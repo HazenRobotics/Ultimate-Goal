@@ -19,7 +19,6 @@ public class TensorFlow {
     private boolean isActive = false;
 
     private List<Recognition> recognitions = null;
-    private List<Recognition> updatedRecognitions;
 
     private Vuforia vuforia = Vuforia.getInstance();
 
@@ -59,6 +58,7 @@ public class TensorFlow {
      */
     public void activate(){
         tfod.activate();
+        isActive = true;
     }
 
     /**
@@ -66,6 +66,7 @@ public class TensorFlow {
      */
     public void shutdown(){
         tfod.shutdown();
+        isActive = false;
     }
 
     public void setZoom( double zoom, double aspectRatio ) {
