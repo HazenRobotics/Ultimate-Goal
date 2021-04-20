@@ -163,9 +163,10 @@ public class TeleOpTechnicolor extends LinearOpMode {
             }
 
             // ring shooter = gamepad1.right_trigger
-            if(!shootPowershotThread.isAlive())
-                robot.ringShooter.setFlyWheelMotorVelocity( (gamepad1.right_trigger + gamepad2.right_trigger)*velocity, AngleUnit.RADIANS );
-            //robot.ringShooter.setFlyWheelMotorPower( gamepad1.right_trigger*SHOOTER_POWER );
+            if(!shootPowershotThread.isAlive()) {
+                robot.ringShooter.setFlyWheelMotorVelocity((gamepad1.right_trigger + gamepad2.right_trigger) * velocity, AngleUnit.RADIANS);
+                //robot.ringShooter.setFlyWheelMotorPower( gamepad1.right_trigger*SHOOTER_POWER );
+            }
 
             // ring pusher (servo) = gamepad1.left_bumper
             if( gamepad1.left_bumper.onPress() || gamepad2.left_bumper.onPress() )

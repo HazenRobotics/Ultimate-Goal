@@ -181,6 +181,9 @@ public class RingShooter {
         while (System.currentTimeMillis() < currentTime + speedUpTime);
 
         pushRingTime();
+
+
+
         if (setPowerZero)
             setFlyWheelMotorVelocity(0, AngleUnit.RADIANS);
     }

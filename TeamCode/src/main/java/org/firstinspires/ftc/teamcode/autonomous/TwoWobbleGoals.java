@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.autonomous;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.acmerobotics.roadrunner.trajectory.Trajectory;
+import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.acmerobotics.roadrunner.trajectory.constraints.MecanumVelocityConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.MinAccelerationConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.ProfileAccelerationConstraint;
@@ -64,22 +66,27 @@ public class TwoWobbleGoals extends LinearOpMode {
         // middle of the stack and wobble goal is (-34.75, -30)
 
         //shoot// was 9.3
+        /*cool path
         robot.drive(robot.trajectoryBuilder()
-                .splineToConstantHeading(new Vector2d(-45, -52), 0)
+                .splineToConstantHeading(new Vector2d(-46, -52), 0)
                 .splineToConstantHeading(new Vector2d(-36, -36), 90)
-                .addDisplacementMarker(() -> {
-                    robot.ringShooter.setFlyWheelMotorVelocity(9.35, AngleUnit.RADIANS);
-                })
+                .addDisplacementMarker(() -> robot.ringShooter.setFlyWheelMotorVelocity(9.35, AngleUnit.RADIANS))
                 .splineToConstantHeading(new Vector2d(-13, -4), 90).build());
-        shootRings();
-
-        //if there is one ring in the stack, pick up the ring and shoot
-        pickUpStackAndShoot();
+        */
+        //robot.drive(robot.trajectoryBuilder().splineToConstantHeading(new Vector2d(-12, -50), 90).addDisplacementMarker(() -> robot.ringShooter.setFlyWheelMotorVelocity(9.35, AngleUnit.RADIANS)).splineToConstantHeading(new Vector2d(-10, 0), 0).build());
 
         //Move wobble goal to correct zone
         moveWobbleGoalOne();
 
         dropWobbleGoal();
+
+        robot.drive(robot.trajectoryBuilder().addDisplacementMarker(() -> robot.goalLift.setGoalLiftPositionAsync(GoalLift.LiftPosition.LIFTED, 0.8, 500)).splineToLinearHeading(new Pose2d(-13, -4, 0), 90).addTemporalMarker(0.5, 0, () -> robot.ringShooter.setFlyWheelMotorVelocity(9.35, AngleUnit.RADIANS)).build());
+
+        shootRings();
+        //if there is one ring in the stack, pick up the ring and shoot
+        pickUpStackAndShoot();
+
+
 
         //Pick up 2nd wobble goal
         pickUpWobbleGoalTwo();
@@ -113,16 +120,14 @@ public class TwoWobbleGoals extends LinearOpMode {
     private void moveWobbleGoalTwo() {
 
         if (stack == Robot.STACK_NONE) {
-            robot.drive(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(-15, -53, Math.toRadians(180)), 0).addTemporalMarker(0.7, 0, () -> {
-                dropWobbleGoal();
-            }).build());
+            robot.drive(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(-15, -53, Math.toRadians(180)), 0).build());
+            dropWobbleGoal();
         } else if (stack == Robot.STACK_SINGLE) {
-            robot.drive(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(10, -36, Math.toRadians(180)), 0).addTemporalMarker(0.7, 0, () -> {
-                dropWobbleGoal();
-            }).build());
+            robot.drive(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(10, -36, Math.toRadians(180)), 0).build());
+            dropWobbleGoal();
         } else {
-            robot.drive(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(33, -53, Math.toRadians(180)), 0).addTemporalMarker(0.7, 0, () -> {
-                dropWobbleGoal();
+            robot.drive(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(33, -53, Math.toRadians(180)), 0).addTemporalMarker(0.8, 0, () -> {
+                dropWobbleGoalAsync();
             }).build());
         }
     }
@@ -141,7 +146,7 @@ public class TwoWobbleGoals extends LinearOpMode {
         robot.goalLift.setClawPositionAsync(Robot.CLAW_OPEN);
         robot.goalLift.setGoalLiftPositionAsync(GoalLift.LiftPosition.LOWERED, 0.6, 500);
         double radianSplice = stack == Robot.STACK_QUAD ? 10 : 6;
-        robot.drive(robot.trajectoryBuilder().lineToLinearHeading(new Pose2d(-25.625 - 1.5, -30.5, Math.toRadians(0/*radianSplice*/))).build());
+        robot.drive(robot.trajectoryBuilder().lineToLinearHeading(new Pose2d(-25.625 - 1.5, -31, Math.toRadians(0/*radianSplice*/))).build());
 
         sleep(300);
         robot.goalLift.setClawPosition(Robot.CLAW_CLOSED);
@@ -159,15 +164,23 @@ public class TwoWobbleGoals extends LinearOpMode {
         //while (System.currentTimeMillis() < startTime + 300) ;
     }
 
+    private void dropWobbleGoalAsync() {
+        robot.goalLift.setGoalLiftPositionAsync(Robot.LIFT_LOWERED, 0.6, 700);
+        robot.goalLift.setClawPosition(Robot.CLAW_OPEN);
+    }
+
     private Pose2d newPos2d180( double x, double y ) {
-        return new Pose2d(x, y, Math.PI);
+        return new Pose2d(x, y, Math.PI - 1e-6);
     }
 
     private void moveWobbleGoalOne() {
 
-        Pose2d position = stack == Robot.STACK_QUAD ? newPos2d180(33, -58) : (stack == Robot.STACK_SINGLE ? newPos2d180(20, -36) : newPos2d180(-15, -60));
+        Pose2d position = stack == Robot.STACK_QUAD ? newPos2d180(33, -60) : (stack == Robot.STACK_SINGLE ? newPos2d180(18, -36) : newPos2d180(-15, -60));
 
-        robot.drive(robot.trajectoryBuilder().splineToLinearHeading(position, 90).build());
+        if(stack == TensorFlowUtil.Stack.SINGLE) {
+            robot.drive(robot.trajectoryBuilder().splineTo(new Vector2d(-24, -55), 270).build());
+        }
+        robot.drive(robot.trajectoryBuilder().splineToLinearHeading(position, 270).build());
 
         /*
         if (stack == Robot.STACK_NONE) {
@@ -226,19 +239,19 @@ public class TwoWobbleGoals extends LinearOpMode {
              */
 
             robot.ringShooter.setIntakeMotorPower(1);
-            robot.ringShooter.setFlyWheelMotorVelocity(10.8, AngleUnit.RADIANS);
-            robot.drive(robot.trajectoryBuilder().lineToLinearHeading(new Pose2d(-7, ringPosX, Math.toRadians(10))).build());
+            robot.ringShooter.setFlyWheelMotorVelocity(9.4, AngleUnit.RADIANS);
+            robot.drive(robot.trajectoryBuilder().lineToLinearHeading(new Pose2d(-3, ringPosX, Math.toRadians(0))).build());
 
             if (stack == Robot.STACK_SINGLE)
-                driveWaitShoot(-17, ringPosX, 10.075, 250);
+                driveWaitShoot(-17, ringPosX, 10.075, 500);
             else if (stack == Robot.STACK_QUAD) {
                 robot.drive(robot.trajectoryBuilder()
-                        .lineToLinearHeading(new Pose2d(-34, ringPosX, 0),
-                                new MecanumVelocityConstraint(15, Math.toRadians(60), 21),
+                        .lineToLinearHeading(new Pose2d(-38, ringPosX, Math.toRadians(5)),
+                                new MecanumVelocityConstraint(14, Math.toRadians(60), 21),
                                 new ProfileAccelerationConstraint(40))
-                        .addDisplacementMarker(8, () -> {
+                        .addDisplacementMarker(12, () -> {
                             for (int i = 0; i <= 4; i++) {
-                                robot.ringShooter.setFlyWheelMotorVelocity(10.7 + 0.1*i, AngleUnit.RADIANS);
+                                robot.ringShooter.setFlyWheelMotorVelocity(10.1 + 0.2*i, AngleUnit.RADIANS);
                                 robot.sleepRobot(300);
                                 //long startTime = System.currentTimeMillis();
                                 //while (System.currentTimeMillis() < startTime + 300) ;

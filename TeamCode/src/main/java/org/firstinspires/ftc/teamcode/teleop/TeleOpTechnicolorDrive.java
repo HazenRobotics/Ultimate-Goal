@@ -178,7 +178,7 @@ public class TeleOpTechnicolorDrive extends LinearOpMode {
                     shootPowershotThread.start();
             }
 
-            // addMotorInfoTelemtry();
+            addMotorInfoTelemetry();
 
             // addControlTelemtry();
 
