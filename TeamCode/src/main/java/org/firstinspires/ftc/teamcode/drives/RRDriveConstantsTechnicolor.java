@@ -34,7 +34,7 @@ public class RRDriveConstantsTechnicolor {
      * Set the value of MOTOR_VELO_PID to `new PIDCoefficients(kP, kI, kD);`
      */
     public static final boolean RUN_USING_ENCODER = true;
-    public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(19, 0, 1, 15);
+    public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(19, 0, 1, 14.8);
 
 
     /*

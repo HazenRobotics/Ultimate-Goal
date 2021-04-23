@@ -155,9 +155,9 @@ public class RobotTechnicolorRR {
 
         drive.setMotorPowers( frontLeftPower, backLeftPower, backRightPower, frontRightPower );
     }
-    
-    public void initTeleOp() {
-        drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+    public static void initTeleop() {
+        OPEN_POSTITION = 0.5;
     }
 
 }

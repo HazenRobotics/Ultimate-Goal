@@ -80,6 +80,8 @@ public class RingShooter {
 
         intakeMotor = hw.dcMotor.get(intakeMotorName);
 
+        intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+
         leftFlyWheelMotor = hw.get(DcMotorEx.class, leftFlyWheelName);
         rightFlyWheelMotor = hw.get(DcMotorEx.class, rightFlyWheelName);
 
@@ -124,6 +126,26 @@ public class RingShooter {
     public void setFlyWheelMotorVelocity(double velocity, AngleUnit angleUnit) {
         leftFlyWheelMotor.setVelocity(velocity, angleUnit);
         rightFlyWheelMotor.setVelocity(velocity, angleUnit);
+    }
+
+    /**
+     * Sets velocity for the motor to run at
+     *
+     * @param velocity  target velocity
+     * @param angleUnit unit in which the input velocity is given, in units/second
+     */
+    public void setSingleFlyWheelMotorVelocity(double velocity, AngleUnit angleUnit) {
+        leftFlyWheelMotor.setVelocity(velocity, angleUnit);
+        rightFlyWheelMotor.setVelocity(velocity, angleUnit);
+
+        if( leftFlyWheelMotor.getVelocity() > 0.01 && leftFlyWheelMotor.getVelocity() < 0.01 ) {
+            leftFlyWheelMotor.setPower( rightFlyWheelMotor.getPower() );
+            rightFlyWheelMotor.setPower( rightFlyWheelMotor.getPower() );
+        } else if( rightFlyWheelMotor.getVelocity() > 0.01 && rightFlyWheelMotor.getVelocity() < 0.01 ) {
+            rightFlyWheelMotor.setPower( leftFlyWheelMotor.getPower() );
+            leftFlyWheelMotor.setPower( leftFlyWheelMotor.getPower() );
+        }
+
     }
 
     /**

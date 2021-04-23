@@ -22,15 +22,15 @@ public class TeleOpTechnicolor extends LinearOpMode {
 
     RobotTechnicolorRR robot;
 
-    final double LIFT_POWER = 0.5;
+    final double LIFT_POWER = 0.7;
     final double SHOOTER_POWER = 0.85;
     final double INTAKE_POWER = 1.0;
 
-    final double MAX_DRIVE_SPEED = 1.0;
-    final double MIN_DRIVE_SPEED = 0.7;
+    final double MAX_DRIVE_SPEED = 0.65;
+    final double MIN_DRIVE_SPEED = 0.35;
 
-    final double MAX_TURN_SPEED = 0.65;
-    final double MIN_TURN_SPEED = 0.4;
+    final double MAX_TURN_SPEED = 0.5;
+    final double MIN_TURN_SPEED = 0.2;
 
     final long LIFT_TIME_LIMIT = 500;
     final long LOWER_TIME_LIMIT = 500;
@@ -43,19 +43,21 @@ public class TeleOpTechnicolor extends LinearOpMode {
     double velocitySmallChange = 0.1;
 
     double maxVelocity = 9.9;
-    double minVelocity = 9.35;
+    double minVelocity = 9.5;
 
     private GamepadEvents gamepad1;
     private GamepadEvents gamepad2;
-    private Vuforia vuforia = Vuforia.getInstance();
-    private VuforiaLocalization vuforiaLocalizer;
+    //private Vuforia vuforia = Vuforia.getInstance();
+    //private VuforiaLocalization vuforiaLocalizer;
 
     private final String VUFORIA_TRACKABLES_ASSET_NAME = "UltimateGoal";
 
-    private Thread shootPowershotThread;
+    //private Thread shootPowershotThread;
 
     @Override
     public void runOpMode() throws InterruptedException {
+
+        RobotTechnicolorRR.initTeleop();
 
         Robot.createMatchLogFile( this.getClass().getSimpleName() );
 
@@ -65,16 +67,16 @@ public class TeleOpTechnicolor extends LinearOpMode {
 
         gamepad1 = new GamepadEvents(super.gamepad1);
         gamepad2 = new GamepadEvents(super.gamepad2);
-        if(!Vuforia.getInstance().isRunning()) {
+        /*if(!Vuforia.getInstance().isRunning()) {
             Vuforia.getInstance().start();
-        }
-        vuforiaLocalizer = new VuforiaLocalization(VUFORIA_TRACKABLES_ASSET_NAME);
-        vuforiaLocalizer.activateTracking();
+        }*/
+        /*vuforiaLocalizer = new VuforiaLocalization(VUFORIA_TRACKABLES_ASSET_NAME);
+        vuforiaLocalizer.activateTracking();*/
 
         robot.ringShooter.setPusherPosition(Robot.PUSHER_RETRACTED);
         robot.goalLift.setClawPosition(Robot.CLAW_OPEN);
 
-        shootPowershotThread = new Thread(() -> {
+        /*shootPowershotThread = new Thread(() -> {
             robot.setPosition(new Pose2d(0, 14, 0)); // 61, 14 if the robot is 18" wide: 70.125-robotwidth/2, 23.125-robotwidth/2
             robot.driveAsync(robot.trajectoryBuilder().lineToLinearHeading(new Pose2d(-13, -5, 0)).build());
             robot.ringShooter.setFlyWheelMotorVelocity(9.25, AngleUnit.RADIANS);
@@ -84,14 +86,12 @@ public class TeleOpTechnicolor extends LinearOpMode {
             robot.shootAtTarget(FieldMap.ScoringGoals.RED_MIDDLE_POWERSHOT, false, false);
             robot.drive(robot.trajectoryBuilder().lineTo(new Vector2d(-13, -19)).build());
             robot.shootAtTarget(FieldMap.ScoringGoals.RED_RIGHT_POWERSHOT, true, false);
-        });
+        });*/
 
         Robot.writeToMatchFile( "Initialization Complete", true );
 
         telemetry.addLine("Initialization Complete");
         telemetry.update();
-
-        robot.initTeleOp();
 
         waitForStart();
 
@@ -101,8 +101,7 @@ public class TeleOpTechnicolor extends LinearOpMode {
             driveMult = gamepad1.left_stick_button.getValue() ? MAX_DRIVE_SPEED : MIN_DRIVE_SPEED;
             turnMult = gamepad1.right_stick_button.getValue() ? MAX_TURN_SPEED : MIN_TURN_SPEED;
 
-            if(!shootPowershotThread.isAlive())
-                robot.teleOpDrive(-gamepad1.left_stick_y*driveMult, gamepad1.left_stick_x*driveMult, -gamepad1.right_stick_x*turnMult);
+            robot.teleOpDrive(-gamepad1.left_stick_y*driveMult, gamepad1.left_stick_x*driveMult, -gamepad1.right_stick_x*turnMult);
 
             if( gamepad2.y.onPress() )
                 velocity = maxVelocity;
@@ -163,10 +162,8 @@ public class TeleOpTechnicolor extends LinearOpMode {
             }
 
             // ring shooter = gamepad1.right_trigger
-            if(!shootPowershotThread.isAlive()) {
-                robot.ringShooter.setFlyWheelMotorVelocity((gamepad1.right_trigger + gamepad2.right_trigger) * velocity, AngleUnit.RADIANS);
-                //robot.ringShooter.setFlyWheelMotorPower( gamepad1.right_trigger*SHOOTER_POWER );
-            }
+            robot.ringShooter.setFlyWheelMotorVelocity((gamepad1.right_trigger + gamepad2.right_trigger) * velocity, AngleUnit.RADIANS);
+            //robot.ringShooter.setFlyWheelMotorPower( gamepad1.right_trigger*SHOOTER_POWER );
 
             // ring pusher (servo) = gamepad1.left_bumper
             if( gamepad1.left_bumper.onPress() || gamepad2.left_bumper.onPress() )
@@ -179,13 +176,6 @@ public class TeleOpTechnicolor extends LinearOpMode {
                 robot.ringShooter.setIntakeMotorPower(-INTAKE_POWER);
             // robot.ringShooter.setIntakeMotorPower( gamepad1.left_trigger*INTAKE_POWER );
 
-            if(gamepad1.back.onPress()) {
-                if(shootPowershotThread.isAlive())
-                    shootPowershotThread.interrupt();
-                else
-                    shootPowershotThread.start();
-            }
-
             // addMotorInfoTelemetry();
 
             // addControlTelemetry();
@@ -195,14 +185,14 @@ public class TeleOpTechnicolor extends LinearOpMode {
             telemetry.addLine( "Left Fly Wheel Velocity  = " + robot.ringShooter.getFlyWheelVelocity( true ) );
             telemetry.addLine( "Right Fly Wheel Velocity = " + robot.ringShooter.getFlyWheelVelocity( false ) );
 
-            vuforiaLocalizer.updateRobotLocation();
+            //vuforiaLocalizer.updateRobotLocation();
             telemetry.update();
             gamepad1.update();
             gamepad2.update();
 
             if(isStopRequested())
-                if(vuforia.isRunning())
-                    vuforia.close();
+                if(Vuforia.getInstance().isRunning())
+                    Vuforia.getInstance().close();
         }
     }
 

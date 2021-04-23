@@ -58,6 +58,14 @@ public class SoundLibrary {
         // other audios
         audioList.add( new Audio("ps_startup", 0.5f,  hardwareMap) );
         audioList.add( new Audio("slurp_yummy", 1, hardwareMap) );
+        audioList.add( new Audio("fine_addition", 1, hardwareMap) );
+        audioList.add( new Audio("general_kenobi", hardwareMap) );
+        audioList.add( new Audio("have_hulk", hardwareMap) );
+        audioList.add( new Audio("hello_there", hardwareMap) );
+        audioList.add( new Audio("my_precious", hardwareMap) );
+        audioList.add( new Audio("punch", hardwareMap) );
+        audioList.add( new Audio("seismic_charge", hardwareMap) );
+        audioList.add( new Audio("smash", hardwareMap) );
         //audioList.add( new Audio("", hardwareMap) );
 
         //audioList.add( new Audio("gold", hardwareMap) );

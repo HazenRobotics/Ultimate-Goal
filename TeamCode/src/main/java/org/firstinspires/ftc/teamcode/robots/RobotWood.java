@@ -279,7 +279,7 @@ public class RobotWood extends Robot {
         //wait for certain amount of time while motors are running
         //robotMecanum.wait(time);
         long setTime = System.currentTimeMillis();
-        previousTime = opMode.getRuntime();
+        //previousTime = opMode.getRuntime();
 
         while(System.currentTimeMillis() - setTime < (time) && opModeIsActive())
         {

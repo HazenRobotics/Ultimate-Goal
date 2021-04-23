@@ -81,8 +81,6 @@ public class TeleOpTechnicolorDrive extends LinearOpMode {
         telemetry.addLine("Initialization Complete");
         telemetry.update();
 
-        robot.initTeleOp();
-
         waitForStart();
 
         while (opModeIsActive() && !isStopRequested()) {
