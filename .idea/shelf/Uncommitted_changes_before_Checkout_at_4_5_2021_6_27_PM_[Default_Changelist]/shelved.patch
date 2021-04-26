@@ -1,0 +1,651 @@
+Index: TeamCode/src/main/java/org/firstinspires/ftc/teamcode/autonomous/TwoWobbleGoals.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package org.firstinspires.ftc.teamcode.autonomous;\r\n\r\nimport com.acmerobotics.roadrunner.geometry.Pose2d;\r\nimport com.acmerobotics.roadrunner.geometry.Vector2d;\r\nimport com.acmerobotics.roadrunner.trajectory.Trajectory;\r\nimport com.qualcomm.robotcore.eventloop.opmode.Autonomous;\r\nimport com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;\r\n\r\nimport org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;\r\nimport org.firstinspires.ftc.teamcode.mechanisms.GoalLift;\r\nimport org.firstinspires.ftc.teamcode.robots.Robot;\r\nimport org.firstinspires.ftc.teamcode.robots.RobotTechnicolorRR;\r\nimport org.firstinspires.ftc.teamcode.utils.FieldMap;\r\nimport org.firstinspires.ftc.teamcode.utils.SoundLibrary;\r\nimport org.firstinspires.ftc.teamcode.utils.TensorFlowUtil;\r\nimport org.firstinspires.ftc.teamcode.utils.Vuforia;\r\n\r\n@Autonomous(name=\"Two Wobble Goals\", group=\"Competition\" )\r\npublic class TwoWobbleGoals extends LinearOpMode {\r\n\r\n    private RobotTechnicolorRR robot;\r\n    private TensorFlowUtil.Stack stack;\r\n\r\n    private final boolean pickUpRing = true;\r\n    private final boolean expiramental = true;\r\n\r\n    @Override\r\n    public void runOpMode() throws InterruptedException {\r\n\r\n        //Robot.createDefaultMatchLogFileName( this.getClass().getName() );\r\n        // otherwise do Robot.createDefaultMatchLogFileName( \"TwoWobbleGoals\" );\r\n\r\n        robot = new RobotTechnicolorRR(hardwareMap, this);\r\n\r\n        SoundLibrary.playStartup();\r\n\r\n        robot.setPosition(new Pose2d(-62, -48));\r\n        robot.goalLift.setClawPosition(GoalLift.ClawPosition.CLOSED);\r\n        robot.tfod.initTensorFlow();\r\n \r\n        telemetry.addLine(\"Initialization Complete\");\r\n        telemetry.update();\r\n\r\n        while(!isStarted()) {\r\n            if(isStopRequested()) {\r\n                robot.tfod.deactivateTensorFlow();\r\n                if(Vuforia.getInstance().isRunning())\r\n                    Vuforia.getInstance().close();\r\n            }\r\n        }\r\n\r\n        waitForStart();\r\n\r\n        //Detect stack\r\n        robot.drive(robot.trajectoryBuilder().lineToConstantHeading(new Vector2d(-52, -40)).build());\r\n        robot.tfod.runStackDetection(115);\r\n        stack = robot.tfod.getStack();\r\n\r\n        //shoot\r\n        robot.driveAsync(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(-13, -9, 0), 0).build());\r\n        robot.ringShooter.setFlyWheelMotorVelocity(9.25, AngleUnit.RADIANS);\r\n        telemetry.addData(\"Fly Wheel Speed\", robot.ringShooter.rightFlyWheelMotor.getVelocity(AngleUnit.RADIANS));\r\n        telemetry.update();\r\n        robot.drive.waitForIdle();\r\n        robot.shootAtTarget(FieldMap.ScoringGoals.RED_LEFT_POWERSHOT, false, false);\r\n        telemetry.addData(\"Fly Wheel Speed\", robot.ringShooter.rightFlyWheelMotor.getVelocity(AngleUnit.RADIANS));\r\n        telemetry.update();\r\n        robot.drive(robot.trajectoryBuilder().lineToLinearHeading(new Pose2d(-13, -16, 0)).build());\r\n        robot.shootAtTarget(FieldMap.ScoringGoals.RED_MIDDLE_POWERSHOT, false, false);\r\n        telemetry.addData(\"Fly Wheel Speed\", robot.ringShooter.rightFlyWheelMotor.getVelocity(AngleUnit.RADIANS));\r\n        telemetry.update();\r\n        robot.drive(robot.trajectoryBuilder().lineToLinearHeading(new Pose2d(-13, -23.5, 0)).build());\r\n        robot.shootAtTarget(FieldMap.ScoringGoals.RED_RIGHT_POWERSHOT, true, false);\r\n        telemetry.addData(\"Fly Wheel Speed\", robot.ringShooter.rightFlyWheelMotor.getVelocity(AngleUnit.RADIANS));\r\n        telemetry.update();\r\n\r\n        //if there is one ring in the stack, pick up the ring and shoot\r\n        if((stack == TensorFlowUtil.Stack.SINGLE || stack == TensorFlowUtil.Stack.QUAD) && pickUpRing && !expiramental) {\r\n            robot.ringShooter.setIntakeMotorPower(0.8);\r\n            robot.driveAsync(robot.trajectoryBuilder().lineToConstantHeading(new Vector2d(-10, -36)).build());\r\n            robot.ringShooter.setFlyWheelMotorVelocity(10, AngleUnit.RADIANS);\r\n            robot.drive.waitForIdle();\r\n            robot.drive(robot.trajectoryBuilder().lineToConstantHeading(new Vector2d(-24, -36)).build());\r\n            sleep(500);\r\n            robot.ringShooter.setIntakeMotorPower(0);\r\n            if(stack == TensorFlowUtil.Stack.QUAD) {\r\n                robot.ringShooter.launchRingAngularVelocity(10, false, false);\r\n                robot.ringShooter.launchRingAngularVelocity(10, false, false);\r\n            }\r\n            robot.ringShooter.launchRingAngularVelocity(10, true, false);\r\n        }\r\n        else if((stack == TensorFlowUtil.Stack.SINGLE || stack == TensorFlowUtil.Stack.QUAD) && pickUpRing && expiramental) {\r\n            robot.ringShooter.setIntakeMotorPower(0.8);\r\n            robot.driveAsync(robot.trajectoryBuilder().lineToConstantHeading(new Vector2d(-10, -36)).build());\r\n            robot.ringShooter.setFlyWheelMotorVelocity(10, AngleUnit.RADIANS);\r\n            robot.drive.waitForIdle();\r\n            robot.driveAsync(robot.trajectoryBuilder().lineToConstantHeading(new Vector2d(-30, -36)).build());\r\n            long currentTime = System.currentTimeMillis();\r\n            while (System.currentTimeMillis() < currentTime + 200);\r\n            if(stack == TensorFlowUtil.Stack.QUAD) {\r\n                robot.ringShooter.launchRingAngularVelocity(10, false, false);\r\n                robot.ringShooter.launchRingAngularVelocity(10.1, false, false);\r\n                robot.ringShooter.launchRingAngularVelocity(10.2, false, false);\r\n            }\r\n            robot.ringShooter.launchRingAngularVelocity(10.2, true, false);\r\n            robot.drive.waitForIdle();\r\n            robot.ringShooter.setIntakeMotorPower(0);\r\n        }\r\n\r\n        //Move wobble goal to correct zone\r\n        if(stack == TensorFlowUtil.Stack.NONE) {\r\n            robot.drive(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(-15, -60, Math.toRadians(182)), 0).build());\r\n        } else if(stack == TensorFlowUtil.Stack.SINGLE) {\r\n            robot.drive(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(12, -36, Math.toRadians(182)), 0).build());\r\n        } else {\r\n            robot.drive(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(33, -58, Math.toRadians(182)), 0).build());\r\n            //robot.setPosition(new Pose2d(33, -56));\r\n            // off - puts wobble goal in center of square (4 rngs)\r\n        }\r\n\r\n\r\n\r\n        //Drop wobble goal TODO: create method in robot class for this\r\n        robot.goalLift.setGoalLiftPosition(GoalLift.LiftPosition.LOWERED, 0.6, 700);\r\n        robot.goalLift.setClawPosition(GoalLift.ClawPosition.OPEN);\r\n        sleep(500);\r\n\r\n\r\n        //Pick up 2nd wobble goal\r\n        robot.driveAsync(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(-16, -30, 0), 90).build());\r\n        robot.goalLift.setGoalLiftPositionAsync(GoalLift.LiftPosition.LIFTED, 0.6, 700);\r\n        robot.drive.waitForIdle();\r\n        robot.goalLift.setGoalLiftPositionAsync(GoalLift.LiftPosition.LOWERED, 0.6, 500);\r\n        if(stack == TensorFlowUtil.Stack.QUAD) {\r\n            robot.drive(robot.trajectoryBuilder().lineToLinearHeading(new Pose2d(-30, -30, Math.toRadians(10))).build());\r\n        }\r\n        else {\r\n            robot.drive(robot.trajectoryBuilder().lineToLinearHeading(new Pose2d(-30, -30, Math.toRadians(6))).build());\r\n        }\r\n        sleep(300);\r\n\r\n        robot.goalLift.setClawPosition(GoalLift.ClawPosition.CLOSED);\r\n        sleep(1000);\r\n        robot.goalLift.setGoalLiftPositionAsync(GoalLift.LiftPosition.LIFTED, 1.0, 800);\r\n\r\n        //Move wobble goal to correct zone (slightly to the left or back if single)\r\n        if(stack == TensorFlowUtil.Stack.NONE) {\r\n            robot.drive(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(-15, -53, Math.toRadians(180)), 0).build());\r\n        } else if(stack == TensorFlowUtil.Stack.SINGLE) {\r\n            robot.drive(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(0, -36, Math.toRadians(177)), 0).build());\r\n        } else {\r\n            robot.drive(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(33, -53, Math.toRadians(175)), 0).build());\r\n        }\r\n\r\n        robot.goalLift.setGoalLiftPosition(GoalLift.LiftPosition.LOWERED, 0.6, 700);\r\n        robot.goalLift.setClawPosition(GoalLift.ClawPosition.OPEN);\r\n        sleep(500);\r\n\r\n        //park\r\n        if(stack == TensorFlowUtil.Stack.NONE) {\r\n            robot.driveAsync(robot.trajectoryBuilder().strafeRight(8).splineToConstantHeading( new Vector2d(10, -36), 0).build());\r\n        }\r\n        else {\r\n            robot.driveAsync(robot.trajectoryBuilder().lineTo(new Vector2d(8, -36)).build());\r\n\r\n        }\r\n\r\n        robot.goalLift.setGoalLiftPositionAsync(GoalLift.LiftPosition.LIFTED, 0.6, 800);\r\n        robot.drive.waitForIdle();\r\n\r\n\r\n        //Return to center line\r\n\r\n        while (opModeIsActive() && !isStopRequested()) {\r\n            idle();\r\n        }\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- TeamCode/src/main/java/org/firstinspires/ftc/teamcode/autonomous/TwoWobbleGoals.java	(revision 6510be4e44dff80c9ece855c3feb64892795d29a)
++++ TeamCode/src/main/java/org/firstinspires/ftc/teamcode/autonomous/TwoWobbleGoals.java	(date 1617672247387)
+@@ -22,22 +22,23 @@
+     private TensorFlowUtil.Stack stack;
+ 
+     private final boolean pickUpRing = true;
+-    private final boolean expiramental = true;
++    private final boolean expiramental = false;
+ 
+     @Override
+     public void runOpMode() throws InterruptedException {
+ 
+-        //Robot.createDefaultMatchLogFileName( this.getClass().getName() );
+-        // otherwise do Robot.createDefaultMatchLogFileName( "TwoWobbleGoals" );
++        //Robot.createDefaultMatchLogFileName( this.getClass().getSimpleName() );
+ 
+         robot = new RobotTechnicolorRR(hardwareMap, this);
+ 
+-        SoundLibrary.playStartup();
++        //SoundLibrary.playStartup();
+ 
+         robot.setPosition(new Pose2d(-62, -48));
+         robot.goalLift.setClawPosition(GoalLift.ClawPosition.CLOSED);
+         robot.tfod.initTensorFlow();
+- 
++
++        Robot.writeToDefaultFile( "Initialization Complete", false, true );
++
+         telemetry.addLine("Initialization Complete");
+         telemetry.update();
+ 
+@@ -53,7 +54,7 @@
+ 
+         //Detect stack
+         robot.drive(robot.trajectoryBuilder().lineToConstantHeading(new Vector2d(-52, -40)).build());
+-        robot.tfod.runStackDetection(115);
++        robot.tfod.runStackDetection(20000);
+         stack = robot.tfod.getStack();
+ 
+         //shoot
+@@ -69,13 +70,13 @@
+         robot.shootAtTarget(FieldMap.ScoringGoals.RED_MIDDLE_POWERSHOT, false, false);
+         telemetry.addData("Fly Wheel Speed", robot.ringShooter.rightFlyWheelMotor.getVelocity(AngleUnit.RADIANS));
+         telemetry.update();
+-        robot.drive(robot.trajectoryBuilder().lineToLinearHeading(new Pose2d(-13, -23.5, 0)).build());
++        robot.drive(robot.trajectoryBuilder().lineToLinearHeading(new Pose2d(-13, -23, 0)).build());
+         robot.shootAtTarget(FieldMap.ScoringGoals.RED_RIGHT_POWERSHOT, true, false);
+         telemetry.addData("Fly Wheel Speed", robot.ringShooter.rightFlyWheelMotor.getVelocity(AngleUnit.RADIANS));
+         telemetry.update();
+ 
+         //if there is one ring in the stack, pick up the ring and shoot
+-        if((stack == TensorFlowUtil.Stack.SINGLE || stack == TensorFlowUtil.Stack.QUAD) && pickUpRing && !expiramental) {
++        if((stack == TensorFlowUtil.Stack.SINGLE) && pickUpRing && !expiramental) {
+             robot.ringShooter.setIntakeMotorPower(0.8);
+             robot.driveAsync(robot.trajectoryBuilder().lineToConstantHeading(new Vector2d(-10, -36)).build());
+             robot.ringShooter.setFlyWheelMotorVelocity(10, AngleUnit.RADIANS);
+@@ -89,7 +90,7 @@
+             }
+             robot.ringShooter.launchRingAngularVelocity(10, true, false);
+         }
+-        else if((stack == TensorFlowUtil.Stack.SINGLE || stack == TensorFlowUtil.Stack.QUAD) && pickUpRing && expiramental) {
++        else if((stack == TensorFlowUtil.Stack.SINGLE) && pickUpRing && expiramental) {
+             robot.ringShooter.setIntakeMotorPower(0.8);
+             robot.driveAsync(robot.trajectoryBuilder().lineToConstantHeading(new Vector2d(-10, -36)).build());
+             robot.ringShooter.setFlyWheelMotorVelocity(10, AngleUnit.RADIANS);
+@@ -147,7 +148,7 @@
+         if(stack == TensorFlowUtil.Stack.NONE) {
+             robot.drive(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(-15, -53, Math.toRadians(180)), 0).build());
+         } else if(stack == TensorFlowUtil.Stack.SINGLE) {
+-            robot.drive(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(0, -36, Math.toRadians(177)), 0).build());
++            robot.drive(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(-1, -38, Math.toRadians(177)), 0).build());
+         } else {
+             robot.drive(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(33, -53, Math.toRadians(175)), 0).build());
+         }
+Index: TeamCode/src/main/java/org/firstinspires/ftc/teamcode/teleop/TeleOpTechnicolor.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package org.firstinspires.ftc.teamcode.teleop;\r\n\r\nimport com.acmerobotics.roadrunner.geometry.Pose2d;\r\nimport com.acmerobotics.roadrunner.geometry.Vector2d;\r\nimport com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;\r\nimport com.qualcomm.robotcore.eventloop.opmode.OpMode;\r\nimport com.qualcomm.robotcore.eventloop.opmode.TeleOp;\r\nimport com.qualcomm.robotcore.hardware.DcMotorEx;\r\n\r\nimport org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;\r\nimport org.firstinspires.ftc.teamcode.mechanisms.GoalLift;\r\nimport org.firstinspires.ftc.teamcode.road_runner.util.Encoder;\r\nimport org.firstinspires.ftc.teamcode.robots.Robot;\r\nimport org.firstinspires.ftc.teamcode.robots.RobotTechnicolorRR;\r\nimport org.firstinspires.ftc.teamcode.utils.FieldMap;\r\nimport org.firstinspires.ftc.teamcode.utils.GamepadEvents;\r\nimport org.firstinspires.ftc.teamcode.utils.SoundLibrary;\r\nimport org.firstinspires.ftc.teamcode.utils.Vuforia;\r\nimport org.firstinspires.ftc.teamcode.utils.VuforiaLocalization;\r\n\r\nimport java.util.List;\r\n\r\n@TeleOp (name = \"Technicolor\", group = \"Competition\")\r\npublic class TeleOpTechnicolor extends LinearOpMode {\r\n\r\n    RobotTechnicolorRR robot;\r\n\r\n    final double LIFT_POWER = 0.5;\r\n    final double SHOOTER_POWER = 0.85;\r\n    final double INTAKE_POWER = 1.0;\r\n\r\n    final double MAX_DRIVE_SPEED = 0.8;\r\n    final double MIN_DRIVE_SPEED = 0.4;\r\n\r\n    final double MAX_TURN_SPEED = 0.35;\r\n    final double MIN_TURN_SPEED = 0.2;\r\n\r\n    final long LIFT_TIME_LIMIT = 500;\r\n    final long LOWER_TIME_LIMIT = 500;\r\n\r\n    private double driveMult = MIN_DRIVE_SPEED;\r\n    private double turnMult = MIN_TURN_SPEED;\r\n\r\n    double velocity = 9.25 ;\r\n    double velocityChange = 0.25;\r\n    double velocitySmallChange = 0.1;\r\n\r\n    double maxVelocity = 10.5;\r\n    double minVelocity = 9.25;\r\n\r\n    private GamepadEvents gamepad1;\r\n    private GamepadEvents gamepad2;\r\n    private Vuforia vuforia = Vuforia.getInstance();\r\n    private VuforiaLocalization vuforiaLocalizer;\r\n\r\n    private final String VUFORIA_TRACKABLES_ASSET_NAME = \"UltimateGoal\";\r\n\r\n    private Thread shootPowershotThread;\r\n\r\n    @Override\r\n    public void runOpMode() throws InterruptedException {\r\n\r\n        telemetry.addLine( \"getCanonicalName :: \" + this.getClass().getCanonicalName() );\r\n        telemetry.addLine( \"getName :: \" + this.getClass().getName() );\r\n        telemetry.addLine( \"getSimpleName :: \" + this.getClass().getSimpleName() );\r\n        telemetry.addLine( \"getName :: \" + this.getClass().getName() );\r\n        telemetry.update();\r\n\r\n        waitForStart();\r\n\r\n        //Robot.createDefaultMatchLogFileName( this.getClass().getName() );\r\n        // otherwise do Robot.createDefaultMatchLogFileName( \"TeleOpTechnicolor\" );\r\n\r\n        robot = new RobotTechnicolorRR(hardwareMap, this);\r\n\r\n        SoundLibrary.playStartup();\r\n\r\n        gamepad1 = new GamepadEvents(super.gamepad1);\r\n        gamepad2 = new GamepadEvents(super.gamepad2);\r\n        if(!Vuforia.getInstance().isRunning()) {\r\n            Vuforia.getInstance().start();\r\n        }\r\n        vuforiaLocalizer = new VuforiaLocalization(VUFORIA_TRACKABLES_ASSET_NAME);\r\n        vuforiaLocalizer.activateTracking();\r\n\r\n        shootPowershotThread = new Thread(() -> {\r\n            robot.setPosition(new Pose2d(0, 14, 0)); // 61, 14 if the robot is 18\" wide: 70.125-robotwidth/2, 23.125-robotwidth/2\r\n            robot.driveAsync(robot.trajectoryBuilder().lineToLinearHeading(new Pose2d(-13, -5, 0)).build());\r\n            robot.ringShooter.setFlyWheelMotorVelocity(9.25, AngleUnit.RADIANS);\r\n            robot.drive.waitForIdle();\r\n            robot.shootAtTarget(FieldMap.ScoringGoals.RED_LEFT_POWERSHOT, false, false);\r\n            robot.drive(robot.trajectoryBuilder().lineTo(new Vector2d(-13, -12.5)).build());\r\n            robot.shootAtTarget(FieldMap.ScoringGoals.RED_MIDDLE_POWERSHOT, false, false);\r\n            robot.drive(robot.trajectoryBuilder().lineTo(new Vector2d(-13, -19)).build());\r\n            robot.shootAtTarget(FieldMap.ScoringGoals.RED_RIGHT_POWERSHOT, true, false);\r\n        });\r\n\r\n        //Robot.writeToMatchDefaultFile( \"Initialization Complete\", true, true );\r\n\r\n        telemetry.addLine(\"Initialization Complete\");\r\n        telemetry.update();\r\n\r\n        //waitForStart();\r\n\r\n        while (opModeIsActive() && !isStopRequested()) {\r\n\r\n            //Sprint control\r\n            driveMult = gamepad1.left_stick_button.getValue() ? MAX_DRIVE_SPEED : MIN_DRIVE_SPEED;\r\n            turnMult = gamepad1.right_stick_button.getValue() ? MAX_TURN_SPEED : MIN_TURN_SPEED;\r\n\r\n            if(!shootPowershotThread.isAlive()) {\r\n                robot.teleopDrive(-gamepad1.left_stick_y*driveMult, gamepad1.left_stick_x*driveMult, -gamepad1.right_stick_x*turnMult);\r\n            }\r\n\r\n            if( gamepad2.y.onPress() )\r\n                velocity = maxVelocity;\r\n            else if( gamepad2.a.onPress() )\r\n                velocity = minVelocity;\r\n\r\n            /*\r\n            //D-pad rotation control\r\n            if(gamepad1.dpad_up.onPress()) {\r\n                robot.drive.turnToAsync(0);\r\n            } else if(gamepad1.dpad_down.onPress()) {\r\n                robot.drive.turnToAsync(Math.toRadians(180));\r\n            } else if(gamepad1.dpad_left.onPress()) {\r\n                robot.drive.turnToAsync(Math.toRadians(270));\r\n            } else if(gamepad1.dpad_right.onPress()) {\r\n                robot.drive.turnToAsync(Math.toRadians(90));\r\n            }\r\n            */\r\n\r\n            // increases and decreases the velocity of the flyWheels\r\n            if( gamepad1.dpad_up.onPress() || gamepad2.dpad_up.onPress() )\r\n                velocity += velocityChange;\r\n            else if( gamepad1.dpad_down.onPress() || gamepad2.dpad_up.onPress() )\r\n                velocity -= velocityChange;\r\n            else if( gamepad1.dpad_right.onPress() || gamepad2.dpad_up.onPress() )\r\n                velocity += velocitySmallChange;\r\n            else if( gamepad1.dpad_left.onPress() || gamepad2.dpad_up.onPress() )\r\n                velocity -= velocitySmallChange;\r\n\r\n            telemetry.addLine( \"velocity: \" + velocity );\r\n\r\n            // claw position\r\n            if(gamepad1.x.onPress())\r\n                robot.goalLift.setClawPosition( GoalLift.ClawPosition.CLOSED );\r\n            if(gamepad1.b.onPress())\r\n                robot.goalLift.setClawPosition( GoalLift.ClawPosition.OPEN );\r\n\r\n            // goal lift\r\n            if( gamepad1.y.onPress() ) {\r\n                //if the goal lift is running but hasn't been lowered all the way yet\r\n                if(robot.goalLift.goalLiftIsRunning() && robot.goalLift.getCurrentLiftPosition() == GoalLift.LiftPosition.LIFTED) {\r\n                    robot.goalLift.stopGoalLift();\r\n                    robot.goalLift.setGoalLiftPositionAsync( GoalLift.LiftPosition.LIFTED, LIFT_POWER + 0.3, LIFT_TIME_LIMIT );\r\n                }\r\n                else if(robot.goalLift.goalLiftIsRunning()) {\r\n                    robot.goalLift.stopGoalLift();\r\n                }\r\n                else {\r\n                    robot.goalLift.setGoalLiftPositionAsync( GoalLift.LiftPosition.LIFTED, LIFT_POWER + 0.3, LIFT_TIME_LIMIT );\r\n                }\r\n            }\r\n            if( gamepad1.a.onPress() ) {\r\n                //if the goal lift is running but hasn't been raised all the way yet\r\n                if(robot.goalLift.goalLiftIsRunning() && robot.goalLift.getCurrentLiftPosition() == GoalLift.LiftPosition.LOWERED) {\r\n                    robot.goalLift.stopGoalLift();\r\n                    robot.goalLift.setGoalLiftPositionAsync(GoalLift.LiftPosition.LOWERED, LIFT_POWER, LOWER_TIME_LIMIT);\r\n                }\r\n                else if(robot.goalLift.goalLiftIsRunning()) {\r\n                    robot.goalLift.stopGoalLift();\r\n                }\r\n                else {\r\n                    robot.goalLift.setGoalLiftPositionAsync(GoalLift.LiftPosition.LOWERED, LIFT_POWER, LOWER_TIME_LIMIT);\r\n                }\r\n            }\r\n\r\n            // ring shooter = gamepad1.right_trigger\r\n            if(!shootPowershotThread.isAlive()) {\r\n                robot.ringShooter.setFlyWheelMotorVelocity( (gamepad1.right_trigger + gamepad2.right_trigger)*velocity, AngleUnit.RADIANS );\r\n            }\r\n            //robot.ringShooter.setFlyWheelMotorPower( gamepad1.right_trigger*SHOOTER_POWER );\r\n\r\n            // ring pusher (servo) = gamepad1.left_bumper\r\n            if( gamepad1.left_bumper.onPress() || gamepad2.left_bumper.onPress() ) {\r\n                robot.ringShooter.pushRingAsync();\r\n            }\r\n\r\n            // intake = gamepad1.left_trigger\r\n            if(gamepad1.right_bumper.onPress() || gamepad2.right_bumper.onPress())\r\n                robot.ringShooter.setIntakeMotorPower( robot.ringShooter.getIntakePower() > 0 ? 0 : INTAKE_POWER);\r\n            else if(gamepad1.left_trigger > 0.2 || gamepad2.left_trigger > 0.2)\r\n                robot.ringShooter.setIntakeMotorPower(-INTAKE_POWER);\r\n            //robot.ringShooter.setIntakeMotorPower( gamepad1.left_trigger*INTAKE_POWER );\r\n\r\n            //addMotorInfoTelemtry();\r\n\r\n            if(gamepad1.back.onPress()) {\r\n                if(shootPowershotThread.isAlive())\r\n                    shootPowershotThread.interrupt();\r\n                else\r\n                    shootPowershotThread.start();\r\n            }\r\n\r\n            // addControlTelemtry();\r\n\r\n            telemetry.addLine( \"TouchPad :: \" + super.gamepad1.touchpad );\r\n            telemetry.addLine( \"ps :: \" + super.gamepad1.ps );\r\n\r\n            vuforiaLocalizer.updateRobotLocation();\r\n            telemetry.update();\r\n            gamepad1.update();\r\n            gamepad2.update();\r\n\r\n            if(isStopRequested()) {\r\n                if(vuforia.isRunning()) {\r\n                    vuforia.close();\r\n                }\r\n            }\r\n        }\r\n    }\r\n\r\n\r\n    public void addControlTelemtry() {\r\n\r\n        telemetry.addLine(\"            Controls:\");\r\n        telemetry.addData(\"Drive \", \"Gp1: left stick y (axis)\")\r\n                .addData(\"Strafe\", \"Gp1: left stick x (axis)\")\r\n                .addData(\"Rotate\", \"Gp1: right stick x (axis)\")\r\n                .addData(\"Open Claw \", \"Gp1: b\")\r\n                .addData(\"Close Claw\", \"Gp1: x\")\r\n                .addData(\"Lift Goal Lift \", \"Gp1: y\")\r\n                .addData(\"Lower Goal Lift\", \"Gp1: a\")\r\n                .addData(\"Flywheels\", \"Gp1: right trigger\")\r\n                .addData(\"Ring Pusher\", \"Gp1/Gp2: left bumper\")\r\n                .addData(\"Intake Toggle\", \"Gp1/Gp2: right bumper\")\r\n                .addData(\"Negate Intake\", \"Gp1/Gp2: left trigger\")\r\n                .addData(\"+/- flywheel velocity by \" + velocityChange, \"Gp1: dpad up/down\")\r\n                .addData(\"+/- flywheel velocity by \" + velocitySmallChange, \"Gp1: dpad right/left\")\r\n                .addData(\" \", \" \");\r\n        addLine();\r\n    }\r\n\r\n    public void addInfoTelemetry() {\r\n\r\n        telemetry.addLine(\"left_stick_y  = \" + gamepad1.left_stick_y );\r\n        telemetry.addLine(\"left_stick_x  = \" + gamepad1.left_stick_x );\r\n        telemetry.addLine(\"right_stick_x = \" + gamepad1.right_stick_x );\r\n        addLine();\r\n\r\n        //telemetry.addLine(\"longitudinal position = \" + robot.tracker.getLongitudinalPosition() + \" (ticks), \" + robot.mecanumDrive.convertTicksDist( robot.tracker.getLongitudinalPosition()) + \" (in)\" );\r\n        //telemetry.addLine(\"lateral position = \" + robot.tracker.getLateralPosition() + \" (ticks), \" + robot.mecanumDrive.convertTicksDist( robot.tracker.getLateralPosition()) + \" (in)\" );\r\n        addLine();\r\n\r\n        telemetry.addLine( \"Claw Position = \" + robot.goalLift.getClawLocation() + \" :: \"  + robot.goalLift.getClawPosition() );\r\n        telemetry.addLine( \"Lift Position = \" + robot.goalLift.getCurrentLiftPosition() + \" :: \" + robot.goalLift.getLiftPower() );\r\n        addLine();\r\n\r\n        telemetry.addLine( \"Shooter Power = \" + robot.ringShooter.getFlyWheelPower() );\r\n        addLine();\r\n\r\n        telemetry.addLine( \"Pusher Position = \" + robot.ringShooter.getPusherLocation() + \" :: \" + robot.ringShooter.getPusherPosition() );\r\n        addLine();\r\n\r\n        telemetry.addLine( \"Intake Power = \" + robot.ringShooter.getIntakePower() );\r\n        addLine();\r\n\r\n        //telemetry.addLine(\"getGyroHeading    = \" + robot.tracker.getGyroHeading() );\r\n        //telemetry.addLine(\"get360GyroHeading = \" + robot.tracker.get360GyroHeading() );\r\n\r\n    }\r\n\r\n    public void addLine() {\r\n        telemetry.addLine();\r\n    }\r\n\r\n    public void addMotorInfoTelemtry() {\r\n\r\n        //(leftFront, leftRear, rightRear, rightFront)\r\n\r\n        List<Double> positions = robot.drive.getWheelPositions();\r\n\r\n        telemetry.addData( \"leftFront\", \"Pos 0: \" + positions.get( 0 ) );\r\n        telemetry.addData( \"leftRear\", \"Pos 1: \" + positions.get( 1 ) );\r\n        telemetry.addData( \"rightRear\", \"Pos 2: \" + positions.get( 2 ) );\r\n        telemetry.addData( \"rightFront\", \"Pos 3: \" + positions.get( 3 ) );\r\n\r\n        List<Double> velocities = robot.drive.getWheelVelocities();\r\n\r\n        addLine();\r\n\r\n        telemetry.addData( \"leftFront\", \"Vel 0: \" + velocities.get( 0 ) );\r\n        telemetry.addData( \"leftRear\", \"Vel 1: \" + velocities.get( 1 ) );\r\n        telemetry.addData( \"rightRear\", \"Vel 2: \" + velocities.get( 2 ) );\r\n        telemetry.addData( \"rightFront\", \"Vel 3: \" + velocities.get( 3 ) );\r\n\r\n        addLine();\r\n\r\n    }\r\n\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- TeamCode/src/main/java/org/firstinspires/ftc/teamcode/teleop/TeleOpTechnicolor.java	(revision 6510be4e44dff80c9ece855c3feb64892795d29a)
++++ TeamCode/src/main/java/org/firstinspires/ftc/teamcode/teleop/TeleOpTechnicolor.java	(date 1617669071014)
+@@ -60,20 +60,11 @@
+     @Override
+     public void runOpMode() throws InterruptedException {
+ 
+-        telemetry.addLine( "getCanonicalName :: " + this.getClass().getCanonicalName() );
+-        telemetry.addLine( "getName :: " + this.getClass().getName() );
+-        telemetry.addLine( "getSimpleName :: " + this.getClass().getSimpleName() );
+-        telemetry.addLine( "getName :: " + this.getClass().getName() );
+-        telemetry.update();
+-
+-        waitForStart();
+-
+-        //Robot.createDefaultMatchLogFileName( this.getClass().getName() );
+-        // otherwise do Robot.createDefaultMatchLogFileName( "TeleOpTechnicolor" );
++        //Robot.createDefaultMatchLogFileName( this.getClass().getSimpleName() );
+ 
+         robot = new RobotTechnicolorRR(hardwareMap, this);
+ 
+-        SoundLibrary.playStartup();
++        //SoundLibrary.playStartup();
+ 
+         gamepad1 = new GamepadEvents(super.gamepad1);
+         gamepad2 = new GamepadEvents(super.gamepad2);
+@@ -100,7 +91,7 @@
+         telemetry.addLine("Initialization Complete");
+         telemetry.update();
+ 
+-        //waitForStart();
++        waitForStart();
+ 
+         while (opModeIsActive() && !isStopRequested()) {
+ 
+Index: TeamCode/src/main/java/org/firstinspires/ftc/teamcode/tests/TensorFlowTest.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package org.firstinspires.ftc.teamcode.tests;\r\n\r\nimport com.qualcomm.robotcore.eventloop.opmode.Disabled;\r\nimport com.qualcomm.robotcore.eventloop.opmode.OpMode;\r\nimport com.qualcomm.robotcore.eventloop.opmode.TeleOp;\r\n\r\nimport org.firstinspires.ftc.robotcore.external.tfod.Recognition;\r\nimport org.firstinspires.ftc.teamcode.R;\r\nimport org.firstinspires.ftc.teamcode.robots.Robot;\r\nimport org.firstinspires.ftc.teamcode.utils.TensorFlow;\r\nimport org.firstinspires.ftc.teamcode.utils.Vuforia;\r\n\r\n@TeleOp(name=\"TensorFlow Test\")\r\n@Disabled\r\npublic class TensorFlowTest extends OpMode {\r\n\r\n    private final String TENSOR_FLOW_MODEL_NAME = \"UltimateGoal\";\r\n\r\n    private static final String LABEL_FIRST_ELEMENT = \"Quad\";\r\n    private static final String LABEL_SECOND_ELEMENT = \"Single\";\r\n\r\n    private Vuforia vuforia = Vuforia.getInstance();\r\n\r\n    TensorFlow tensorFlow;\r\n    @Override\r\n    public void init() {\r\n\r\n        Robot.createDefaultMatchLogFileName( this.getClass().getName() );\r\n\r\n        final String VUFORIA_KEY = hardwareMap.appContext.getResources().getString(R.string.vuforiakey);\r\n        vuforia.setParameters(VUFORIA_KEY, \"webcam\", true, hardwareMap);\r\n        vuforia.start();\r\n\r\n        tensorFlow = new TensorFlow(TENSOR_FLOW_MODEL_NAME, 0.8f, true, hardwareMap, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);\r\n    }\r\n\r\n    @Override\r\n    public void start() {\r\n        tensorFlow.activate();\r\n    }\r\n\r\n\r\n    @Override\r\n    public void loop() {\r\n        if(tensorFlow.getRecognition() != null) {\r\n            Recognition recognition = tensorFlow.getRecognition();\r\n            telemetry.addData(String.format(\"label (%d)\"), recognition.getLabel());\r\n            telemetry.addData(String.format(\"  left,top (%d)\"), \"%.03f , %.03f\",\r\n                    recognition.getLeft(), recognition.getTop());\r\n            telemetry.addData(String.format(\"  right,bottom (%d)\"), \"%.03f , %.03f\",\r\n                    recognition.getRight(), recognition.getBottom());\r\n        }\r\n        else {\r\n            telemetry.addData(\"No Recognitions\", null);\r\n        }\r\n    }\r\n\r\n    @Override\r\n    public void stop() {\r\n        tensorFlow.shutdown();\r\n        if(vuforia.isRunning()) {\r\n            vuforia.close();\r\n        }\r\n    }\r\n\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- TeamCode/src/main/java/org/firstinspires/ftc/teamcode/tests/TensorFlowTest.java	(revision 6510be4e44dff80c9ece855c3feb64892795d29a)
++++ TeamCode/src/main/java/org/firstinspires/ftc/teamcode/tests/TensorFlowTest.java	(date 1617669071054)
+@@ -6,7 +6,6 @@
+ 
+ import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
+ import org.firstinspires.ftc.teamcode.R;
+-import org.firstinspires.ftc.teamcode.robots.Robot;
+ import org.firstinspires.ftc.teamcode.utils.TensorFlow;
+ import org.firstinspires.ftc.teamcode.utils.Vuforia;
+ 
+@@ -25,8 +24,6 @@
+     @Override
+     public void init() {
+ 
+-        Robot.createDefaultMatchLogFileName( this.getClass().getName() );
+-
+         final String VUFORIA_KEY = hardwareMap.appContext.getResources().getString(R.string.vuforiakey);
+         vuforia.setParameters(VUFORIA_KEY, "webcam", true, hardwareMap);
+         vuforia.start();
+Index: TeamCode/src/main/java/org/firstinspires/ftc/teamcode/autonomous/ComplexAuto.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package org.firstinspires.ftc.teamcode.autonomous;\r\n\r\nimport com.acmerobotics.roadrunner.geometry.Pose2d;\r\nimport com.acmerobotics.roadrunner.geometry.Vector2d;\r\nimport com.qualcomm.robotcore.eventloop.opmode.Autonomous;\r\nimport com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;\r\n\r\nimport org.firstinspires.ftc.teamcode.mechanisms.GoalLift;\r\nimport org.firstinspires.ftc.teamcode.robots.Robot;\r\nimport org.firstinspires.ftc.teamcode.robots.RobotTechnicolorRR;\r\nimport org.firstinspires.ftc.teamcode.utils.FieldMap;\r\nimport org.firstinspires.ftc.teamcode.utils.TensorFlowUtil.Stack;\r\n\r\n@Autonomous(name=\"Complex Auto\", group=\"Competition\")\r\npublic class ComplexAuto extends LinearOpMode {\r\n\r\n    private RobotTechnicolorRR robot;\r\n    private Stack stack;\r\n\r\n    @Override\r\n    public void runOpMode() throws InterruptedException {\r\n\r\n        Robot.createDefaultMatchLogFileName( this.getClass().getName() );\r\n\r\n        robot = new RobotTechnicolorRR(hardwareMap, this);\r\n        robot.setPosition(new Pose2d(-61, -48));\r\n        robot.goalLift.setClawPosition(GoalLift.ClawPosition.CLOSED);\r\n        robot.tfod.initTensorFlow();\r\n\r\n        telemetry.addLine(\"Initialization Complete\");\r\n        telemetry.update();\r\n\r\n        waitForStart();\r\n\r\n        //Detect stack\r\n        robot.drive(robot.trajectoryBuilder().lineToConstantHeading(new Vector2d(-52, -40)).build());\r\n        robot.tfod.runStackDetection(115);\r\n        stack = robot.tfod.getStack();\r\n\r\n\r\n        //Shoot powershot targets\r\n        robot.drive(robot.trajectoryBuilder().lineToConstantHeading(new Vector2d(-36, -36)).splineToConstantHeading(new Vector2d(-13, -25.5), 0).build());\r\n        robot.shootAtTarget(FieldMap.ScoringGoals.RED_RIGHT_POWERSHOT, false, true);\r\n        robot.drive(robot.trajectoryBuilder().lineTo(new Vector2d(-13, -20)).build());\r\n        robot.shootAtTarget(FieldMap.ScoringGoals.RED_MIDDLE_POWERSHOT, false, false);\r\n        robot.drive(robot.trajectoryBuilder().lineTo(new Vector2d(-13, -12.5)).build());\r\n        robot.shootAtTarget(FieldMap.ScoringGoals.RED_LEFT_POWERSHOT, true, false);\r\n\r\n        //Move wobble goal to correct zone\r\n        if(stack == Stack.QUAD)\r\n            robot.drive(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(38, -60, Math.toRadians(180)), 0).build()); // quad\r\n        else if(stack == Stack.SINGLE)\r\n            robot.drive(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(14, -36, Math.toRadians(180)), 0).build()); // single\r\n        else\r\n            robot.drive(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(-10, -60, Math.toRadians(180)), 0).build()); // none\r\n\r\n\r\n        //Drop wobble goal TODO: create method in robot class for this\r\n        robot.goalLift.setGoalLiftPosition(GoalLift.LiftPosition.LOWERED, 0.6, 500);\r\n        robot.goalLift.setClawPosition(GoalLift.ClawPosition.OPEN);\r\n        sleep(1000);\r\n        robot.goalLift.setGoalLiftPosition(GoalLift.LiftPosition.LIFTED, 0.6, 800);\r\n\r\n        //Return to center line\r\n        if(stack == Stack.QUAD)\r\n            robot.drive(robot.trajectoryBuilder().lineToLinearHeading(new Pose2d(12, -24, Math.toRadians(0))).build());\r\n        else\r\n            robot.drive(robot.trajectoryBuilder().lineToLinearHeading(new Pose2d(12, -24, Math.toRadians(180))).build());\r\n\r\n        while (opModeIsActive() && !isStopRequested()) {\r\n            idle();\r\n        }\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- TeamCode/src/main/java/org/firstinspires/ftc/teamcode/autonomous/ComplexAuto.java	(revision 6510be4e44dff80c9ece855c3feb64892795d29a)
++++ TeamCode/src/main/java/org/firstinspires/ftc/teamcode/autonomous/ComplexAuto.java	(date 1617669071067)
+@@ -6,7 +6,6 @@
+ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+ 
+ import org.firstinspires.ftc.teamcode.mechanisms.GoalLift;
+-import org.firstinspires.ftc.teamcode.robots.Robot;
+ import org.firstinspires.ftc.teamcode.robots.RobotTechnicolorRR;
+ import org.firstinspires.ftc.teamcode.utils.FieldMap;
+ import org.firstinspires.ftc.teamcode.utils.TensorFlowUtil.Stack;
+@@ -20,8 +19,6 @@
+     @Override
+     public void runOpMode() throws InterruptedException {
+ 
+-        Robot.createDefaultMatchLogFileName( this.getClass().getName() );
+-
+         robot = new RobotTechnicolorRR(hardwareMap, this);
+         robot.setPosition(new Pose2d(-61, -48));
+         robot.goalLift.setClawPosition(GoalLift.ClawPosition.CLOSED);
+Index: TeamCode/src/main/java/org/firstinspires/ftc/teamcode/autonomous/BasicShooterAuto.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package org.firstinspires.ftc.teamcode.autonomous;\r\n\r\nimport com.acmerobotics.roadrunner.geometry.Pose2d;\r\nimport com.acmerobotics.roadrunner.geometry.Vector2d;\r\nimport com.qualcomm.robotcore.eventloop.opmode.Autonomous;\r\nimport com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;\r\n\r\nimport org.firstinspires.ftc.teamcode.robots.Robot;\r\nimport org.firstinspires.ftc.teamcode.robots.RobotTechnicolorRR;\r\nimport org.firstinspires.ftc.teamcode.utils.FieldMap;\r\n\r\n@Autonomous(name=\"Basic Auto\")\r\npublic class BasicShooterAuto extends LinearOpMode {\r\n\r\n    private RobotTechnicolorRR robot;\r\n\r\n    @Override\r\n    public void runOpMode() throws InterruptedException {\r\n\r\n        Robot.createDefaultMatchLogFileName( this.getClass().getName() );\r\n\r\n        robot = new RobotTechnicolorRR(hardwareMap, this);\r\n        robot.setPosition(new Pose2d(-60, -48));\r\n\r\n        waitForStart();\r\n\r\n\r\n\r\n        //Shoot powershot targets\r\n        robot.drive(robot.trajectoryBuilder().splineToConstantHeading(new Vector2d(-10, -22.5), 0).build());\r\n        robot.shootAtTarget(FieldMap.ScoringGoals.RED_RIGHT_POWERSHOT, true, true);\r\n        robot.drive(robot.trajectoryBuilder().lineTo(new Vector2d(-10, -17)).build());\r\n        robot.shootAtTarget(FieldMap.ScoringGoals.RED_MIDDLE_POWERSHOT, true, false);\r\n        robot.drive(robot.trajectoryBuilder().lineTo(new Vector2d(-10, -9.5)).build());\r\n        robot.shootAtTarget(FieldMap.ScoringGoals.RED_LEFT_POWERSHOT, true, false);\r\n\r\n\r\n\r\n        //Return to center line\r\n        robot.drive(robot.trajectoryBuilder().lineTo(new Vector2d(12, -18.5)).build());\r\n\r\n        while (opModeIsActive() && !isStopRequested()) {\r\n            idle();\r\n        }\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- TeamCode/src/main/java/org/firstinspires/ftc/teamcode/autonomous/BasicShooterAuto.java	(revision 6510be4e44dff80c9ece855c3feb64892795d29a)
++++ TeamCode/src/main/java/org/firstinspires/ftc/teamcode/autonomous/BasicShooterAuto.java	(date 1617669071080)
+@@ -5,7 +5,6 @@
+ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+ 
+-import org.firstinspires.ftc.teamcode.robots.Robot;
+ import org.firstinspires.ftc.teamcode.robots.RobotTechnicolorRR;
+ import org.firstinspires.ftc.teamcode.utils.FieldMap;
+ 
+@@ -17,8 +16,6 @@
+     @Override
+     public void runOpMode() throws InterruptedException {
+ 
+-        Robot.createDefaultMatchLogFileName( this.getClass().getName() );
+-
+         robot = new RobotTechnicolorRR(hardwareMap, this);
+         robot.setPosition(new Pose2d(-60, -48));
+ 
+Index: TeamCode/src/main/java/org/firstinspires/ftc/teamcode/robots/RobotTechnicolorRR.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package org.firstinspires.ftc.teamcode.robots;\r\n\r\nimport com.acmerobotics.roadrunner.geometry.Pose2d;\r\nimport com.acmerobotics.roadrunner.trajectory.Trajectory;\r\nimport com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;\r\nimport com.qualcomm.hardware.rev.RevBlinkinLedDriver;\r\nimport com.qualcomm.robotcore.eventloop.opmode.OpMode;\r\nimport com.qualcomm.robotcore.hardware.HardwareMap;\r\nimport com.qualcomm.robotcore.hardware.PIDFCoefficients;\r\nimport com.qualcomm.robotcore.hardware.VoltageSensor;\r\n\r\nimport org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;\r\nimport org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;\r\nimport org.firstinspires.ftc.teamcode.R;\r\nimport org.firstinspires.ftc.teamcode.drives.RRMecanumDriveTechnicolor;\r\nimport org.firstinspires.ftc.teamcode.mechanisms.GoalLift;\r\nimport org.firstinspires.ftc.teamcode.mechanisms.RingShooter;\r\nimport org.firstinspires.ftc.teamcode.utils.FieldMap;\r\nimport org.firstinspires.ftc.teamcode.utils.SoundLibrary;\r\nimport org.firstinspires.ftc.teamcode.utils.TensorFlowUtil;\r\nimport org.firstinspires.ftc.teamcode.utils.Vuforia;\r\nimport org.firstinspires.ftc.teamcode.utils.VuforiaLocalization;\r\nimport org.jetbrains.annotations.NotNull;\r\n\r\npublic class RobotTechnicolorRR {\r\n\r\n    public RRMecanumDriveTechnicolor drive;\r\n\r\n    public GoalLift goalLift;\r\n    public RingShooter ringShooter;\r\n    public TensorFlowUtil tfod;\r\n\r\n    private RevBlinkinLedDriver lights;\r\n    private VoltageSensor batteryVoltageSensor;\r\n\r\n    private final double FLY_WHEEL_RADIUS = 4; //in inches\r\n\r\n    public static double PUSHED_POSTITION = 0.2 ;\r\n    public static double RETRACTED_POSTITION = 0.0;\r\n\r\n    public static double OPEN_POSTITION = 0.0;\r\n    public static double CLOSED_POSTITION = 1.0;\r\n\r\n    public static boolean REVERSE_LIFT_DIRECTION = false ;\r\n    public static boolean REVERSE_SHOOTER_DIRECTION = false;\r\n\r\n    public RobotTechnicolorRR(HardwareMap hw, OpMode op) {\r\n        drive = new RRMecanumDriveTechnicolor(hw);\r\n        goalLift = new GoalLift(hw, OPEN_POSTITION, CLOSED_POSTITION, REVERSE_LIFT_DIRECTION);\r\n        ringShooter = new RingShooter(hw, FLY_WHEEL_RADIUS, PUSHED_POSTITION, RETRACTED_POSTITION, REVERSE_SHOOTER_DIRECTION);\r\n        tfod = new TensorFlowUtil(hw, op);\r\n\r\n        final String VUFORIA_KEY = hw.appContext.getResources().getString(R.string.vuforiakey);\r\n        Vuforia.getInstance().setParameters(VUFORIA_KEY, \"webcam\", true, hw);\r\n\r\n        batteryVoltageSensor = hw.voltageSensor.iterator().next();\r\n        new SoundLibrary(hw);\r\n        //lights = hw.get(RevBlinkinLedDriver.class, \"lights\");\r\n    }\r\n\r\n    /**\r\n     * Shoots a ring at a specified target\r\n     * @param target target at which to shoot a ring at\r\n     */\r\n    public void shootAtTarget(OpenGLMatrix target, boolean setSpeedZero, boolean speedUpTime) {\r\n        ringShooter.setFlyWheelPID(new PIDFCoefficients(5, 0, 2, 12.5 * 12 / batteryVoltageSensor.getVoltage()));\r\n        //rotate towards target\r\n        //drive.turn(ShootingMath.getAngleToTarget(drive.getPoseEstimate(), FieldMap.toInches(FieldMap.toVectorF(target))));\r\n        //assuming we are now lined up for the shot\r\n        //shoot using velocity required to hit the target\r\n        // backup shoot using power ringShooter.launchRingPower(0.85);\r\n        ringShooter.launchRingAngularVelocity( 9.3, setSpeedZero, speedUpTime );\r\n        //ringShooter.launchRingVelocity(ShootingMath.getVelocityToTarget(FieldMap.RobotInfo.getRingLaunchPointPosition().toVector(), target.toVector(), ringShooter.getLaunchAngle()), DistanceUnit.MM);\r\n    }\r\n\r\n    /**\r\n     * Sets the position of the lift\r\n     * @param liftPosition position at which to move the lift to\r\n     * @param liftPower power at which to move the lift\r\n     */\r\n    public void setLiftPosition(GoalLift.LiftPosition liftPosition, double liftPower) {\r\n        goalLift.setGoalLiftPosition(liftPosition, liftPower, 1000);\r\n    }\r\n\r\n    public void setIntakePower(double power) {\r\n        ringShooter.setIntakeMotorPower(power);\r\n    }\r\n\r\n    public void driveTo(@NotNull Pose2d... poses) {\r\n        TrajectoryBuilder trajectoryBuilder = trajectoryBuilder();\r\n        for(Pose2d pose : poses) {\r\n            trajectoryBuilder = trajectoryBuilder.splineToLinearHeading(pose, 0);\r\n        }\r\n        drive(trajectoryBuilder.build());\r\n    }\r\n\r\n    public TrajectoryBuilder trajectoryBuilder() {\r\n        //If the robot's location is known and stored in field map, use that. else, get a pose estimate from the dead wheels only\r\n        return drive.trajectoryBuilder(drive.getPoseEstimate());\r\n    }\r\n\r\n    public void drive(Trajectory trajectory) {\r\n        drive.followTrajectory(trajectory);\r\n    }\r\n\r\n    public void driveAsync(Trajectory trajectory) {\r\n        drive.followTrajectoryAsync(trajectory);\r\n    }\r\n\r\n    public void setPosition(Pose2d currentPosition) {\r\n        drive.setPoseEstimate(currentPosition);\r\n    }\r\n\r\n    public void teleopDrive(double forwardPower, double strafePower, double turnPower) {\r\n        // You might have to play with the + or - depending on how your motors are installed\r\n        double frontLeftPower  = forwardPower + strafePower - turnPower;\r\n        double backLeftPower   = forwardPower - strafePower - turnPower;\r\n        double frontRightPower = forwardPower - strafePower + turnPower;\r\n        double backRightPower  = forwardPower + strafePower + turnPower;\r\n\r\n        drive.setMotorPowers( frontLeftPower, backLeftPower, backRightPower, frontRightPower );\r\n    }\r\n\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- TeamCode/src/main/java/org/firstinspires/ftc/teamcode/robots/RobotTechnicolorRR.java	(revision 6510be4e44dff80c9ece855c3feb64892795d29a)
++++ TeamCode/src/main/java/org/firstinspires/ftc/teamcode/robots/RobotTechnicolorRR.java	(date 1617669070980)
+@@ -54,7 +54,7 @@
+         Vuforia.getInstance().setParameters(VUFORIA_KEY, "webcam", true, hw);
+ 
+         batteryVoltageSensor = hw.voltageSensor.iterator().next();
+-        new SoundLibrary(hw);
++        //new SoundLibrary(hw);
+         //lights = hw.get(RevBlinkinLedDriver.class, "lights");
+     }
+ 
+@@ -69,7 +69,7 @@
+         //assuming we are now lined up for the shot
+         //shoot using velocity required to hit the target
+         // backup shoot using power ringShooter.launchRingPower(0.85);
+-        ringShooter.launchRingAngularVelocity( 9.3, setSpeedZero, speedUpTime );
++        ringShooter.launchRingAngularVelocity( 9.25, setSpeedZero, speedUpTime );
+         //ringShooter.launchRingVelocity(ShootingMath.getVelocityToTarget(FieldMap.RobotInfo.getRingLaunchPointPosition().toVector(), target.toVector(), ringShooter.getLaunchAngle()), DistanceUnit.MM);
+     }
+ 
+Index: TeamCode/src/main/java/org/firstinspires/ftc/teamcode/tests/TestServoPositions.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package org.firstinspires.ftc.teamcode.tests;\r\n\r\nimport com.acmerobotics.roadrunner.geometry.Pose2d;\r\nimport com.qualcomm.robotcore.eventloop.opmode.Disabled;\r\nimport com.qualcomm.robotcore.eventloop.opmode.OpMode;\r\nimport com.qualcomm.robotcore.eventloop.opmode.TeleOp;\r\n\r\nimport org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;\r\nimport org.firstinspires.ftc.teamcode.mechanisms.GoalLift;\r\nimport org.firstinspires.ftc.teamcode.robots.Robot;\r\nimport org.firstinspires.ftc.teamcode.robots.RobotTechnicolorRR;\r\nimport org.firstinspires.ftc.teamcode.utils.GamepadEvents;\r\n\r\n@TeleOp (name = \"TestServoPositions\", group = \"Competition\")\r\n@Disabled\r\npublic class TestServoPositions extends OpMode {\r\n\r\n    RobotTechnicolorRR robot;\r\n\r\n    double position = 0;\r\n    double positionChange = 0.1;\r\n\r\n    GamepadEvents gamepad1;\r\n\r\n    @Override\r\n    public void init() {\r\n\r\n        Robot.createDefaultMatchLogFileName( this.getClass().getName() );\r\n\r\n        robot = new RobotTechnicolorRR(hardwareMap, this);\r\n        gamepad1 = new GamepadEvents(super.gamepad1);\r\n        robot.drive.setPoseEstimate(new Pose2d(0, 0, 0));\r\n    }\r\n\r\n    @Override\r\n    public void loop() {\r\n\r\n        if( gamepad1.dpad_up.onPress() ) {\r\n            position += positionChange;\r\n        } else if( gamepad1.dpad_down.onPress() ) {\r\n            position -= positionChange;\r\n        } else if( gamepad1.dpad_right.onPress() ) {\r\n            positionChange += 0.01;\r\n        } else if( gamepad1.dpad_left.onPress() ) {\r\n            positionChange -= 0.01;\r\n        }\r\n\r\n        telemetry.addLine( \"position: \" + position );\r\n        telemetry.addLine( \"positionChange: \" + positionChange );\r\n\r\n        if( gamepad1.right_bumper.onPress() )\r\n            robot.ringShooter.pusher.setPosition( position );\r\n        if( gamepad1.left_bumper.onPress() )\r\n            robot.goalLift.claw.setPosition( positionChange );\r\n\r\n        robot.drive.update();\r\n        telemetry.update();\r\n        gamepad1.update();\r\n        robot.drive.update();\r\n    }\r\n\r\n\r\n    public void addControlTelemtry() {\r\n\r\n        telemetry.addLine(\"            Controls:\");\r\n        telemetry.addData(\"Drive \", \"Gp1: left stick y (axis)\")\r\n                .addData(\"Strafe\", \"Gp1: left stick x (axis)\")\r\n                .addData(\"Rotate\", \"Gp1: right stick x (axis)\")\r\n                .addData(\"Open Claw \", \"Gp1: x\")\r\n                .addData(\"Close Claw\", \"Gp1: b\")\r\n                .addData(\"Lift Goal Lift \", \"Gp1: y\")\r\n                .addData(\"Lower Goal Lift\", \"Gp1: x\")\r\n                .addData(\"Ring Shooter\", \"Gp1: right trigger\")\r\n                .addData(\"Ring Pusher \", \"Gp1: left bumper\")\r\n                .addData(\"Intake Toggle\", \"Gp1: right trigger\")\r\n                .addData(\"Intake\", \"Gp1: left trigger\");\r\n        addLine();\r\n    }\r\n\r\n    public void addInfoTelemetry() {\r\n\r\n        telemetry.addLine(\"left_stick_y  = \" + gamepad1.left_stick_y );\r\n        telemetry.addLine(\"left_stick_x  = \" + gamepad1.left_stick_x );\r\n        telemetry.addLine(\"right_stick_x = \" + gamepad1.right_stick_x );\r\n        addLine();\r\n\r\n        //telemetry.addLine(\"longitudinal position = \" + robot.tracker.getLongitudinalPosition() + \" (ticks), \" + robot.mecanumDrive.convertTicksDist( robot.tracker.getLongitudinalPosition()) + \" (in)\" );\r\n        //telemetry.addLine(\"lateral position = \" + robot.tracker.getLateralPosition() + \" (ticks), \" + robot.mecanumDrive.convertTicksDist( robot.tracker.getLateralPosition()) + \" (in)\" );\r\n        addLine();\r\n\r\n        telemetry.addLine( \"Claw Position = \" + robot.goalLift.getClawLocation() + \" :: \"  + robot.goalLift.getClawPosition() );\r\n        telemetry.addLine( \"Lift Position = \" + robot.goalLift.getCurrentLiftPosition() + \" :: \" + robot.goalLift.getLiftPower() );\r\n        addLine();\r\n\r\n        telemetry.addLine( \"Shooter Power = \" + robot.ringShooter.getFlyWheelPower() );\r\n        addLine();\r\n\r\n        telemetry.addLine( \"Pusher Position = \" + robot.ringShooter.getPusherLocation() + \" :: \" + robot.ringShooter.getPusherPosition() );\r\n        addLine();\r\n\r\n        telemetry.addLine( \"Intake Power = \" + robot.ringShooter.getIntakePower() );\r\n        addLine();\r\n\r\n        //telemetry.addLine(\"getGyroHeading    = \" + robot.tracker.getGyroHeading() );\r\n        //telemetry.addLine(\"get360GyroHeading = \" + robot.tracker.get360GyroHeading() );\r\n\r\n    }\r\n\r\n    public void addLine() {\r\n        telemetry.addLine();\r\n    }\r\n\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- TeamCode/src/main/java/org/firstinspires/ftc/teamcode/tests/TestServoPositions.java	(revision 6510be4e44dff80c9ece855c3feb64892795d29a)
++++ TeamCode/src/main/java/org/firstinspires/ftc/teamcode/tests/TestServoPositions.java	(date 1617669071093)
+@@ -7,7 +7,6 @@
+ 
+ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+ import org.firstinspires.ftc.teamcode.mechanisms.GoalLift;
+-import org.firstinspires.ftc.teamcode.robots.Robot;
+ import org.firstinspires.ftc.teamcode.robots.RobotTechnicolorRR;
+ import org.firstinspires.ftc.teamcode.utils.GamepadEvents;
+ 
+@@ -25,8 +24,6 @@
+     @Override
+     public void init() {
+ 
+-        Robot.createDefaultMatchLogFileName( this.getClass().getName() );
+-
+         robot = new RobotTechnicolorRR(hardwareMap, this);
+         gamepad1 = new GamepadEvents(super.gamepad1);
+         robot.drive.setPoseEstimate(new Pose2d(0, 0, 0));
+Index: TeamCode/src/main/java/org/firstinspires/ftc/teamcode/tests/TimedGoalLiftTest.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package org.firstinspires.ftc.teamcode.tests;\r\n\r\nimport com.qualcomm.robotcore.eventloop.opmode.OpMode;\r\nimport com.qualcomm.robotcore.eventloop.opmode.TeleOp;\r\nimport com.qualcomm.robotcore.hardware.TouchSensor;\r\n\r\nimport org.firstinspires.ftc.teamcode.mechanisms.GoalLift;\r\nimport org.firstinspires.ftc.teamcode.robots.Robot;\r\nimport org.firstinspires.ftc.teamcode.robots.RobotTechnicolorRR;\r\nimport org.firstinspires.ftc.teamcode.utils.GamepadEvents;\r\n\r\n@TeleOp(name=\"TimedGoalLiftTest\", group=\"Test\")\r\n//@Disabled\r\npublic class TimedGoalLiftTest extends OpMode {\r\n    RobotTechnicolorRR robot;\r\n\r\n    TouchSensor newLiftedButton;\r\n    TouchSensor newLoweredButton;\r\n\r\n    GamepadEvents gamepad1;\r\n\r\n    final double LIFT_POWER = 0.5;\r\n\r\n    long timeToLift = 0;\r\n\r\n    final long LIFT_TIME_LIMIT = 500;\r\n\r\n    @Override\r\n    public void init() {\r\n\r\n        Robot.createDefaultMatchLogFileName( this.getClass().getName() );\r\n\r\n        robot = new RobotTechnicolorRR(hardwareMap, this);\r\n        gamepad1 = new GamepadEvents(super.gamepad1);\r\n\r\n        newLiftedButton = hardwareMap.touchSensor.get(\"liftedButton\");\r\n        newLoweredButton = hardwareMap.touchSensor.get(\"loweredButton\");\r\n    }\r\n\r\n    @Override\r\n    public void loop() {\r\n\r\n        // goal lift\r\n        if( gamepad1.y.onPress() ) {\r\n            timeToLift = System.currentTimeMillis();\r\n            robot.goalLift.setGoalLiftPosition(GoalLift.LiftPosition.LIFTED, LIFT_POWER + 0.3, LIFT_TIME_LIMIT);\r\n            timeToLift = System.currentTimeMillis() - timeToLift;\r\n        }\r\n        if( gamepad1.a.onPress() ) {\r\n            timeToLift = System.currentTimeMillis();\r\n            robot.goalLift.setGoalLiftPosition(GoalLift.LiftPosition.LOWERED, LIFT_POWER, LIFT_TIME_LIMIT);\r\n            timeToLift = System.currentTimeMillis() - timeToLift;\r\n        }\r\n\r\n        telemetry.addLine( \"time: \" + timeToLift );\r\n\r\n        telemetry.addLine( \"liftedButton: \" + robot.goalLift.liftedButtonPressed() );\r\n        telemetry.addLine( \"loweredButton: \" + robot.goalLift.loweredButtonPressed() );\r\n\r\n        telemetry.addLine( \"newLiftedButton: \" + newLiftedButton.isPressed() );\r\n        telemetry.addLine( \"newLoweredButton: \" + newLoweredButton.isPressed() );\r\n\r\n        telemetry.update();\r\n        gamepad1.update();\r\n\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- TeamCode/src/main/java/org/firstinspires/ftc/teamcode/tests/TimedGoalLiftTest.java	(revision 6510be4e44dff80c9ece855c3feb64892795d29a)
++++ TeamCode/src/main/java/org/firstinspires/ftc/teamcode/tests/TimedGoalLiftTest.java	(date 1617669071106)
+@@ -5,7 +5,6 @@
+ import com.qualcomm.robotcore.hardware.TouchSensor;
+ 
+ import org.firstinspires.ftc.teamcode.mechanisms.GoalLift;
+-import org.firstinspires.ftc.teamcode.robots.Robot;
+ import org.firstinspires.ftc.teamcode.robots.RobotTechnicolorRR;
+ import org.firstinspires.ftc.teamcode.utils.GamepadEvents;
+ 
+@@ -28,8 +27,6 @@
+     @Override
+     public void init() {
+ 
+-        Robot.createDefaultMatchLogFileName( this.getClass().getName() );
+-
+         robot = new RobotTechnicolorRR(hardwareMap, this);
+         gamepad1 = new GamepadEvents(super.gamepad1);
+ 
+Index: FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples/ConceptSoundsASJava.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>/* Copyright (c) 2018 FIRST. All rights reserved.\r\n *\r\n * Redistribution and use in source and binary forms, with or without modification,\r\n * are permitted (subject to the limitations in the disclaimer below) provided that\r\n * the following conditions are met:\r\n *\r\n * Redistributions of source code must retain the above copyright notice, this list\r\n * of conditions and the following disclaimer.\r\n *\r\n * Redistributions in binary form must reproduce the above copyright notice, this\r\n * list of conditions and the following disclaimer in the documentation and/or\r\n * other materials provided with the distribution.\r\n *\r\n * Neither the name of FIRST nor the names of its contributors may be used to endorse or\r\n * promote products derived from this software without specific prior written permission.\r\n *\r\n * NO EXPRESS OR IMPLIED LICENSES TO ANY PARTY'S PATENT RIGHTS ARE GRANTED BY THIS\r\n * LICENSE. THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS\r\n * \"AS IS\" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,\r\n * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE\r\n * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE\r\n * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL\r\n * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR\r\n * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER\r\n * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,\r\n * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE\r\n * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.\r\n */\r\n\r\npackage org.firstinspires.ftc.robotcontroller.external.samples;\r\n\r\nimport com.qualcomm.ftccommon.SoundPlayer;\r\nimport com.qualcomm.robotcore.eventloop.opmode.Disabled;\r\nimport com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;\r\nimport com.qualcomm.robotcore.eventloop.opmode.TeleOp;\r\n\r\nimport java.io.File;\r\n\r\n/**\r\n * This file demonstrates how to play simple sounds on both the RC and DS phones.\r\n * It illustrates how to build sounds into your application as a resource.\r\n * This technique is best suited for use with Android Studio since it assumes you will be creating a new application\r\n *\r\n * If you are using OnBotJava, please see the ConceptSoundsOnBotJava sample\r\n *\r\n * Use Android Studios to Copy this Class, and Paste it into your team's code folder with a new name.\r\n * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list\r\n *\r\n * Operation:\r\n *\r\n * Gamepad X & B buttons are used to trigger sounds in this example, but any event can be used.\r\n * Note: Time should be allowed for sounds to complete before playing other sounds.\r\n *\r\n * For sound files to be used as a compiled-in resource, they need to be located in a folder called \"raw\" under your \"res\" (resources) folder.\r\n * You can create your own \"raw\" folder from scratch, or you can copy the one from the FtcRobotController module.\r\n *\r\n *     Android Studio coders will ultimately need a folder in your path as follows:\r\n *       <project root>/TeamCode/src/main/res/raw\r\n *\r\n *     Copy any .wav files you want to play into this folder.\r\n *     Make sure that your files ONLY use lower-case characters, and have no spaces or special characters other than underscore.\r\n *\r\n *     The name you give your .wav files will become the resource ID for these sounds.\r\n *     eg:  gold.wav becomes R.raw.gold\r\n *\r\n *     If you wish to use the sounds provided for this sample, they are located in:\r\n *     <project root>/FtcRobotController/src/main/res/raw\r\n *     You can copy and paste the entire 'raw' folder using Android Studio.\r\n *\r\n */\r\n\r\n@TeleOp(name=\"Concept: Sound Resources\", group=\"Concept\")\r\n//@Disabled\r\npublic class ConceptSoundsASJava extends LinearOpMode {\r\n\r\n    // Declare OpMode members.\r\n    private boolean goldFound;      // Sound file present flags\r\n    private boolean silverFound;\r\n\r\n    private boolean isX = false;    // Gamepad button state variables\r\n    private boolean isB = false;\r\n\r\n    private boolean wasX = false;   // Gamepad button history variables\r\n    private boolean WasB = false;\r\n\r\n    @Override\r\n    public void runOpMode() {\r\n\r\n        // Determine Resource IDs for sounds built into the RC application.\r\n        int silverSoundID = hardwareMap.appContext.getResources().getIdentifier(\"silver\", \"raw\", hardwareMap.appContext.getPackageName());\r\n        int goldSoundID   = hardwareMap.appContext.getResources().getIdentifier(\"pew\",   \"raw\", hardwareMap.appContext.getPackageName());\r\n\r\n        // Determine if sound resources are found.\r\n        // Note: Preloading is NOT required, but it's a good way to verify all your sounds are available before you run.\r\n        if (goldSoundID != 0)\r\n            goldFound   = SoundPlayer.getInstance().preload(hardwareMap.appContext, goldSoundID);\r\n\r\n        if (silverSoundID != 0)\r\n            silverFound = SoundPlayer.getInstance().preload(hardwareMap.appContext, silverSoundID);\r\n\r\n        // Display sound status\r\n        telemetry.addData(\"gold resource\",   goldFound ?   \"Found\" : \"NOT found\\n Add gold.wav to /src/main/res/raw\" );\r\n        telemetry.addData(\"silver resource\", silverFound ? \"Found\" : \"Not found\\n Add silver.wav to /src/main/res/raw\" );\r\n\r\n        // Wait for the game to start (driver presses PLAY)\r\n        telemetry.addData(\">\", \"Press Start to continue\");\r\n        telemetry.update();\r\n        waitForStart();\r\n\r\n        telemetry.addData(\">\", \"Press X, B to play sounds.\");\r\n        telemetry.update();\r\n\r\n        // run until the end of the match (driver presses STOP)\r\n        while (opModeIsActive()) {\r\n\r\n            // say Silver each time gamepad X is pressed (This sound is a resource)\r\n            if (silverFound && (isX = gamepad1.x) && !wasX) {\r\n                SoundPlayer.getInstance().startPlaying(hardwareMap.appContext, silverSoundID);\r\n                telemetry.addData(\"Playing\", \"Resource Silver\");\r\n                telemetry.update();\r\n            }\r\n\r\n            // say Gold each time gamepad B is pressed  (This sound is a resource)\r\n            if (goldFound && (isB = gamepad1.b) && !WasB) {\r\n                SoundPlayer.getInstance().startPlaying(hardwareMap.appContext, goldSoundID);\r\n                telemetry.addData(\"Playing\", \"Resource Gold\");\r\n                telemetry.update();\r\n            }\r\n\r\n            // Save last button states\r\n            wasX = isX;\r\n            WasB = isB;\r\n        }\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples/ConceptSoundsASJava.java	(revision 6510be4e44dff80c9ece855c3feb64892795d29a)
++++ FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples/ConceptSoundsASJava.java	(date 1617669071118)
+@@ -70,7 +70,7 @@
+  */
+ 
+ @TeleOp(name="Concept: Sound Resources", group="Concept")
+-//@Disabled
++@Disabled
+ public class ConceptSoundsASJava extends LinearOpMode {
+ 
+     // Declare OpMode members.
+Index: TeamCode/src/main/java/org/firstinspires/ftc/teamcode/drives/RRDriveConstantsWood.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package org.firstinspires.ftc.teamcode.drives;\r\n\r\nimport com.acmerobotics.dashboard.config.Config;\r\nimport com.qualcomm.robotcore.hardware.PIDFCoefficients;\r\n\r\n/*\r\n * Constants shared between multiple drive types.\r\n *\r\n * TODO: Tune or adjust the following constants to fit your robot. Note that the non-final\r\n * fields may also be edited through the dashboard (connect to the robot's WiFi network and\r\n * navigate to https://192.168.49.1:8080/dash). Make sure to save the values here after you\r\n * adjust them in the dashboard; **config variable changes don't persist between app restarts**.\r\n *\r\n * These are not the only parameters; some are located in the localizer classes, drive base classes,\r\n * and op modes themselves.\r\n */\r\n@Config\r\npublic class RRDriveConstantsWood {\r\n\r\n    /*\r\n     * These are motor constants that should be listed online for your motors.\r\n     */\r\n    public static final double TICKS_PER_REV = 1440;\r\n    public static final double MAX_RPM = 100;\r\n\r\n    /*\r\n     * Set RUN_USING_ENCODER to true to enable built-in hub velocity control using drive encoders.\r\n     * Set this flag to false if drive encoders are not present and an alternative localization\r\n     * method is in use (e.g., tracking wheels).\r\n     *\r\n     * If using the built-in motor velocity PID, update\r\n     * MOTOR_VELO_PID with the tuned coefficients from DriveVelocityPIDTuner.\r\n     * Set the value of MOTOR_VELO_PID to `new PIDCoefficients(kP, kI, kD);`\r\n     */\r\n    public static final boolean RUN_USING_ENCODER = true;\r\n    public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(0, 0, 0, 0);\r\n\r\n    /*\r\n     * These are physical constants that can be determined from your robot (including the track\r\n     * width; it will be tune empirically later although a rough estimate is important). Users are\r\n     * free to chose whichever linear distance unit they would like so long as it is consistently\r\n     * used. The default values were selected with inches in mind. Road runner uses radians for\r\n     * angular distances although most angular parameters are wrapped in Math.toRadians() for\r\n     * convenience. Make sure to exclude any gear ratio included in MOTOR_CONFIG from GEAR_RATIO.\r\n     */\r\n    public static double WHEEL_RADIUS = 1.9291; // in\r\n    public static double GEAR_RATIO = 1/3; // output (wheel) speed / input (motor) speed\r\n    public static double TRACK_WIDTH = 15.3; // in\r\n\r\n    /*\r\n     * These are the feedforward parameters used to model the drive motor behavior. If you are using\r\n     * the built-in velocity PID, *these values are fine as is*. However, if you do not have drive\r\n     * motor encoders or have elected not to use them for velocity control, these values should be\r\n     * empirically tuned.\r\n     */\r\n    public static double kV = 1.0 / rpmToVelocity(MAX_RPM);\r\n    public static double kA = 0;\r\n    public static double kStatic = 0;\r\n\r\n    /*\r\n     * These values are used to generate the trajectories for you robot. To ensure proper operation,\r\n     * the constraints should never exceed ~80% of the robot's actual capabilities. While Road\r\n     * Runner is designed to enable faster autonomous motion, it is a good idea for testing to start\r\n     * small and gradually increase them later after everything is working. All distance units are\r\n     * inches.\r\n     */\r\n    public static double MAX_VEL = 30;\r\n    public static double MAX_ACCEL = 20;\r\n    public static double MAX_ANG_VEL = Math.toRadians(60);\r\n    public static double MAX_ANG_ACCEL = Math.toRadians(40);\r\n\r\n\r\n    public static double encoderTicksToInches(double ticks) {\r\n        return WHEEL_RADIUS * 2 * Math.PI * GEAR_RATIO * ticks / TICKS_PER_REV;\r\n    }\r\n\r\n    public static double rpmToVelocity(double rpm) {\r\n        return rpm * GEAR_RATIO * 2 * Math.PI * WHEEL_RADIUS / 60.0;\r\n    }\r\n\r\n    public static double getMotorVelocityF(double ticksPerSecond) {\r\n        // see https://docs.google.com/document/d/1tyWrXDfMidwYyP_5H4mZyVgaEswhOC35gvdmP-V-5hA/edit#heading=h.61g9ixenznbx\r\n        return 32767 / ticksPerSecond;\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- TeamCode/src/main/java/org/firstinspires/ftc/teamcode/drives/RRDriveConstantsWood.java	(revision 6510be4e44dff80c9ece855c3feb64892795d29a)
++++ TeamCode/src/main/java/org/firstinspires/ftc/teamcode/drives/RRDriveConstantsWood.java	(date 1617669071132)
+@@ -44,7 +44,7 @@
+      * convenience. Make sure to exclude any gear ratio included in MOTOR_CONFIG from GEAR_RATIO.
+      */
+     public static double WHEEL_RADIUS = 1.9291; // in
+-    public static double GEAR_RATIO = 1/3; // output (wheel) speed / input (motor) speed
++    public static double GEAR_RATIO = 1/3f; // output (wheel) speed / input (motor) speed
+     public static double TRACK_WIDTH = 15.3; // in
+ 
+     /*
+Index: TeamCode/src/main/java/org/firstinspires/ftc/teamcode/tests/EncoderTest.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package org.firstinspires.ftc.teamcode.tests;\r\n\r\nimport com.acmerobotics.roadrunner.geometry.Pose2d;\r\nimport com.qualcomm.hardware.bosch.BNO055IMU;\r\nimport com.qualcomm.robotcore.eventloop.opmode.OpMode;\r\nimport com.qualcomm.robotcore.eventloop.opmode.TeleOp;\r\nimport com.qualcomm.robotcore.hardware.DcMotorEx;\r\n\r\nimport org.firstinspires.ftc.teamcode.road_runner.util.Encoder;\r\nimport org.firstinspires.ftc.teamcode.robots.Robot;\r\nimport org.firstinspires.ftc.teamcode.robots.RobotTechnicolorRR;\r\nimport org.firstinspires.ftc.teamcode.utils.AveragedGyro;\r\n\r\n@TeleOp(name=\"Localization Encoder Test\", group=\"Test\")\r\npublic class EncoderTest extends OpMode {\r\n    RobotTechnicolorRR robot;\r\n    Encoder parallelEncoder;\r\n    Encoder perpendicularEncoder;\r\n    AveragedGyro imu;\r\n    @Override\r\n    public void init() {\r\n\r\n        //Robot.createDefaultMatchLogFileName( this.getClass().getName() );\r\n\r\n        robot = new RobotTechnicolorRR(hardwareMap, this);\r\n        parallelEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, \"intake\"));\r\n        perpendicularEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, \"goalLift\"));\r\n        BNO055IMU.Parameters params = new BNO055IMU.Parameters();\r\n        params.angleUnit = BNO055IMU.AngleUnit.RADIANS;\r\n        imu = new AveragedGyro(hardwareMap, \"imu\", \"imu2\", params);\r\n    }\r\n\r\n    @Override\r\n    public void loop() {\r\n        robot.drive.setWeightedDrivePower(\r\n                new Pose2d(\r\n                        -gamepad1.left_stick_y,\r\n                        -gamepad1.left_stick_x,\r\n                        -gamepad1.right_stick_x\r\n                )\r\n        );\r\n\r\n        telemetry.addData(\"Parallel Encoder\", parallelEncoder.getCurrentPosition());\r\n        telemetry.addData(\"Perpendicular Encoder\", perpendicularEncoder.getCurrentPosition());\r\n        telemetry.addData(\"Drive Motor Encoders\", robot.drive.getWheelPositions());\r\n        telemetry.addData(\"Angle\", imu.getAngularHeading());\r\n        telemetry.update();\r\n\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- TeamCode/src/main/java/org/firstinspires/ftc/teamcode/tests/EncoderTest.java	(revision 6510be4e44dff80c9ece855c3feb64892795d29a)
++++ TeamCode/src/main/java/org/firstinspires/ftc/teamcode/tests/EncoderTest.java	(date 1617669071145)
+@@ -7,7 +7,6 @@
+ import com.qualcomm.robotcore.hardware.DcMotorEx;
+ 
+ import org.firstinspires.ftc.teamcode.road_runner.util.Encoder;
+-import org.firstinspires.ftc.teamcode.robots.Robot;
+ import org.firstinspires.ftc.teamcode.robots.RobotTechnicolorRR;
+ import org.firstinspires.ftc.teamcode.utils.AveragedGyro;
+ 
+@@ -20,8 +19,6 @@
+     @Override
+     public void init() {
+ 
+-        //Robot.createDefaultMatchLogFileName( this.getClass().getName() );
+-
+         robot = new RobotTechnicolorRR(hardwareMap, this);
+         parallelEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "intake"));
+         perpendicularEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "goalLift"));
+Index: TeamCode/src/main/java/org/firstinspires/ftc/teamcode/tests/ShooterVelocityTuner.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package org.firstinspires.ftc.teamcode.tests;\r\n\r\nimport com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;\r\nimport com.qualcomm.robotcore.eventloop.opmode.OpMode;\r\nimport com.qualcomm.robotcore.eventloop.opmode.TeleOp;\r\n\r\nimport org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;\r\nimport org.firstinspires.ftc.teamcode.robots.Robot;\r\nimport org.firstinspires.ftc.teamcode.robots.RobotTechnicolorRR;\r\nimport org.firstinspires.ftc.teamcode.utils.GamepadEvents;\r\n\r\n@TeleOp(name = \"Shooter Velocity Tuner\", group = \"Tuner\")\r\n//@Disabled\r\npublic class ShooterVelocityTuner extends OpMode {\r\n    RobotTechnicolorRR robot;\r\n    double velocity = 8;\r\n    GamepadEvents gamepad1;\r\n\r\n    @Override\r\n    public void init() {\r\n\r\n        Robot.createDefaultMatchLogFileName( this.getClass().getName() );\r\n\r\n        robot = new RobotTechnicolorRR(hardwareMap, this);\r\n        gamepad1 = new GamepadEvents(super.gamepad1);\r\n    }\r\n\r\n    @Override\r\n    public void loop() {\r\n\r\n        robot.ringShooter.setFlyWheelMotorVelocity(velocity, AngleUnit.RADIANS);\r\n\r\n        if(gamepad1.dpad_up.onPress()) {\r\n            velocity += 1;\r\n        }\r\n        if(gamepad1.dpad_down.onPress()) {\r\n            velocity -= 1;\r\n        }\r\n        telemetry.addData(\"Target Velocity\", velocity);\r\n\r\n        telemetry.addData(\"Left Flywheel Velocity\", robot.ringShooter.leftFlyWheelMotor.getVelocity(AngleUnit.RADIANS));\r\n        telemetry.addData(\"Right Flywheel Velocity\", robot.ringShooter.rightFlyWheelMotor.getVelocity(AngleUnit.RADIANS));\r\n        telemetry.update();\r\n        gamepad1.update();\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- TeamCode/src/main/java/org/firstinspires/ftc/teamcode/tests/ShooterVelocityTuner.java	(revision 6510be4e44dff80c9ece855c3feb64892795d29a)
++++ TeamCode/src/main/java/org/firstinspires/ftc/teamcode/tests/ShooterVelocityTuner.java	(date 1617669071155)
+@@ -5,7 +5,6 @@
+ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+ 
+ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+-import org.firstinspires.ftc.teamcode.robots.Robot;
+ import org.firstinspires.ftc.teamcode.robots.RobotTechnicolorRR;
+ import org.firstinspires.ftc.teamcode.utils.GamepadEvents;
+ 
+@@ -19,8 +18,6 @@
+     @Override
+     public void init() {
+ 
+-        Robot.createDefaultMatchLogFileName( this.getClass().getName() );
+-
+         robot = new RobotTechnicolorRR(hardwareMap, this);
+         gamepad1 = new GamepadEvents(super.gamepad1);
+     }
+Index: TeamCode/src/main/java/org/firstinspires/ftc/teamcode/tests/ShooterEncoderTest.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package org.firstinspires.ftc.teamcode.tests;\r\n\r\nimport com.acmerobotics.roadrunner.geometry.Pose2d;\r\nimport com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;\r\nimport com.qualcomm.robotcore.eventloop.opmode.OpMode;\r\nimport com.qualcomm.robotcore.eventloop.opmode.TeleOp;\r\nimport com.qualcomm.robotcore.hardware.DcMotor;\r\nimport com.qualcomm.robotcore.hardware.DcMotorEx;\r\nimport com.qualcomm.robotcore.hardware.PIDFCoefficients;\r\nimport com.qualcomm.robotcore.hardware.VoltageSensor;\r\n\r\nimport org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;\r\nimport org.firstinspires.ftc.teamcode.road_runner.util.Encoder;\r\nimport org.firstinspires.ftc.teamcode.robots.Robot;\r\nimport org.firstinspires.ftc.teamcode.robots.RobotTechnicolorRR;\r\n\r\n@TeleOp(name=\"Shooter Encoder Test\", group=\"Test\")\r\n//@Disabled\r\npublic class ShooterEncoderTest extends LinearOpMode {\r\n    RobotTechnicolorRR robot;\r\n    private VoltageSensor batteryVoltageSensor;\r\n\r\n    @Override\r\n    public void runOpMode() throws InterruptedException {\r\n\r\n        Robot.createDefaultMatchLogFileName( this.getClass().getName() );\r\n\r\n        robot = new RobotTechnicolorRR(hardwareMap, this);\r\n        batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();\r\n        robot.ringShooter.leftFlyWheelMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);\r\n        robot.ringShooter.rightFlyWheelMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);\r\n        robot.ringShooter.leftFlyWheelMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);\r\n        robot.ringShooter.rightFlyWheelMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);\r\n        robot.ringShooter.setFlyWheelPID(new PIDFCoefficients(6, 0, 3, 12 * 12 / batteryVoltageSensor.getVoltage()));\r\n\r\n        waitForStart();\r\n        robot.ringShooter.setFlyWheelMotorVelocity(3, AngleUnit.RADIANS);\r\n        while (opModeIsActive() && !isStopRequested()) {\r\n            telemetry.addData(\"Left Flywheel Position\", robot.ringShooter.leftFlyWheelMotor.getCurrentPosition());\r\n            telemetry.addData(\"Left Flywheel Velocity\", robot.ringShooter.leftFlyWheelMotor.getVelocity(AngleUnit.RADIANS));\r\n            telemetry.addData(\"Right Flywheel Position\", robot.ringShooter.rightFlyWheelMotor.getCurrentPosition());\r\n            telemetry.addData(\"Right Flywheel Velocity\", robot.ringShooter.rightFlyWheelMotor.getVelocity(AngleUnit.RADIANS));\r\n            telemetry.update();\r\n        }\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- TeamCode/src/main/java/org/firstinspires/ftc/teamcode/tests/ShooterEncoderTest.java	(revision 6510be4e44dff80c9ece855c3feb64892795d29a)
++++ TeamCode/src/main/java/org/firstinspires/ftc/teamcode/tests/ShooterEncoderTest.java	(date 1617669071165)
+@@ -11,7 +11,6 @@
+ 
+ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+ import org.firstinspires.ftc.teamcode.road_runner.util.Encoder;
+-import org.firstinspires.ftc.teamcode.robots.Robot;
+ import org.firstinspires.ftc.teamcode.robots.RobotTechnicolorRR;
+ 
+ @TeleOp(name="Shooter Encoder Test", group="Test")
+@@ -23,8 +22,6 @@
+     @Override
+     public void runOpMode() throws InterruptedException {
+ 
+-        Robot.createDefaultMatchLogFileName( this.getClass().getName() );
+-
+         robot = new RobotTechnicolorRR(hardwareMap, this);
+         batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
+         robot.ringShooter.leftFlyWheelMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+Index: TeamCode/src/main/java/org/firstinspires/ftc/teamcode/robots/Robot.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package org.firstinspires.ftc.teamcode.robots;\r\n\r\nimport android.os.Environment;\r\nimport android.util.Log;\r\n\r\nimport com.qualcomm.hardware.lynx.LynxModule;\r\nimport com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;\r\nimport com.qualcomm.robotcore.eventloop.opmode.OpMode;\r\nimport com.qualcomm.robotcore.hardware.HardwareMap;\r\n\r\nimport org.firstinspires.ftc.robotcore.external.Telemetry;\r\nimport org.firstinspires.ftc.teamcode.drives.Drive;\r\n\r\nimport java.io.File;\r\nimport java.io.FileWriter;\r\nimport java.io.IOException;\r\nimport java.text.SimpleDateFormat;\r\nimport java.util.Date;\r\n\r\n/**\r\n * This class sets up and manages a robot\r\n */\r\npublic abstract class Robot {\r\n\r\n    HardwareMap hardwareMap;\r\n    OpMode opMode;\r\n    Telemetry telemetry;\r\n\r\n    // time\r\n    double previousTime;\r\n\r\n    // drive\r\n    public Drive driveTrain;\r\n\r\n    private static final String DEFAULT_LOG_FILE_NAME = \"*robotLog.txt\";\r\n    private static String default_match_log_file_name = \"defaultRobotLog.txt\";\r\n\r\n    /**\r\n     * Creates a Robot\r\n     * @param hw robot's hardware map\r\n     */\r\n    public Robot( HardwareMap hw, OpMode op ) {\r\n        this.hardwareMap = hw;\r\n        this.opMode = op;\r\n        telemetry = opMode.telemetry;\r\n\r\n        //vuforiaKey = hardwareMap.appContext.getResources().getString(R.string.vuforiakey);\r\n\r\n        //Bulk Caching to decrease cycle times\r\n        for (LynxModule module : hw.getAll(LynxModule.class)) {\r\n            module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);\r\n        }\r\n    }\r\n\r\n    public static void createDefaultMatchLogFileName( String className ) {\r\n\r\n        SimpleDateFormat dateFormatter = new SimpleDateFormat(\"MM-dd_HH:mm_\");\r\n        Date date = new Date();\r\n        String time = dateFormatter.format(date) + \" :: \";\r\n\r\n        // will look like: 04-05_15:11_TeleOpTechnicolor.txt\r\n\r\n        default_match_log_file_name = time + className + \".txt\";\r\n        writeAFile(default_match_log_file_name, default_match_log_file_name + \": created\", false, true );\r\n    }\r\n\r\n    /**\r\n     * writes to the default match file\r\n     * @param writeText what the method will write to the fill (plus the timeStamp if includeTimeStamp is true)\r\n     * @param isAppending true: will append to the file if it exists, false: will create a new file\r\n     * @param includeTimeStamp will include the timeStamp for when the method is called\r\n     */\r\n    public static void writeToMatchDefaultFile( String writeText, boolean isAppending, boolean includeTimeStamp ) {\r\n        Log.e( \"|-|-|-|\", writeText );\r\n        writeAFile(default_match_log_file_name, writeText, isAppending, includeTimeStamp );\r\n    }\r\n\r\n    /**\r\n     * writes to the default file *robotLog.txt\r\n     * @param writeText what the method will write to the fill (plus the timeStamp if includeTimeStamp is true)\r\n     * @param isAppending true: will append to the file if it exists, false: will create a new file\r\n     * @param includeTimeStamp will include the timeStamp for when the method is called\r\n     */\r\n    public static void writeToDefaultFile( String writeText, boolean isAppending, boolean includeTimeStamp ) {\r\n        Log.e( \"|-|-|-|\", writeText );\r\n        writeAFile( DEFAULT_LOG_FILE_NAME, writeText, isAppending, includeTimeStamp );\r\n    }\r\n\r\n    /**\r\n     *\r\n     * @param fileName the name of the file to write to\r\n     * @param writeText what the method will write to the fill (plus the timeStamp if includeTimeStamp is true)\r\n     * @param isAppending true: will append to the file if it exists, false: will create a new file\r\n     * @param includeTimeStamp will include the timeStamp for when the method is called\r\n     */\r\n    public static void writeAFile(String fileName, String writeText, boolean isAppending, boolean includeTimeStamp ){\r\n\r\n        // \"\\n\" = System.lineSeparator()\r\n\r\n        String time = \"\";\r\n        if( includeTimeStamp ) {\r\n            SimpleDateFormat dateFormatter = new SimpleDateFormat(\"MM-dd HH:mm:ss\");\r\n            Date date = new Date();\r\n            time = dateFormatter.format(date) + \" :: \";\r\n        }\r\n\r\n        //\".../Internal Storage\";\r\n        String path = Environment.getExternalStorageDirectory().getPath() + \"/\" + \"FIRST\" + \"/\" + \"Logs\" + \"/\";\r\n\r\n        try {\r\n            FileWriter writer = new FileWriter( new File( path + fileName ), isAppending );\r\n            writer.write( time + writeText + System.lineSeparator() );\r\n            writer.close();\r\n        } catch ( IOException e ) {\r\n            e.printStackTrace();\r\n            Robot.writeToDefaultFile( e.getStackTrace().toString(), true, true);\r\n        }\r\n\r\n    }\r\n\r\n\r\n    public void sleep(long millis){\r\n        long startTime = System.currentTimeMillis();\r\n        while(System.currentTimeMillis() < startTime + millis && opModeIsActive());\r\n    }\r\n\r\n    /**\r\n     * opMode version of LinearOpmode's opModeIsActive\r\n     * @return\r\n     */\r\n    public boolean opModeIsActive()\r\n    {\r\n        try {\r\n            return ((LinearOpMode) opMode).opModeIsActive();\r\n        } catch (ClassCastException e){\r\n            return true;\r\n        }\r\n    }\r\n\r\n    /**\r\n     *\r\n     * @param delay - delay/wait time in SECONDS\r\n     */\r\n    public void sleepRobot(long delay)\r\n    {\r\n        long setTime = System.currentTimeMillis();\r\n        previousTime = opMode.getRuntime();\r\n\r\n        while( (System.currentTimeMillis() - setTime)*1000 < (delay) && opModeIsActive())\r\n            previousTime = opMode.getRuntime();\r\n\r\n        telemetry.addData(\"Finished Sleep\", \"\");\r\n        telemetry.update();\r\n    }\r\n\r\n    public void sleepRobot2(long delay) {\r\n        double currTime = opMode.getRuntime();\r\n        double waitUntil = currTime + (double)(delay/1000);\r\n        while( opMode.getRuntime() < waitUntil ) {}\r\n    }\r\n\r\n\r\n\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- TeamCode/src/main/java/org/firstinspires/ftc/teamcode/robots/Robot.java	(revision 6510be4e44dff80c9ece855c3feb64892795d29a)
++++ TeamCode/src/main/java/org/firstinspires/ftc/teamcode/robots/Robot.java	(date 1617669071204)
+@@ -82,8 +82,8 @@
+      * @param includeTimeStamp will include the timeStamp for when the method is called
+      */
+     public static void writeToDefaultFile( String writeText, boolean isAppending, boolean includeTimeStamp ) {
+-        Log.e( "|-|-|-|", writeText );
+-        writeAFile( DEFAULT_LOG_FILE_NAME, writeText, isAppending, includeTimeStamp );
++        //Log.e( "|-|-|-|", writeText );
++        //writeAFile( DEFAULT_LOG_FILE_NAME, writeText, isAppending, includeTimeStamp );
+     }
+ 
+     /**
+Index: TeamCode/src/main/java/org/firstinspires/ftc/teamcode/teleop/TeleOpClapper.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package org.firstinspires.ftc.teamcode.teleop;\r\n\r\nimport com.qualcomm.robotcore.eventloop.opmode.OpMode;\r\nimport com.qualcomm.robotcore.eventloop.opmode.TeleOp;\r\n\r\nimport org.firstinspires.ftc.teamcode.drives.MecanumDrive;\r\nimport org.firstinspires.ftc.teamcode.robots.Robot;\r\nimport org.firstinspires.ftc.teamcode.robots.RobotClapper;\r\n\r\n// TeleOp class for the old clapper robot\r\n@TeleOp(name=\"TeleOpClapper\", group=\"teleop\")\r\npublic class TeleOpClapper extends OpMode {\r\n\r\n    Robot robot;\r\n\r\n    @Override\r\n    public void init() {\r\n\r\n        Robot.createDefaultMatchLogFileName( this.getClass().getName() );\r\n\r\n        robot = new RobotClapper(hardwareMap, this);\r\n        robot.driveTrain = new MecanumDrive(hardwareMap);\r\n    }\r\n\r\n    @Override\r\n    public void loop() {\r\n\r\n        telemetry.addData(\"              Controls\", \"   \");\r\n        telemetry.addData(\"Drive\", \"Gp1: left stick y (axis)\");\r\n        telemetry.addData(\"Strafe\", \"Gp1: left stick x (axis)\");\r\n        telemetry.addData(\"Rotate\", \"Gp1: right stick x (axis)\");\r\n        telemetry.addLine();\r\n\r\n        // moves the robot • left stick; moves forwards/backwards (y axis), strafing left/right (x axis) • right stick; rotating left/right ()x axis)\r\n        ( (MecanumDrive)robot.driveTrain).drive( -gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x );\r\n\r\n        telemetry.addData(\"left_stick_y\", gamepad1.left_stick_y);\r\n        telemetry.addData(\"left_stick_x\", gamepad1.left_stick_x);\r\n        telemetry.addData(\"right_stick_x\", gamepad1.right_stick_x);\r\n\r\n        telemetry.update();\r\n\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- TeamCode/src/main/java/org/firstinspires/ftc/teamcode/teleop/TeleOpClapper.java	(revision 6510be4e44dff80c9ece855c3feb64892795d29a)
++++ TeamCode/src/main/java/org/firstinspires/ftc/teamcode/teleop/TeleOpClapper.java	(date 1617669071216)
+@@ -16,8 +16,6 @@
+     @Override
+     public void init() {
+ 
+-        Robot.createDefaultMatchLogFileName( this.getClass().getName() );
+-
+         robot = new RobotClapper(hardwareMap, this);
+         robot.driveTrain = new MecanumDrive(hardwareMap);
+     }
+Index: TeamCode/src/main/java/org/firstinspires/ftc/teamcode/teleop/TeleOpWood.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package org.firstinspires.ftc.teamcode.teleop;\r\n\r\nimport com.qualcomm.robotcore.eventloop.opmode.OpMode;\r\nimport com.qualcomm.robotcore.eventloop.opmode.TeleOp;\r\n\r\nimport org.firstinspires.ftc.teamcode.mechanisms.GoalLift;\r\nimport org.firstinspires.ftc.teamcode.mechanisms.RingShooter;\r\nimport org.firstinspires.ftc.teamcode.robots.Robot;\r\nimport org.firstinspires.ftc.teamcode.robots.RobotWood;\r\nimport org.firstinspires.ftc.teamcode.utils.GamepadEvents;\r\n\r\n// TeleOp class for the new wooden robot\r\n@TeleOp(name=\"TeleOpWood\", group=\"teleop\")\r\npublic class TeleOpWood extends OpMode {\r\n\r\n    //Robot robot;\r\n    RobotWood robot;\r\n\r\n    // PIDCoefficients coefficients;\r\n    //GeneralPID pIDCorrections;\r\n\r\n    GamepadEvents gamepad;\r\n\r\n    public static boolean doTelemetry = true;\r\n\r\n    @Override\r\n    public void init() {\r\n\r\n        Robot.createDefaultMatchLogFileName( this.getClass().getName() );\r\n\r\n        robot = new RobotWood(hardwareMap, this);\r\n\r\n        robot.goalLift.setClawPosition( GoalLift.ClawPosition.OPEN );\r\n        robot.ringShooter.setPusherPosition( RingShooter.PusherPosition.RETRACTED );\r\n\r\n        //coefficients = new PIDCoefficients( 0, 0, 0 );\r\n        //pIDCorrections = new GeneralPID(coefficients);\r\n\r\n        gamepad = new GamepadEvents(super.gamepad1);\r\n\r\n        telemetry.addLine(\"init finished\");\r\n        telemetry.update();\r\n\r\n        Robot.writeToDefaultFile( \"*******INIT FINISHED********\", false, true );\r\n    }\r\n\r\n    @Override\r\n    public void loop() {\r\n\r\n        addControlTelemtry();\r\n\r\n        // drive, strafe, rotate = gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x\r\n        double drivePower = ( gamepad1.left_stick_button ? 1.0 : 0.4 );\r\n        robot.mecanumDrive.drive( -gamepad1.left_stick_y*drivePower, gamepad1.left_stick_x*drivePower, gamepad1.right_stick_x*drivePower );\r\n\r\n        // claw = gamepad1.b and gamepad1.x\r\n        if(gamepad1.b)\r\n            robot.goalLift.setClawPosition( robot.CLAW_CLOSED );\r\n        if(gamepad1.x)\r\n            robot.goalLift.setClawPosition( robot.CLAW_OPEN );\r\n\r\n        // goal lift = gamepad1.y and gamepad1.a\r\n        double liftPower = 0.5;\r\n        if( gamepad1.y )\r\n            robot.goalLift.setGoalLiftPosition( robot.LIFT_LIFTED, liftPower, 1000 );\r\n        if( gamepad1.a )\r\n            robot.goalLift.setGoalLiftPosition( robot.LIFT_LOWERED, liftPower, 1000 );\r\n\r\n        // ring shooter = gamepad1.right_trigger\r\n        double ringShooterPower = 1;\r\n        robot.ringShooter.setFlyWheelMotorPower( gamepad1.right_trigger*ringShooterPower );\r\n\r\n        // ring pusher (servo) = gamepad1.left_bumper\r\n        if( gamepad.left_bumper.onPress() )\r\n            robot.ringShooter.pushRing();\r\n\r\n        // intake = gamepad1.left_trigger\r\n        double intakePower = 1;\r\n        //robot.ringShooter.setIntakeMotorPower( gamepad1.left_trigger*intakePower );\r\n        if( gamepad.right_bumper.onPress() )\r\n            robot.ringShooter.setIntakeMotorPower( robot.ringShooter.getIntakePower() > 0 ? 0 : intakePower );\r\n\r\n\r\n        addInfoTelemetry();\r\n\r\n        //int testPID = generalPID\r\n\r\n        telemetry.update();\r\n        gamepad.update();\r\n\r\n    }\r\n\r\n    public void addControlTelemtry() {\r\n\r\n        telemetry.addLine(\"               Controls:\");\r\n        telemetry.addData(\"Drive \", \"Gp1: left stick y (axis)\")\r\n                .addData(\"Strafe\", \"Gp1: left stick x (axis)\")\r\n                .addData(\"Rotate\", \"Gp1: right stick x (axis)\")\r\n                .addData(\"Open Claw \", \"Gp1: x\")\r\n                .addData(\"Close Claw\", \"Gp1: b\")\r\n                .addData(\"Lift Goal Lift \", \"Gp1: y\")\r\n                .addData(\"Lower Goal Lift\", \"Gp1: x\")\r\n                .addData(\"Ring Shooter\", \"Gp1: right trigger\")\r\n                .addData(\"Ring Pusher \", \"Gp1: left bumper\")\r\n                .addData(\"Intake Toggle\", \"Gp1: right trigger\")\r\n                .addData(\"Intake\", \"Gp1: left trigger\");\r\n        addLine();\r\n    }\r\n\r\n    public void addInfoTelemetry() {\r\n\r\n        telemetry.addLine(\"left_stick_y  = \" + gamepad1.left_stick_y );\r\n        telemetry.addLine(\"left_stick_x  = \" + gamepad1.left_stick_x );\r\n        telemetry.addLine(\"right_stick_x = \" + gamepad1.right_stick_x );\r\n        addLine();\r\n\r\n        telemetry.addLine(\"longitudinal position = \" + robot.tracker.getLongitudinalPosition() + \" (ticks), \"\r\n                + robot.mecanumDrive.convertTicksDist( robot.tracker.getLongitudinalPosition()) + \" (in)\" );\r\n        telemetry.addLine(\"lateral position = \" + robot.tracker.getLateralPosition() + \" (ticks), \"\r\n                + robot.mecanumDrive.convertTicksDist( robot.tracker.getLateralPosition()) + \" (in)\" );\r\n        addLine();\r\n\r\n        telemetry.addLine( \"Claw Position = \" + robot.goalLift.getClawLocation() + \" :: \"  + robot.goalLift.getClawPosition() );\r\n        telemetry.addLine( \"Lift Position = \" + robot.goalLift.getCurrentLiftPosition() + \" :: \" + robot.goalLift.getLiftPower() );\r\n        addLine();\r\n\r\n        telemetry.addLine( \"Shooter Power = \" + robot.ringShooter.getFlyWheelPower() );\r\n        addLine();\r\n\r\n        telemetry.addLine( \"Pusher Position = \" + robot.ringShooter.getPusherLocation() + \" :: \" + robot.ringShooter.getPusherPosition() );\r\n        addLine();\r\n\r\n        telemetry.addLine( \"Intake Power = \" + robot.ringShooter.getIntakePower() );\r\n        addLine();\r\n\r\n        telemetry.addLine(\"getGyroHeading        = \" + robot.tracker.getGyroHeading() );\r\n        telemetry.addLine(\"get360GyroHeading = \" + robot.tracker.get360GyroHeading() );\r\n\r\n    }\r\n\r\n    public void addLine() {\r\n        telemetry.addLine();\r\n    }\r\n\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- TeamCode/src/main/java/org/firstinspires/ftc/teamcode/teleop/TeleOpWood.java	(revision 6510be4e44dff80c9ece855c3feb64892795d29a)
++++ TeamCode/src/main/java/org/firstinspires/ftc/teamcode/teleop/TeleOpWood.java	(date 1617669071230)
+@@ -26,8 +26,6 @@
+     @Override
+     public void init() {
+ 
+-        Robot.createDefaultMatchLogFileName( this.getClass().getName() );
+-
+         robot = new RobotWood(hardwareMap, this);
+ 
+         robot.goalLift.setClawPosition( GoalLift.ClawPosition.OPEN );
+Index: TeamCode/src/main/java/org/firstinspires/ftc/teamcode/autonomous/AutonomousTest.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package org.firstinspires.ftc.teamcode.autonomous;\r\n\r\nimport com.qualcomm.robotcore.eventloop.opmode.Autonomous;\r\nimport com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;\r\n\r\nimport org.firstinspires.ftc.teamcode.robots.Robot;\r\nimport org.firstinspires.ftc.teamcode.robots.RobotWood;\r\nimport org.firstinspires.ftc.teamcode.drives.MecanumDrive;\r\n\r\n// autonomous program that drives bot forward a set distance, stops then\r\n// backs up to the starting point using encoders to measure the distance.\r\n// This example assumes there is one encoder, attached to the left motor\r\n\r\n@Autonomous(name=\"AutonomousTest\", group=\"autonomous\")\r\n//@disabled\r\npublic class AutonomousTest extends LinearOpMode\r\n{\r\n    //Robot robot;\r\n    RobotWood robotWood;\r\n\r\n    @Override\r\n    public void runOpMode() throws InterruptedException {\r\n\r\n        Robot.createDefaultMatchLogFileName( this.getClass().getName() );\r\n\r\n        //robot = new RobotWood(hardwareMap, this);\r\n        robotWood = new RobotWood(hardwareMap, this);\r\n\r\n        robotWood.tensorFlowUtil.initTensorFlow();\r\n\r\n        waitForStart();\r\n\r\n        //==========================================================================================\r\n        //Official Start\r\n\r\n        robotWood.tensorFlowUtil.runStackDetection(500);\r\n\r\n\r\n\r\n    }\r\n\r\n\r\n}\r\n\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- TeamCode/src/main/java/org/firstinspires/ftc/teamcode/autonomous/AutonomousTest.java	(revision 6510be4e44dff80c9ece855c3feb64892795d29a)
++++ TeamCode/src/main/java/org/firstinspires/ftc/teamcode/autonomous/AutonomousTest.java	(date 1617669071242)
+@@ -21,8 +21,6 @@
+     @Override
+     public void runOpMode() throws InterruptedException {
+ 
+-        Robot.createDefaultMatchLogFileName( this.getClass().getName() );
+-
+         //robot = new RobotWood(hardwareMap, this);
+         robotWood = new RobotWood(hardwareMap, this);
+ 
+Index: TeamCode/src/main/java/org/firstinspires/ftc/teamcode/tests/ClassNameTest.java
+===================================================================
+--- TeamCode/src/main/java/org/firstinspires/ftc/teamcode/tests/ClassNameTest.java	(date 1617669071193)
++++ TeamCode/src/main/java/org/firstinspires/ftc/teamcode/tests/ClassNameTest.java	(date 1617669071193)
+@@ -0,0 +1,57 @@
++package org.firstinspires.ftc.teamcode.tests;
++
++import com.qualcomm.robotcore.eventloop.opmode.OpMode;
++import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
++
++import org.firstinspires.ftc.teamcode.utils.GamepadEvents;
++import org.firstinspires.ftc.teamcode.utils.SoundLibrary;
++
++
++@TeleOp (name = "ClassNameTest", group = "Test")
++public class ClassNameTest extends OpMode {
++
++    GamepadEvents gamepad1;
++    SoundLibrary library;
++
++    int currentOutput;
++
++    int totalOutputs;
++
++    boolean showAudios = true;
++
++    @Override
++    public void init() {
++
++        gamepad1 = new GamepadEvents(super.gamepad1);
++
++        currentOutput = 0;
++        totalOutputs = 3;
++
++        //telemetry.addLine( "name :: " + this.getClass() );
++
++        telemetry.addLine("Initialization Complete");
++        telemetry.update();
++    }
++
++    @Override
++    public void loop() {
++
++        if( gamepad1.dpad_up.onPress() )
++            currentOutput = ( currentOutput + 1 ) % totalOutputs;
++
++        if( gamepad1.dpad_down.onPress() )
++            currentOutput = ( currentOutput + totalOutputs - 1 ) % totalOutputs;
++
++        switch ( currentOutput ) {
++            case 0:
++                telemetry.addLine( "name :: " + this.getClass().getCanonicalName() );
++            case 1:
++                telemetry.addLine( "name :: " + this.getClass().getName() );
++            case 2:
++                telemetry.addLine( "name :: " + this.getClass().getSimpleName() );
++        }
++
++        telemetry.update();
++        gamepad1.update();
++    }
++}
+Index: TeamCode/src/main/java/org/firstinspires/ftc/teamcode/tests/VuforiaTest.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package org.firstinspires.ftc.teamcode.tests;\r\n\r\nimport com.qualcomm.robotcore.eventloop.opmode.Disabled;\r\nimport com.qualcomm.robotcore.eventloop.opmode.OpMode;\r\nimport com.qualcomm.robotcore.eventloop.opmode.TeleOp;\r\n\r\nimport org.firstinspires.ftc.teamcode.R;\r\nimport org.firstinspires.ftc.teamcode.robots.Robot;\r\nimport org.firstinspires.ftc.teamcode.utils.FieldMap;\r\nimport org.firstinspires.ftc.teamcode.utils.Vuforia;\r\nimport org.firstinspires.ftc.teamcode.utils.VuforiaLocalization;\r\n\r\n@TeleOp(name=\"Vuforia Test\")\r\n@Disabled\r\npublic class VuforiaTest extends OpMode {\r\n\r\n    private final String VUFORIA_TRACKABLES_ASSET_NAME = \"UltimateGoal\";\r\n\r\n    VuforiaLocalization vuforiaLocalization;\r\n    Vuforia vuforia = Vuforia.getInstance();\r\n\r\n\r\n    @Override\r\n    public void init() {\r\n\r\n        Robot.createDefaultMatchLogFileName( this.getClass().getName() );\r\n\r\n        final String VUFORIA_KEY = hardwareMap.appContext.getResources().getString(R.string.vuforiakey);\r\n        vuforia.setParameters(VUFORIA_KEY, \"webcam\", true, hardwareMap);\r\n        vuforia.start();\r\n\r\n        vuforiaLocalization = new VuforiaLocalization(VUFORIA_TRACKABLES_ASSET_NAME);\r\n    }\r\n    @Override\r\n    public void start(){\r\n        vuforiaLocalization.activateTracking();\r\n    }\r\n\r\n    @Override\r\n    public void loop() {\r\n        if(vuforiaLocalization.getVisibleTarget() != null) {\r\n            telemetry.addData(\"Visible Vuforia Mark\", vuforiaLocalization.getVisibleTarget().getName());\r\n            vuforiaLocalization.updateRobotLocation();\r\n            telemetry.addData(\"Robot Position\", FieldMap.toPose2d(vuforiaLocalization.getRobotPosition(), vuforiaLocalization.getRobotRotation()));\r\n        }\r\n        else{\r\n            telemetry.addData(\"Visible Vuforia Mark\", \"none\");\r\n        }\r\n        telemetry.update();\r\n    }\r\n\r\n    @Override\r\n    public void stop() {\r\n        vuforiaLocalization.deactivateTracking();\r\n        if(vuforia.isRunning()) {\r\n            vuforia.close();\r\n        }\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- TeamCode/src/main/java/org/firstinspires/ftc/teamcode/tests/VuforiaTest.java	(revision 6510be4e44dff80c9ece855c3feb64892795d29a)
++++ TeamCode/src/main/java/org/firstinspires/ftc/teamcode/tests/VuforiaTest.java	(date 1617669071251)
+@@ -5,7 +5,6 @@
+ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+ 
+ import org.firstinspires.ftc.teamcode.R;
+-import org.firstinspires.ftc.teamcode.robots.Robot;
+ import org.firstinspires.ftc.teamcode.utils.FieldMap;
+ import org.firstinspires.ftc.teamcode.utils.Vuforia;
+ import org.firstinspires.ftc.teamcode.utils.VuforiaLocalization;
+@@ -23,8 +22,6 @@
+     @Override
+     public void init() {
+ 
+-        Robot.createDefaultMatchLogFileName( this.getClass().getName() );
+-
+         final String VUFORIA_KEY = hardwareMap.appContext.getResources().getString(R.string.vuforiakey);
+         vuforia.setParameters(VUFORIA_KEY, "webcam", true, hardwareMap);
+         vuforia.start();
+Index: TeamCode/src/main/java/org/firstinspires/ftc/teamcode/autonomous/MainAutonomous.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package org.firstinspires.ftc.teamcode.autonomous;\r\n\r\nimport com.qualcomm.robotcore.eventloop.opmode.Autonomous;\r\nimport com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;\r\n\r\nimport org.firstinspires.ftc.teamcode.drives.MecanumDrive;\r\nimport org.firstinspires.ftc.teamcode.robots.Robot;\r\nimport org.firstinspires.ftc.teamcode.robots.RobotWood;\r\n\r\n// autonomous program that drives bot forward a set distance, stops then\r\n// backs up to the starting point using encoders to measure the distance.\r\n// This example assumes there is one encoder, attached to the left motor\r\n\r\n@Autonomous(name=\"MainAutonomous\", group=\"autonomous\")\r\n//@disabled\r\npublic class MainAutonomous extends LinearOpMode\r\n{\r\n\r\n    RobotWood robot;\r\n\r\n    @Override\r\n    public void runOpMode() throws InterruptedException {\r\n\r\n        Robot.createDefaultMatchLogFileName( this.getClass().getName() );\r\n\r\n        robot = new RobotWood(hardwareMap, this);\r\n        robot.driveTrain = new MecanumDrive(hardwareMap);\r\n        robot.tensorFlowUtil.initTensorFlow();\r\n\r\n        //telemetry.setAutoClear( false );\r\n\r\n        robot.writeToDefaultFile( \"******** Init Finished ********\", false, true );\r\n\r\n        telemetry.addLine(\"init finished\");\r\n        telemetry.update();\r\n\r\n        waitForStart();\r\n\r\n        //==========================================================================================\r\n        //Official Start\r\n\r\n        robot.writeToDefaultFile( \"******** Main Class Started ********\", true, true );\r\n\r\n        // start 15\" left of right wall\r\n\r\n        double powerConstant = 0.5;\r\n\r\n        // strafe left 15\"\r\n        robot.strafeDistance( 15, -powerConstant, true );\r\n\r\n        // run stack detection (tensorflow/scan stack)\r\n        robot.tensorFlowUtil.runStackDetection( 10000 );\r\n\r\n        // strafe left 17\"\r\n        robot.strafeDistance( 17, -powerConstant, true );\r\n\r\n        // drive forward 4'\r\n        robot.driveDistance( 48, powerConstant, true );\r\n\r\n        // shoot disc 1\r\n\r\n\r\n        // strafe left 7.5\"\r\n        robot.strafeDistance( 7, -powerConstant, true );\r\n\r\n        // shoot disc 2\r\n\r\n\r\n        // strafe left 7.5\"\r\n        robot.strafeDistance( 7, -powerConstant, true );\r\n\r\n        // shoot disc 3\r\n\r\n\r\n        // wobble goal stuff\r\n        robot.dropOffGoal();\r\n\r\n    }\r\n\r\n\r\n\r\n}\r\n\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- TeamCode/src/main/java/org/firstinspires/ftc/teamcode/autonomous/MainAutonomous.java	(revision 6510be4e44dff80c9ece855c3feb64892795d29a)
++++ TeamCode/src/main/java/org/firstinspires/ftc/teamcode/autonomous/MainAutonomous.java	(date 1617669071261)
+@@ -4,7 +4,6 @@
+ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+ 
+ import org.firstinspires.ftc.teamcode.drives.MecanumDrive;
+-import org.firstinspires.ftc.teamcode.robots.Robot;
+ import org.firstinspires.ftc.teamcode.robots.RobotWood;
+ 
+ // autonomous program that drives bot forward a set distance, stops then
+@@ -21,8 +20,6 @@
+     @Override
+     public void runOpMode() throws InterruptedException {
+ 
+-        Robot.createDefaultMatchLogFileName( this.getClass().getName() );
+-
+         robot = new RobotWood(hardwareMap, this);
+         robot.driveTrain = new MecanumDrive(hardwareMap);
+         robot.tensorFlowUtil.initTensorFlow();
+Index: TeamCode/src/main/java/org/firstinspires/ftc/teamcode/tests/AudioTest.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package org.firstinspires.ftc.teamcode.tests;\r\n\r\nimport com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;\r\nimport com.qualcomm.robotcore.eventloop.opmode.OpMode;\r\nimport com.qualcomm.robotcore.eventloop.opmode.TeleOp;\r\n\r\nimport org.firstinspires.ftc.teamcode.robots.Robot;\r\nimport org.firstinspires.ftc.teamcode.utils.GamepadEvents;\r\nimport org.firstinspires.ftc.teamcode.utils.SoundLibrary;\r\n\r\n\r\n@TeleOp (name = \"AudioTest\", group = \"Test\")\r\npublic class AudioTest extends OpMode {\r\n\r\n    GamepadEvents gamepad1;\r\n    SoundLibrary library;\r\n\r\n    boolean showAudios = true;\r\n\r\n    @Override\r\n    public void init() {\r\n\r\n        Robot.createDefaultMatchLogFileName( this.getClass().getName() );\r\n\r\n        gamepad1 = new GamepadEvents(super.gamepad1);\r\n        library = new SoundLibrary( hardwareMap );\r\n\r\n        telemetry.addLine(\"Initialization Complete\");\r\n        telemetry.update();\r\n    }\r\n\r\n    @Override\r\n    public void loop() {\r\n\r\n        if( gamepad1.a.onPress() )\r\n            telemetry.addLine( library.playAudio(\"pew_default\") );\r\n\r\n        if( gamepad1.b.onPress() )\r\n            telemetry.addLine( library.playRandomPew() );\r\n\r\n        if( gamepad1.x.onPress() )\r\n            telemetry.addLine( library.playRandomSound() );\r\n\r\n        if( gamepad1.y.onPress() )\r\n            telemetry.addLine( library.playAudio(\"ps_startup\") );\r\n\r\n        if( gamepad1.right_bumper.onPress() )\r\n            showAudios = !showAudios;\r\n\r\n        if( showAudios )\r\n            telemetry.addLine( library.getAudios() );\r\n\r\n        telemetry.update();\r\n        gamepad1.update();\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- TeamCode/src/main/java/org/firstinspires/ftc/teamcode/tests/AudioTest.java	(revision 6510be4e44dff80c9ece855c3feb64892795d29a)
++++ TeamCode/src/main/java/org/firstinspires/ftc/teamcode/tests/AudioTest.java	(date 1617669071026)
+@@ -4,7 +4,6 @@
+ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+ 
+-import org.firstinspires.ftc.teamcode.robots.Robot;
+ import org.firstinspires.ftc.teamcode.utils.GamepadEvents;
+ import org.firstinspires.ftc.teamcode.utils.SoundLibrary;
+ 
+@@ -20,8 +19,6 @@
+     @Override
+     public void init() {
+ 
+-        Robot.createDefaultMatchLogFileName( this.getClass().getName() );
+-
+         gamepad1 = new GamepadEvents(super.gamepad1);
+         library = new SoundLibrary( hardwareMap );
+ 
+Index: TeamCode/src/main/java/org/firstinspires/ftc/teamcode/tests/RingPusherTest.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package org.firstinspires.ftc.teamcode.tests;\r\n\r\nimport com.qualcomm.robotcore.eventloop.opmode.Autonomous;\r\nimport com.qualcomm.robotcore.eventloop.opmode.Disabled;\r\nimport com.qualcomm.robotcore.eventloop.opmode.OpMode;\r\nimport com.qualcomm.robotcore.eventloop.opmode.TeleOp;\r\n\r\nimport org.firstinspires.ftc.teamcode.robots.Robot;\r\nimport org.firstinspires.ftc.teamcode.robots.ShooterBot;\r\n\r\n@TeleOp(name = \"Motor test\", group=\"Test\")\r\n@Disabled\r\npublic class RingPusherTest extends OpMode {\r\n\r\n    ShooterBot robot;\r\n\r\n    @Override\r\n    public void init() {\r\n\r\n        Robot.createDefaultMatchLogFileName( this.getClass().getName() );\r\n\r\n        robot = new ShooterBot(hardwareMap, this);\r\n    }\r\n\r\n    @Override\r\n    public void loop() {\r\n\r\n        robot.ringShooter.pusher.setPosition(gamepad1.right_stick_x);\r\n        telemetry.addData(\"Servo position\", robot.ringShooter.pusher.getPosition());\r\n        telemetry.update();\r\n\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- TeamCode/src/main/java/org/firstinspires/ftc/teamcode/tests/RingPusherTest.java	(revision 6510be4e44dff80c9ece855c3feb64892795d29a)
++++ TeamCode/src/main/java/org/firstinspires/ftc/teamcode/tests/RingPusherTest.java	(date 1617669071267)
+@@ -5,7 +5,6 @@
+ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+ 
+-import org.firstinspires.ftc.teamcode.robots.Robot;
+ import org.firstinspires.ftc.teamcode.robots.ShooterBot;
+ 
+ @TeleOp(name = "Motor test", group="Test")
+@@ -17,8 +16,6 @@
+     @Override
+     public void init() {
+ 
+-        Robot.createDefaultMatchLogFileName( this.getClass().getName() );
+-
+         robot = new ShooterBot(hardwareMap, this);
+     }
+ 
+Index: TeamCode/src/main/java/org/firstinspires/ftc/teamcode/mechanisms/RingShooter.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package org.firstinspires.ftc.teamcode.mechanisms;\r\n\r\nimport com.qualcomm.robotcore.hardware.DcMotor;\r\nimport com.qualcomm.robotcore.hardware.DcMotorEx;\r\nimport com.qualcomm.robotcore.hardware.DcMotorSimple;\r\nimport com.qualcomm.robotcore.hardware.HardwareMap;\r\nimport com.qualcomm.robotcore.hardware.PIDCoefficients;\r\nimport com.qualcomm.robotcore.hardware.PIDFCoefficients;\r\nimport com.qualcomm.robotcore.hardware.Servo;\r\nimport com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;\r\n\r\nimport org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;\r\nimport org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;\r\nimport org.firstinspires.ftc.teamcode.utils.ShootingMath;\r\nimport org.firstinspires.ftc.teamcode.utils.SoundLibrary;\r\n\r\nimport java.util.Timer;\r\n\r\n/**\r\n * This class sets up and holds methods for using the ring shooter mechanism\r\n * The ring shooter mechanism is the ______ that does _______\r\n */\r\npublic class RingShooter {\r\n\r\n    private DcMotor intakeMotor;\r\n\r\n    public DcMotorEx leftFlyWheelMotor;\r\n    public DcMotorEx rightFlyWheelMotor;\r\n\r\n    public Servo pusher;\r\n    private double pushedPosition;\r\n    private double retractedPosition;\r\n\r\n    private double flyWheelRadius;\r\n    private static double launchAngle = 35; // degrees\r\n\r\n    private static final double RING_PUSH_TIME = 800; // milliseconds\r\n    private static final double RING_RETRACT_TIME = 500;\r\n\r\n    public enum PusherPosition {\r\n        PUSHED,\r\n        RETRACTED\r\n    }\r\n\r\n    private PusherPosition pusherPosition;\r\n\r\n    /**\r\n     * Creates a RingShooter with default names for the motors\r\n     *\r\n     * @param hw robot's hardware map\r\n     */\r\n    public RingShooter(HardwareMap hw, double flyWheelRadius, double pushedPosition, double retractedPosition, boolean reverseMotorDirections) {\r\n        this(hw, \"intake\", \"leftFlyWheel\", \"rightFlyWheel\", \"pusher\", flyWheelRadius, pushedPosition, retractedPosition, reverseMotorDirections);\r\n    }\r\n\r\n    /**\r\n     * Creates a RingShooter with specified names for the motors\r\n     *\r\n     * @param hw                robot's hardware map\r\n     * @param intakeMotorName   name of intake motor in the hardware map\r\n     * @param leftFlyWheelName  name of left flywheel motor in the hardware map\r\n     * @param rightFlyWheelName name of right flywheel motor in the hardware map\r\n     */\r\n    public RingShooter(HardwareMap hw, String intakeMotorName, String leftFlyWheelName, String rightFlyWheelName,\r\n                       String pusherName, double flyWheelRadius, double pushedPosition, double retractedPosition, boolean reverseMotorDirections ) {\r\n\r\n        setUpHardware(hw, intakeMotorName, leftFlyWheelName, rightFlyWheelName, pusherName, reverseMotorDirections);\r\n\r\n        this.flyWheelRadius = flyWheelRadius;\r\n\r\n        this.pushedPosition = pushedPosition;\r\n        this.retractedPosition = retractedPosition;\r\n    }\r\n\r\n    /**\r\n     * Sets up motors from the hardware map\r\n     *\r\n     * @param hw                robot's hardware map\r\n     * @param intakeMotorName   name of intake motor in the hardware map\r\n     * @param leftFlyWheelName  name of left flywheel motor in the hardware map\r\n     * @param rightFlyWheelName name of right flywheel motor in the hardware map\r\n     */\r\n    private void setUpHardware(HardwareMap hw, String intakeMotorName, String leftFlyWheelName, String rightFlyWheelName, String pusherName, boolean reverseMotorDirections ) {\r\n\r\n        intakeMotor = hw.dcMotor.get(intakeMotorName);\r\n\r\n        leftFlyWheelMotor = hw.get(DcMotorEx.class, leftFlyWheelName);\r\n        rightFlyWheelMotor = hw.get(DcMotorEx.class, rightFlyWheelName);\r\n\r\n        //change these based on motor direction\r\n        leftFlyWheelMotor.setDirection(DcMotorSimple.Direction.FORWARD);\r\n        rightFlyWheelMotor.setDirection(DcMotorSimple.Direction.REVERSE);\r\n\r\n        if( reverseMotorDirections ) {\r\n            leftFlyWheelMotor.setDirection(DcMotorSimple.Direction.REVERSE);\r\n            rightFlyWheelMotor.setDirection(DcMotorSimple.Direction.FORWARD);\r\n        }\r\n\r\n        pusher = hw.servo.get(pusherName);\r\n    }\r\n\r\n    /**\r\n     * Sets power to the intake motor\r\n     *\r\n     * @param power power at which to run the intake motor\r\n     */\r\n    public void setIntakeMotorPower(double power) {\r\n        intakeMotor.setPower(power);\r\n    }\r\n\r\n    /**\r\n     * Sets power to the fly wheel motors\r\n     *\r\n     * @param power power at which to run the flywheels\r\n     */\r\n    public void setFlyWheelMotorPower(double power) {\r\n\r\n        leftFlyWheelMotor.setPower(power);\r\n        rightFlyWheelMotor.setPower(power);\r\n    }\r\n\r\n    /**\r\n     * Sets velocity for the motor to run at\r\n     *\r\n     * @param velocity  target velocity\r\n     * @param angleUnit unit in which the input velocity is given, in units/second\r\n     */\r\n    public void setFlyWheelMotorVelocity(double velocity, AngleUnit angleUnit) {\r\n        leftFlyWheelMotor.setVelocity(velocity, angleUnit);\r\n        rightFlyWheelMotor.setVelocity(velocity, angleUnit);\r\n    }\r\n\r\n    /**\r\n     * Launches a ring stored in the magazine\r\n     *\r\n     * @param velocity  velocity at which to launch the ring\r\n     * @param inputUnit unit used when inputting the velocity, in units/second\r\n     */\r\n    public void launchRingAngularVelocity(double velocity, DistanceUnit inputUnit) {\r\n        setFlyWheelMotorVelocity(ShootingMath.velocityToAngularVelocity(inputUnit.toMeters(velocity), inputUnit.toMeters(flyWheelRadius)), AngleUnit.RADIANS);\r\n        pushRing();\r\n        setFlyWheelMotorVelocity(0, AngleUnit.RADIANS);\r\n    }\r\n\r\n    /**\r\n     * Launches a ring stored in the magazine\r\n     *\r\n     * @param velocity  velocity at which to launch the ring\r\n     * @param setPowerZero set power to zero afterwards\r\n     * @param inputUnit unit used when inputting the velocity, in units/second\r\n     */\r\n    public void launchRingAngularVelocity(double velocity, boolean setPowerZero, DistanceUnit inputUnit) {\r\n        setFlyWheelMotorVelocity(ShootingMath.velocityToAngularVelocity(inputUnit.toMeters(velocity), inputUnit.toMeters(flyWheelRadius)), AngleUnit.RADIANS);\r\n        pushRing();\r\n        if( setPowerZero )\r\n            setFlyWheelMotorVelocity(0, AngleUnit.RADIANS);\r\n    }\r\n\r\n    /**\r\n     *\r\n     * @param omega to shoot with in rad/s\r\n     * @param setPowerZero set motor power zero afterwards\r\n     */\r\n    public void launchRingAngularVelocity(double omega, boolean setPowerZero, boolean speedUpTime) {\r\n        setFlyWheelMotorVelocity(omega, AngleUnit.RADIANS);\r\n        if (speedUpTime) {\r\n            long currentTime = System.currentTimeMillis();\r\n            while (System.currentTimeMillis() < currentTime + 500) ;\r\n        }\r\n        pushRing();\r\n        if (setPowerZero)\r\n            setFlyWheelMotorVelocity(0, AngleUnit.RADIANS);\r\n    }\r\n\r\n    /**\r\n     * Launches a ring stored in the magazine\r\n     *\r\n     * @param power power at which to run the motors when shooting the ring\r\n     */\r\n    public void launchRingPower( double power ) {\r\n        setFlyWheelMotorPower(power);\r\n        pushRing();\r\n        setFlyWheelMotorPower(0);\r\n    }\r\n\r\n    public void setNumericalPusherPosition( double position ) {\r\n        pusher.setPosition( position );\r\n    }\r\n\r\n    public void setPusherPosition( PusherPosition position) {\r\n        switch (position) {\r\n            case PUSHED:\r\n                pusherPosition = PusherPosition.PUSHED;\r\n                pusher.setPosition(pushedPosition);\r\n                break;\r\n            case RETRACTED:\r\n                pusherPosition = PusherPosition.RETRACTED;\r\n                pusher.setPosition(retractedPosition);\r\n                break;\r\n        }\r\n    }\r\n\r\n    public void pushRing() {\r\n        setPusherPosition(PusherPosition.PUSHED);\r\n        SoundLibrary.playRandomPew(); // play a random pew sound\r\n        long currentTime = System.currentTimeMillis();\r\n        while (System.currentTimeMillis() < currentTime + RING_PUSH_TIME);\r\n        setPusherPosition(PusherPosition.RETRACTED);\r\n        while (System.currentTimeMillis() < currentTime + RING_RETRACT_TIME);\r\n    }\r\n\r\n    public void pushRingAsync() {\r\n        new Thread(() -> pushRing()).start();\r\n    }\r\n\r\n    public double getPusherPosition() {\r\n        return pusher.getPosition();\r\n    }\r\n\r\n    public PusherPosition getPusherLocation() {\r\n        return pusherPosition;\r\n    }\r\n\r\n    public double getLaunchAngle() {\r\n        return launchAngle;\r\n    }\r\n\r\n    public double getIntakePower() {\r\n        return intakeMotor.getPower();\r\n    }\r\n\r\n    public double getFlyWheelPower() {\r\n        return leftFlyWheelMotor.getPower();\r\n    }\r\n\r\n    public void setFlyWheelPID( PIDFCoefficients coeffs ) {\r\n\r\n        leftFlyWheelMotor.setVelocityPIDFCoefficients(coeffs.p, coeffs.i, coeffs.d, coeffs.f);\r\n        rightFlyWheelMotor.setVelocityPIDFCoefficients(coeffs.p, coeffs.i, coeffs.d, coeffs.f);\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- TeamCode/src/main/java/org/firstinspires/ftc/teamcode/mechanisms/RingShooter.java	(revision 6510be4e44dff80c9ece855c3feb64892795d29a)
++++ TeamCode/src/main/java/org/firstinspires/ftc/teamcode/mechanisms/RingShooter.java	(date 1617669071042)
+@@ -202,7 +202,7 @@
+ 
+     public void pushRing() {
+         setPusherPosition(PusherPosition.PUSHED);
+-        SoundLibrary.playRandomPew(); // play a random pew sound
++        //SoundLibrary.playRandomPew(); // play a random pew sound
+         long currentTime = System.currentTimeMillis();
+         while (System.currentTimeMillis() < currentTime + RING_PUSH_TIME);
+         setPusherPosition(PusherPosition.RETRACTED);
