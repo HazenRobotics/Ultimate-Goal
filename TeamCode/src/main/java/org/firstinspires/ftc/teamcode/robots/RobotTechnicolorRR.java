@@ -5,7 +5,6 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
@@ -14,7 +13,6 @@ import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.drives.RRMecanumDriveTechnicolor;
 import org.firstinspires.ftc.teamcode.mechanisms.GoalLift;
-import org.firstinspires.ftc.teamcode.mechanisms.RingBlocker;
 import org.firstinspires.ftc.teamcode.mechanisms.RingShooter;
 import org.firstinspires.ftc.teamcode.utils.SoundLibrary;
 import org.firstinspires.ftc.teamcode.utils.TensorFlowUtil;
@@ -28,7 +26,6 @@ public class RobotTechnicolorRR {
 
     public GoalLift goalLift;
     public RingShooter ringShooter;
-    public RingBlocker ringBlocker;
     public TensorFlowUtil tfod;
 
     private RevBlinkinLedDriver lights;
@@ -38,9 +35,6 @@ public class RobotTechnicolorRR {
 
     public static double PUSHED_POSTITION = 0.4 ;
     public static double RETRACTED_POSTITION = 0.18;
-
-    public static double BLOCKED_POSITION = 0.0 ;
-    public static double BLOCKER_RETRACTED_POSTITION = 0.5;
 
     public static double OPEN_POSTITION = 0.0;
     public static double CLOSED_POSTITION = 1.0;
@@ -52,7 +46,6 @@ public class RobotTechnicolorRR {
         drive = new RRMecanumDriveTechnicolor(hw);
         goalLift = new GoalLift(hw, OPEN_POSTITION, CLOSED_POSTITION, REVERSE_LIFT_DIRECTION);
         ringShooter = new RingShooter(hw, FLY_WHEEL_RADIUS, PUSHED_POSTITION, RETRACTED_POSTITION, REVERSE_SHOOTER_DIRECTION);
-        //ringBlocker = new RingBlocker(hw, BLOCKED_POSITION, BLOCKER_RETRACTED_POSTITION);
         tfod = new TensorFlowUtil(hw, op);
 
         opMode = op;

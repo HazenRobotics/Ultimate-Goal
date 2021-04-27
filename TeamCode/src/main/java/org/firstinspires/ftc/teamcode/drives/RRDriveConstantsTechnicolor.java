@@ -16,7 +16,7 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
  * and op modes themselves.
  */
 @Config
-public class RRDriveConstantsTechnicolor {
+public class  RRDriveConstantsTechnicolor {
 
     /*
      * These are motor constants that should be listed online for your motors.
@@ -34,7 +34,7 @@ public class RRDriveConstantsTechnicolor {
      * Set the value of MOTOR_VELO_PID to `new PIDCoefficients(kP, kI, kD);`
      */
     public static final boolean RUN_USING_ENCODER = true;
-    public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(19, 0, 1, 14.8);
+    public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(18, 0, 10, 15.75); // was 19, 0, 1, 14.8
 
 
     /*
