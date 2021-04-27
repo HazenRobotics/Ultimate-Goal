@@ -24,13 +24,16 @@ public class ShooterBot extends Robot {
     public static double OPEN_POSTITION = 1.0;
     public static double CLOSED_POSTITION = 0.0;
 
-    public static boolean REVERSE_LIFT_DIRECTION = true;
-    public static boolean REVERSE_SHOOTER_DIRECTION = true;
-
     //public Tracking tracker;
 
     private final double FLY_WHEEL_RADIUS = 0;
-    private final double tangentalVelocityMultiplier = 1; //calculated tangental velocity / actual velocity
+    private final double tangentialVelocityMultiplier = 1; //calculated tangential velocity / actual velocity
+
+    public static boolean REVERSE_LIFT = false;
+    public static boolean REVERSE_CLAW = true;
+    public static boolean REVERSE_SHOOTER = true;
+    public static boolean REVERSE_INTAKE = true;
+    public static boolean REVERSE_PUSHER = true;
 
     /**
      * Creates a Robot
@@ -44,8 +47,8 @@ public class ShooterBot extends Robot {
         super.driveTrain = new MecanumDrive(hw);
         mecanumDrive = (MecanumDrive) driveTrain;
         //tracker = new Tracking(mecanumDrive, hw);
-        goalLift = new GoalLift(hw, OPEN_POSTITION, CLOSED_POSTITION, REVERSE_LIFT_DIRECTION);
-        ringShooter = new RingShooter(hw, FLY_WHEEL_RADIUS, PUSHED_POSTITION, RETRACTED_POSTITION, REVERSE_SHOOTER_DIRECTION);
+        goalLift = new GoalLift(hw, OPEN_POSTITION, CLOSED_POSTITION, REVERSE_LIFT, REVERSE_CLAW);
+        ringShooter = new RingShooter(hw, FLY_WHEEL_RADIUS, PUSHED_POSTITION, RETRACTED_POSTITION, REVERSE_SHOOTER, REVERSE_INTAKE, REVERSE_PUSHER);
     }
 
     /**

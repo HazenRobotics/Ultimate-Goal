@@ -53,7 +53,7 @@ public class TwoWobbleGoals extends LinearOpMode {
 
         //Detect stack
         robot.drive(robot.trajectoryBuilder().lineToConstantHeading(new Vector2d(-52, -40)).build());
-        robot.tfod.runStackDetection(12500);
+        robot.tfod.runStackDetection(20000);
         stack = robot.tfod.getStack();
 
         //shoot

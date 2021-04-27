@@ -30,14 +30,11 @@ public class RobotWood extends Robot {
     public static double OPEN_POSTITION = 0.5;
     public static double CLOSED_POSTITION = 0.1;
 
-    public static boolean REVERSE_LIFT_DIRECTION = false;
-    public static boolean REVERSE_SHOOTER_DIRECTION = true;
-
-    public static final GoalLift.ClawPosition CLAW_CLOSED = GoalLift.ClawPosition.CLOSED;
-    public static final GoalLift.ClawPosition CLAW_OPEN = GoalLift.ClawPosition.OPEN;
-
-    public static final GoalLift.LiftPosition LIFT_LIFTED = GoalLift.LiftPosition.LIFTED;
-    public static final GoalLift.LiftPosition LIFT_LOWERED = GoalLift.LiftPosition.LOWERED;
+    public static boolean REVERSE_LIFT = false;
+    public static boolean REVERSE_CLAW = true;
+    public static boolean REVERSE_FLY_WHEELS = false;
+    public static boolean REVERSE_INTAKE = true;
+    public static boolean REVERSE_PUSHER = true;
 
     public RobotWood(HardwareMap hw, OpMode op){
         super(hw, op);
@@ -45,8 +42,8 @@ public class RobotWood extends Robot {
         super.driveTrain = new MecanumDrive(hw);
         mecanumDrive = (MecanumDrive) driveTrain;
         tracker = new Tracking(mecanumDrive, hw);
-        goalLift = new GoalLift(hw, OPEN_POSTITION, CLOSED_POSTITION, REVERSE_LIFT_DIRECTION);
-        ringShooter = new RingShooter(hw, FLY_WHEEL_RADIUS, PUSHED_POSTITION, RETRACTED_POSTITION, REVERSE_SHOOTER_DIRECTION);
+        goalLift = new GoalLift(hw, OPEN_POSTITION, CLOSED_POSTITION, REVERSE_LIFT, REVERSE_CLAW);
+        ringShooter = new RingShooter(hw, FLY_WHEEL_RADIUS, PUSHED_POSTITION, RETRACTED_POSTITION, REVERSE_FLY_WHEELS, REVERSE_INTAKE, REVERSE_PUSHER);
         tensorFlowUtil = new TensorFlowUtil(hw, op);
     }
 

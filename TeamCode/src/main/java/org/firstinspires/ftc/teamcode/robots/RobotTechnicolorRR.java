@@ -35,19 +35,22 @@ public class RobotTechnicolorRR {
 
     private final double FLY_WHEEL_RADIUS = 4; //in inches
 
-    public static double PUSHED_POSTITION = 0.2 ;
-    public static double RETRACTED_POSTITION = 0.0;
+    public static double PUSHED_POSTITION = 0.4 ;
+    public static double RETRACTED_POSTITION = 0.18;
 
-    public static double OPEN_POSTITION = 0.0;
-    public static double CLOSED_POSTITION = 1.0;
+    public static double OPEN_POSITION = 0.0;
+    public static double CLOSED_POSITION = 1.0;
 
-    public static boolean REVERSE_LIFT_DIRECTION = false ;
-    public static boolean REVERSE_SHOOTER_DIRECTION = false;
+    public static boolean REVERSE_LIFT = false;
+    public static boolean REVERSE_CLAW = true;
+    public static boolean REVERSE_FLY_WHEELS = false;
+    public static boolean REVERSE_INTAKE = false;
+    public static boolean REVERSE_PUSHER = true;
 
     public RobotTechnicolorRR(HardwareMap hw, OpMode op) {
         drive = new RRMecanumDriveTechnicolor(hw);
-        goalLift = new GoalLift(hw, OPEN_POSTITION, CLOSED_POSTITION, REVERSE_LIFT_DIRECTION);
-        ringShooter = new RingShooter(hw, FLY_WHEEL_RADIUS, PUSHED_POSTITION, RETRACTED_POSTITION, REVERSE_SHOOTER_DIRECTION);
+        goalLift = new GoalLift(hw, OPEN_POSITION, CLOSED_POSITION, REVERSE_LIFT, REVERSE_CLAW);
+        ringShooter = new RingShooter(hw, FLY_WHEEL_RADIUS, PUSHED_POSTITION, RETRACTED_POSTITION, REVERSE_FLY_WHEELS, REVERSE_INTAKE, REVERSE_PUSHER);
         tfod = new TensorFlowUtil(hw, op);
 
         final String VUFORIA_KEY = hw.appContext.getResources().getString(R.string.vuforiakey);

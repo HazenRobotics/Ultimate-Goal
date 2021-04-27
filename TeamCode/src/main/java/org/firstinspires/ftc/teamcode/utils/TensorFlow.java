@@ -38,6 +38,10 @@ public class TensorFlow {
         initTfod(tfodModelAssetName, minResultConfidence, monitorCamera, hw, labels);
     }
 
+    public void setZoom( double zoom, double aspectRatio ) {
+        tfod.setZoom( zoom, aspectRatio );
+    }
+
     /**
      * Initializes Tensor Flow for use
      * @param tfodModelAssetName name of the model asset, found in the assets folder

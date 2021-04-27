@@ -56,6 +56,7 @@ public class TensorFlowUtil {
 
         tensorFlow = new TensorFlow(TENSOR_FLOW_MODEL_NAME, 0.8f, true, hardwareMap, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);
 
+        tensorFlow.setZoom(2, 16.0 / 9.0);
     }
 
     void startTF() {

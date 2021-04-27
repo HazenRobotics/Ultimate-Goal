@@ -49,8 +49,8 @@ public class RingShooter {
      *
      * @param hw robot's hardware map
      */
-    public RingShooter(HardwareMap hw, double flyWheelRadius, double pushedPosition, double retractedPosition, boolean reverseMotorDirections) {
-        this(hw, "intake", "leftFlyWheel", "rightFlyWheel", "pusher", flyWheelRadius, pushedPosition, retractedPosition, reverseMotorDirections);
+    public RingShooter(HardwareMap hw, double flyWheelRadius, double pushedPosition, double retractedPosition, boolean reverseMotorDirections, boolean reversePusher, boolean reverseIntake ) {
+        this(hw, "intake", "leftFlyWheel", "rightFlyWheel", "pusher", flyWheelRadius, pushedPosition, retractedPosition, reverseMotorDirections, reversePusher, reverseIntake);
     }
 
     /**
@@ -62,9 +62,9 @@ public class RingShooter {
      * @param rightFlyWheelName name of right flywheel motor in the hardware map
      */
     public RingShooter(HardwareMap hw, String intakeMotorName, String leftFlyWheelName, String rightFlyWheelName,
-                       String pusherName, double flyWheelRadius, double pushedPosition, double retractedPosition, boolean reverseMotorDirections ) {
+                       String pusherName, double flyWheelRadius, double pushedPosition, double retractedPosition, boolean reverseFlyWheels, boolean reversePusher, boolean reverseIntake ) {
 
-        setUpHardware(hw, intakeMotorName, leftFlyWheelName, rightFlyWheelName, pusherName, reverseMotorDirections);
+        setUpHardware(hw, intakeMotorName, leftFlyWheelName, rightFlyWheelName, pusherName, reverseFlyWheels, reversePusher, reverseIntake);
 
         this.flyWheelRadius = flyWheelRadius;
 
@@ -80,23 +80,24 @@ public class RingShooter {
      * @param leftFlyWheelName  name of left flywheel motor in the hardware map
      * @param rightFlyWheelName name of right flywheel motor in the hardware map
      */
-    private void setUpHardware(HardwareMap hw, String intakeMotorName, String leftFlyWheelName, String rightFlyWheelName, String pusherName, boolean reverseMotorDirections ) {
+    private void setUpHardware(HardwareMap hw, String intakeMotorName, String leftFlyWheelName, String rightFlyWheelName, String pusherName, boolean reverseFlyWheels, boolean reversePusher, boolean reverseIntake ) {
+
+        pusher = hw.servo.get(pusherName);
 
         intakeMotor = hw.dcMotor.get(intakeMotorName);
 
         leftFlyWheelMotor = hw.get(DcMotorEx.class, leftFlyWheelName);
         rightFlyWheelMotor = hw.get(DcMotorEx.class, rightFlyWheelName);
 
-        //change these based on motor direction
-        leftFlyWheelMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-        rightFlyWheelMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        // reverse the fly wheels' directions
+        leftFlyWheelMotor.setDirection( reverseFlyWheels ? DcMotorSimple.Direction.REVERSE : DcMotorSimple.Direction.FORWARD);
+        rightFlyWheelMotor.setDirection( reverseFlyWheels ? DcMotorSimple.Direction.FORWARD : DcMotorSimple.Direction.REVERSE);
 
-        if( reverseMotorDirections ) {
-            leftFlyWheelMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-            rightFlyWheelMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-        }
+        // reverse the pusher servo's direction
+        pusher.setDirection( reversePusher ? Servo.Direction.REVERSE : Servo.Direction.FORWARD );
 
-        pusher = hw.servo.get(pusherName);
+        // reverse the intake motor's direction
+        intakeMotor.setDirection( reverseIntake ? DcMotorSimple.Direction.REVERSE : DcMotorSimple.Direction.FORWARD);
     }
 
     /**

@@ -43,8 +43,8 @@ public class GoalLift {
      * Creates a GoalLift with the default name for the motor
      * @param hw robot's hardware map
      */
-    public GoalLift(HardwareMap hw, double openPosition, double closedPosition, boolean reverseMotor ){
-        this(hw, "goalLift", "claw", "liftedButton", "loweredButton", openPosition, closedPosition, reverseMotor );
+    public GoalLift(HardwareMap hw, double openPosition, double closedPosition, boolean reverseArm, boolean reverseClaw ){
+        this(hw, "goalLift", "claw", "liftedButton", "loweredButton", openPosition, closedPosition, reverseArm, reverseClaw );
     }
 
     /**
@@ -52,7 +52,7 @@ public class GoalLift {
      * @param hw robot's hardware map
      * @param motorName name of the lift motor in the hardware map
      */
-    public GoalLift(HardwareMap hw, String motorName, String clawName, String liftedButtonName, String loweredButtonName, double openPosition, double closedPosition, boolean reverseMotor ) {
+    public GoalLift(HardwareMap hw, String motorName, String clawName, String liftedButtonName, String loweredButtonName, double openPosition, double closedPosition, boolean reverseArm, boolean reverseClaw ) {
 
         lift = hw.dcMotor.get( motorName );
 
@@ -64,8 +64,9 @@ public class GoalLift {
         liftedButton = hw.touchSensor.get(liftedButtonName);
         loweredButton = hw.touchSensor.get(loweredButtonName);
 
-        //change this based on needed motor direction
-        lift.setDirection( reverseMotor ? DcMotorSimple.Direction.REVERSE : DcMotorSimple.Direction.FORWARD );
+        // change this based on needed motor direction
+        lift.setDirection( reverseArm ? DcMotorSimple.Direction.REVERSE : DcMotorSimple.Direction.FORWARD );
+        claw.setDirection( reverseClaw ? Servo.Direction.REVERSE : Servo.Direction.FORWARD );
 
         goalLiftThread = new Thread();
     }
