@@ -69,10 +69,10 @@ public class RRDriveConstantsTechnicolor {
      * small and gradually increase them later after everything is working. All distance units are
      * inches.
      */
-    public static double MAX_VEL = 50; // calculated using MaxVelocityTuner.java
-    public static double MAX_ACCEL = 40; // 40
-    public static double MAX_ANG_VEL = Math.toRadians(70);
-    public static double MAX_ANG_ACCEL = Math.toRadians(40);
+    public static double MAX_VEL = 50; // calculated using MaxVelocityTuner.java // was 50
+    public static double MAX_ACCEL = 40; // was 40
+    public static double MAX_ANG_VEL = Math.toRadians(70); // was 70
+    public static double MAX_ANG_ACCEL = Math.toRadians(40); // was 40
 
 
     public static double encoderTicksToInches(double ticks) {

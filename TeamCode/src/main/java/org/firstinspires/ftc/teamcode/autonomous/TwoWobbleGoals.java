@@ -60,7 +60,7 @@ public class TwoWobbleGoals extends LinearOpMode {
         robot.logAndPrint("Init Finished", true);
 
         new Thread(() -> {
-            while (!isStopRequested());
+            while (!isStopRequested()) ;
             robot.tfod.deactivateTensorFlow();
             if (Vuforia.getInstance().isRunning())
                 Vuforia.getInstance().close();
@@ -70,14 +70,14 @@ public class TwoWobbleGoals extends LinearOpMode {
         normalLocalizer = robot.drive.getLocalizer();
         List<LynxModule> hubs = hardwareMap.getAll(LynxModule.class);
         new Thread(() -> {
-            while(opModeIsActive() && !isStopRequested()) {
-                for(LynxModule hub : hubs) {
-                    if(hub.isNotResponding() && !hubWasNotResponding) {
+            while (opModeIsActive() && !isStopRequested()) {
+                for (LynxModule hub : hubs) {
+                    if (hub.isNotResponding() && !hubWasNotResponding) {
                         Pose2d currentPose = robot.drive.getPoseEstimate();
                         robot.drive.setLocalizer(new MecanumDrive.MecanumLocalizer(robot.drive));
                         robot.drive.setPoseEstimate(currentPose);
                         hubWasNotResponding = true;
-                    } else if(hubWasNotResponding && !hub.isNotResponding()) {
+                    } else if (hubWasNotResponding && !hub.isNotResponding()) {
                         Pose2d currentPose = robot.drive.getPoseEstimate();
                         robot.drive.setLocalizer(normalLocalizer);
                         robot.drive.setPoseEstimate(currentPose);
@@ -116,7 +116,6 @@ public class TwoWobbleGoals extends LinearOpMode {
         shootRings();
         //if there is one ring in the stack, pick up the ring and shoot
         pickUpStackAndShoot();
-
 
 
         //Pick up 2nd wobble goal
@@ -159,6 +158,7 @@ public class TwoWobbleGoals extends LinearOpMode {
             dropWobbleGoal();
         } else {
             robot.drive(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(33, -53, Math.toRadians(180)), 0).addTemporalMarker(0.7, 0, this::dropWobbleGoalAsync).build());
+            // no dropWobbleGoal() here?
         }
     }
 
@@ -169,14 +169,18 @@ public class TwoWobbleGoals extends LinearOpMode {
         if (stack == Robot.STACK_NONE || stack == Robot.STACK_QUAD)
             robot.goalLift.setGoalLiftPositionAsync(Robot.LIFT_LIFTED, 1.0, 800);
 
-        robot.driveAsync(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(-16, stack != TensorFlowUtil.Stack.NONE ? -32 : -34, 0), 90, speedVeloConstraint, speedAccConstraint).build());
+        // robot's position to have the arm be perfectly centered on the wobble goal: ( -26.375 , -30.5 )
+        // should drive to wobble goal position & lower the wobble goal arm
+        robot.driveAsync(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(-16, stack != TensorFlowUtil.Stack.NONE ? -30 : -30.5, 0), 90, speedVeloConstraint, speedAccConstraint).build());
         robot.goalLift.setGoalLiftPositionAsync(GoalLift.LiftPosition.LIFTED, 0.6, 700);
         robot.drive.waitForIdle();
 
+        // should drive back while closing the claw & raising the lift
+        // close claw async, raise arm async, drive back
         robot.goalLift.setClawPositionAsync(Robot.CLAW_OPEN);
         robot.goalLift.setGoalLiftPositionAsync(GoalLift.LiftPosition.LOWERED, 0.6, 500);
         double radianSplice = stack == Robot.STACK_QUAD ? 10 : 6;
-        robot.drive(robot.trajectoryBuilder().lineToLinearHeading(new Pose2d(stack != TensorFlowUtil.Stack.SINGLE ? -25.625 - 1.5 : -25.625 - 2, stack != TensorFlowUtil.Stack.NONE ? -32 : -34, Math.toRadians(0/*radianSplice*/))).build());
+        robot.drive(robot.trajectoryBuilder().lineToLinearHeading(new Pose2d(-25.625 - (stack != Robot.STACK_SINGLE ? 1.5 : 2), stack != Robot.STACK_NONE ? -32 : -30.5, Math.toRadians(0/*radianSplice*/))).build());
 
         sleep(300);
         robot.goalLift.setClawPosition(Robot.CLAW_CLOSED);
@@ -201,7 +205,7 @@ public class TwoWobbleGoals extends LinearOpMode {
         }).start();
     }
 
-    private Pose2d newPos2d180( double x, double y ) {
+    private Pose2d newPos2d180(double x, double y) {
         return new Pose2d(x, y, Math.PI - 1e-6);
     }
 
@@ -209,7 +213,7 @@ public class TwoWobbleGoals extends LinearOpMode {
 
         Pose2d position = stack == Robot.STACK_QUAD ? newPos2d180(33, -60) : (stack == Robot.STACK_SINGLE ? newPos2d180(18, -36) : newPos2d180(-15, -60));
 
-        if(stack == TensorFlowUtil.Stack.SINGLE) {
+        if (stack == TensorFlowUtil.Stack.SINGLE) {
             robot.drive(robot.trajectoryBuilder().splineToConstantHeading(new Vector2d(-24, -55), 270).build());
         }
         robot.drive(robot.trajectoryBuilder().splineToLinearHeading(position, 88).build());
@@ -231,7 +235,7 @@ public class TwoWobbleGoals extends LinearOpMode {
 
     private void pickUpStackAndShoot() {
 
-        if(stack == Robot.STACK_SINGLE || stack == Robot.STACK_QUAD) {
+        if (stack == Robot.STACK_SINGLE || stack == Robot.STACK_QUAD) {
 
             double ringPosX = -39;
 
@@ -277,7 +281,7 @@ public class TwoWobbleGoals extends LinearOpMode {
             if (stack == Robot.STACK_SINGLE)
                 driveWaitShoot(-17, ringPosX, 10.075, 500);
             else if (stack == Robot.STACK_QUAD) {
-                double[] velocities = { 10.1, 10.2, 10.5, 10.4};
+                double[] velocities = {10.1, 10.2, 10.5, 10.4};
                 robot.drive(robot.trajectoryBuilder()
                         .lineToLinearHeading(new Pose2d(-36, ringPosX, Math.toRadians(0)),
                                 new MecanumVelocityConstraint(8, Math.toRadians(60), 21),
@@ -353,7 +357,7 @@ public class TwoWobbleGoals extends LinearOpMode {
     private void shootRings() {
 
         double shootPosX = -13;
-        if(true /*stack == TensorFlowUtil.Stack.NONE*/) {
+        if (true /*stack == TensorFlowUtil.Stack.NONE*/) {
             shootAndPrint(shootPosX, -6, FieldMap.ScoringGoals.RED_LEFT_POWERSHOT, false);
 
             shootAndPrint(shootPosX, -13, FieldMap.ScoringGoals.RED_MIDDLE_POWERSHOT, false);
