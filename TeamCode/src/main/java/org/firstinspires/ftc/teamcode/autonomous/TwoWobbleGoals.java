@@ -26,35 +26,41 @@ public class TwoWobbleGoals extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        Robot.createDefaultMatchLogFileName( this.getClass().getSimpleName() );
-        
+        Robot.createMatchLogFile(this.getClass().getSimpleName());
+
         robot = new RobotTechnicolorRR(hardwareMap, this);
 
         SoundLibrary.playStartup();
 
-        robot.setPosition(new Pose2d(-62, -48));
-        robot.goalLift.setClawPosition(GoalLift.ClawPosition.CLOSED);
+        robot.setPosition(new Pose2d(-61.125, -41.875));
+        robot.ringShooter.setPusherPosition(Robot.PUSHER_RETRACTED);
+        robot.goalLift.setClawPosition(Robot.CLAW_CLOSED);
         robot.tfod.initTensorFlow();
+        robot.tfod.setZoom(2);
  
         telemetry.addLine("Initialization Complete");
         telemetry.update();
-    
-        Robot.writeToMatchDefaultFile( "Init Finished", true );
 
-        while(!isStarted()) {
-            if(isStopRequested()) {
-                robot.tfod.deactivateTensorFlow();
-                if(Vuforia.getInstance().isRunning())
-                    Vuforia.getInstance().close();
-            }
-        }
+        robot.logAndPrint("Init Finished", true);
+
+        new Thread(() -> {
+            while (!isStopRequested()) ;
+            robot.tfod.deactivateTensorFlow();
+            if (Vuforia.getInstance().isRunning())
+                Vuforia.getInstance().close();
+        }).start();
+
+        robot.tfod.runWhileNotStartedStackDetectionSpeed();
 
         waitForStart();
 
         //Detect stack
+        stack = robot.tfod.getStack();
+        /* old stack
         robot.drive(robot.trajectoryBuilder().lineToConstantHeading(new Vector2d(-52, -40)).build());
         robot.tfod.runStackDetection(20000);
         stack = robot.tfod.getStack();
+         */
 
         //shoot
         robot.driveAsync(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(-13, -9, 0), 0).build());

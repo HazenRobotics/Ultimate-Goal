@@ -25,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 public class RobotTechnicolorRR {
 
     public RRMecanumDriveTechnicolor drive;
+    public OpMode opMode;
 
     public GoalLift goalLift;
     public RingShooter ringShooter;
@@ -52,6 +53,8 @@ public class RobotTechnicolorRR {
         goalLift = new GoalLift(hw, OPEN_POSITION, CLOSED_POSITION, REVERSE_LIFT, REVERSE_CLAW);
         ringShooter = new RingShooter(hw, FLY_WHEEL_RADIUS, PUSHED_POSTITION, RETRACTED_POSTITION, REVERSE_FLY_WHEELS, REVERSE_INTAKE, REVERSE_PUSHER);
         tfod = new TensorFlowUtil(hw, op);
+
+        opMode = op;
 
         final String VUFORIA_KEY = hw.appContext.getResources().getString(R.string.vuforiakey);
         Vuforia.getInstance().setParameters(VUFORIA_KEY, "webcam", true, hw);
@@ -124,4 +127,32 @@ public class RobotTechnicolorRR {
         drive.setMotorPowers( frontLeftPower, backLeftPower, backRightPower, frontRightPower );
     }
 
+
+    public void addline() {
+        addline( "" );
+    }
+
+    public void addline( String writeText ) {
+        opMode.telemetry.addLine( writeText );
+    }
+
+    public void updateTelemetry() {
+        opMode.telemetry.update();
+    }
+
+    public void logAndPrint( String writeText ) {
+        logAndPrint( writeText, false );
+    }
+
+    public void logAndPrint( String writeText, boolean includeTimeStamp ) {
+        Robot.writeToMatchFile( writeText, includeTimeStamp );
+        addline( writeText );
+        updateTelemetry();
+    }
+
+    // add thingy here for milliseconds
+    public void sleepRobot(long delay) {
+        long startTime = System.currentTimeMillis();
+        while( System.currentTimeMillis() < startTime + delay ) ;
+    }
 }
