@@ -68,7 +68,7 @@ public class GoalLift {
 
         //change this based on needed motor direction
         lift.setDirection( reverseMotor ? DcMotorSimple.Direction.REVERSE : DcMotorSimple.Direction.FORWARD );
-        claw.setDirection(Servo.Direction.REVERSE);
+        //claw.setDirection(Servo.Direction.REVERSE);
 
         goalLiftThread = new Thread();
         clawThread = new Thread();

@@ -5,6 +5,7 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
@@ -14,10 +15,13 @@ import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.drives.RRMecanumDriveTechnicolor;
 import org.firstinspires.ftc.teamcode.mechanisms.GoalLift;
 import org.firstinspires.ftc.teamcode.mechanisms.RingShooter;
+import org.firstinspires.ftc.teamcode.utils.FieldMap;
 import org.firstinspires.ftc.teamcode.utils.SoundLibrary;
 import org.firstinspires.ftc.teamcode.utils.TensorFlowUtil;
 import org.firstinspires.ftc.teamcode.utils.Vuforia;
 import org.jetbrains.annotations.NotNull;
+
+import static org.firstinspires.ftc.teamcode.drives.RRDriveConstantsTechnicolor.MOTOR_VELO_PID;
 
 public class RobotTechnicolorRR {
 
@@ -97,7 +101,15 @@ public class RobotTechnicolorRR {
         //assuming we are now lined up for the shot
         //shoot using velocity required to hit the target
         // backup shoot using power ringShooter.launchRingPower(0.85);
-        ringShooter.launchRingAngularVelocity( 9.3, setSpeedZero, speedUpTime ); // was 9.3
+        double omega;
+        if(target == FieldMap.ScoringGoals.RED_LEFT_POWERSHOT)
+            omega = 9.35;
+        else if (target == FieldMap.ScoringGoals.RED_MIDDLE_POWERSHOT)
+            omega = 9.38;
+        else
+            omega = 9.45;
+
+        ringShooter.launchRingAngularVelocity( omega, setSpeedZero, speedUpTime ); // was 9.3
         //ringShooter.launchRingVelocity(ShootingMath.getVelocityToTarget(FieldMap.RobotInfo.getRingLaunchPointPosition().toVector(), target.toVector(), ringShooter.getLaunchAngle()), DistanceUnit.MM);
     }
 
@@ -128,6 +140,7 @@ public class RobotTechnicolorRR {
     }
 
     public void drive(Trajectory trajectory) {
+        drive.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, MOTOR_VELO_PID);
         drive.followTrajectory(trajectory);
     }
 
