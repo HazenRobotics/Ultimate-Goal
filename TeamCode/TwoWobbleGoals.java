@@ -82,7 +82,7 @@ public class TwoWobbleGoals extends LinearOpMode {
             //Move wobble goal to correct zone
             moveWobbleGoalOne();
 
-            //Drop wobble goal TODO: create method in robot class for this
+            //Drop wobble goal
             dropWobbleGoal();
         }
 

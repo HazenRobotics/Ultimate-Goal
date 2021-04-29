@@ -57,7 +57,7 @@ public class ComplexAuto extends LinearOpMode {
             robot.drive(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(-10, -60, Math.toRadians(180)), 0).build()); // none
 
 
-        //Drop wobble goal TODO: create method in robot class for this
+        //Drop wobble goal
         robot.goalLift.setGoalLiftPosition(GoalLift.LiftPosition.LOWERED, 0.6, 500);
         robot.goalLift.setClawPosition(GoalLift.ClawPosition.OPEN);
         sleep(1000);

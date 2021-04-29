@@ -52,7 +52,7 @@ public class TeleOpTechnicolor extends LinearOpMode {
 
     private final String VUFORIA_TRACKABLES_ASSET_NAME = "UltimateGoal";
 
-    //private Thread shootPowershotThread;
+    private Thread shootPowershotThread;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -76,17 +76,16 @@ public class TeleOpTechnicolor extends LinearOpMode {
         robot.ringShooter.setPusherPosition(Robot.PUSHER_RETRACTED);
         robot.goalLift.setClawPosition(Robot.CLAW_OPEN);
 
-        /*shootPowershotThread = new Thread(() -> {
+        shootPowershotThread = new Thread(() -> {
+            //TODO: Figure out what starting position we want to use
             robot.setPosition(new Pose2d(0, 14, 0)); // 61, 14 if the robot is 18" wide: 70.125-robotwidth/2, 23.125-robotwidth/2
-            robot.driveAsync(robot.trajectoryBuilder().lineToLinearHeading(new Pose2d(-13, -5, 0)).build());
-            robot.ringShooter.setFlyWheelMotorVelocity(9.25, AngleUnit.RADIANS);
-            robot.drive.waitForIdle();
-            robot.shootAtTarget(FieldMap.ScoringGoals.RED_LEFT_POWERSHOT, false, false);
-            robot.drive(robot.trajectoryBuilder().lineTo(new Vector2d(-13, -12.5)).build());
+            robot.drive(robot.trajectoryBuilder().addDisplacementMarker(() -> robot.ringShooter.setFlyWheelMotorVelocity(9.4, AngleUnit.RADIANS)).splineToLinearHeading(new Pose2d(-4, -19, 0), 0).build());
+            robot.shootAtTarget(FieldMap.ScoringGoals.RED_RIGHT_POWERSHOT, false, false);
+            robot.drive.turnTo(Math.toRadians(5.5));
             robot.shootAtTarget(FieldMap.ScoringGoals.RED_MIDDLE_POWERSHOT, false, false);
-            robot.drive(robot.trajectoryBuilder().lineTo(new Vector2d(-13, -19)).build());
-            robot.shootAtTarget(FieldMap.ScoringGoals.RED_RIGHT_POWERSHOT, true, false);
-        });*/
+            robot.drive.turnTo(Math.toRadians(11));
+            robot.shootAtTarget(FieldMap.ScoringGoals.RED_LEFT_POWERSHOT, true, false);
+        });
 
         Robot.writeToMatchFile( "Initialization Complete", true );
 
@@ -101,7 +100,8 @@ public class TeleOpTechnicolor extends LinearOpMode {
             driveMult = gamepad1.left_stick_button.getValue() ? MAX_DRIVE_SPEED : MIN_DRIVE_SPEED;
             turnMult = gamepad1.right_stick_button.getValue() ? MAX_TURN_SPEED : MIN_TURN_SPEED;
 
-            robot.teleOpDrive(-gamepad1.left_stick_y*driveMult, gamepad1.left_stick_x*driveMult, -gamepad1.right_stick_x*turnMult);
+            if(!gamepad1.isLocked())
+                robot.teleOpDrive(-gamepad1.left_stick_y*driveMult, gamepad1.left_stick_x*driveMult, -gamepad1.right_stick_x*turnMult);
 
             if( gamepad2.y.onPress() )
                 velocity = maxVelocity;
@@ -181,6 +181,17 @@ public class TeleOpTechnicolor extends LinearOpMode {
             // addControlTelemetry();
 
             // addDriveInfoTelemetry();
+
+            if(gamepad1.back.onPress()) {
+                if(shootPowershotThread.isAlive()) {
+                    shootPowershotThread.interrupt();
+                    gamepad1.unlockController();
+                    return;
+                }
+                shootPowershotThread.start();
+                gamepad1.lockController();
+                gamepad1.unlockButton(gamepad1.back);
+            }
 
             telemetry.addLine( "Left Fly Wheel Velocity  = " + robot.ringShooter.getFlyWheelVelocity( true ) );
             telemetry.addLine( "Right Fly Wheel Velocity = " + robot.ringShooter.getFlyWheelVelocity( false ) );
