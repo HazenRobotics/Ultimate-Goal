@@ -171,7 +171,7 @@ public class TwoWobbleGoals extends LinearOpMode {
 
         // robot's position to have the arm be perfectly centered on the wobble goal: ( -26.375 , -30.5 )
         // should drive to wobble goal position & lower the wobble goal arm
-        robot.driveAsync(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(-16, stack != TensorFlowUtil.Stack.NONE ? -30 : -30.5, 0), 90/*, speedVeloConstraint, speedAccConstraint*/).build());
+        robot.driveAsync(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(-16, stack != Robot.STACK_NONE ? -30 : -30.5, 0), 90/*, speedVeloConstraint, speedAccConstraint*/).build());
         robot.goalLift.setGoalLiftPositionAsync(GoalLift.LiftPosition.LIFTED, 0.6, 700);
         robot.drive.waitForIdle();
 
@@ -186,7 +186,7 @@ public class TwoWobbleGoals extends LinearOpMode {
         robot.goalLift.setClawPosition(Robot.CLAW_CLOSED);
 
         sleep(1000);
-        if(stack != TensorFlowUtil.Stack.SINGLE)
+        if(stack != Robot.STACK_SINGLE)
             robot.goalLift.setGoalLiftPositionAsync(Robot.LIFT_LIFTED, 1.0, 800);
     }
 
@@ -214,7 +214,7 @@ public class TwoWobbleGoals extends LinearOpMode {
 
         Pose2d position = stack == Robot.STACK_QUAD ? newPos2d180(33, -60) : (stack == Robot.STACK_SINGLE ? newPos2d180(20, -36) : newPos2d180(-15, -60));
 
-        if (stack == TensorFlowUtil.Stack.SINGLE) {
+        if (stack == Robot.STACK_SINGLE) {
             robot.drive(robot.trajectoryBuilder().splineToConstantHeading(new Vector2d(-24, -55), 270).build());
         }
         robot.drive(robot.trajectoryBuilder().splineToLinearHeading(position, 88).build());
@@ -360,7 +360,7 @@ public class TwoWobbleGoals extends LinearOpMode {
     private void shootRings() {
 
         double shootPosX = -4;
-        /*if (true stack == TensorFlowUtil.Stack.NONE) {
+        /*if (true stack == Robot.STACK_NONE) {
             shootAndPrint(shootPosX, -6, FieldMap.ScoringGoals.RED_LEFT_POWERSHOT, false);
 
             shootAndPrint(shootPosX, -13, FieldMap.ScoringGoals.RED_MIDDLE_POWERSHOT, false);
