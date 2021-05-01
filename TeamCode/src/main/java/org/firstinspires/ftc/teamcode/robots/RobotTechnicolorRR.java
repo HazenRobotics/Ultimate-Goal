@@ -40,7 +40,7 @@ public class RobotTechnicolorRR {
     public static double PUSHED_POSTITION = 0.4 ;
     public static double RETRACTED_POSTITION = 0.18;
 
-    public static double OPEN_POSTITION = 0.0;
+    public static double OPEN_POSTITION = 0.6;
     public static double CLOSED_POSTITION = 1.0;
 
     public static boolean REVERSE_LIFT_DIRECTION = false ;
@@ -102,12 +102,12 @@ public class RobotTechnicolorRR {
         //shoot using velocity required to hit the target
         // backup shoot using power ringShooter.launchRingPower(0.85);
         double omega;
-        if(target == FieldMap.ScoringGoals.RED_LEFT_POWERSHOT)
+        if(target == FieldMap.ScoringGoals.RED_RIGHT_POWERSHOT)
             omega = 9.35;
         else if (target == FieldMap.ScoringGoals.RED_MIDDLE_POWERSHOT)
             omega = 9.38;
         else
-            omega = 9.45;
+            omega = 9.25;
 
         ringShooter.launchRingAngularVelocity( omega, setSpeedZero, speedUpTime ); // was 9.3
         //ringShooter.launchRingVelocity(ShootingMath.getVelocityToTarget(FieldMap.RobotInfo.getRingLaunchPointPosition().toVector(), target.toVector(), ringShooter.getLaunchAngle()), DistanceUnit.MM);

@@ -116,12 +116,12 @@ public class GamepadEvents {
     /**
      * left trigger
      */
-    public float left_trigger = 0f;
+    public Trigger left_trigger = new Trigger(0.5);
 
     /**
      * right trigger
      */
-    public float right_trigger = 0f;
+    public Trigger right_trigger = new Trigger(0.5);
 
     /**
      * PS4 Support - Circle
@@ -180,8 +180,8 @@ public class GamepadEvents {
             left_stick_y = 0;
             right_stick_x = 0;
             right_stick_y = 0;
-            left_trigger = 0;
-            right_trigger = 0;
+            left_trigger.update(0);
+            right_trigger.update(0);
             return;
         }
 
@@ -189,8 +189,8 @@ public class GamepadEvents {
         left_stick_y = gamepad.left_stick_y;
         right_stick_x = gamepad.right_stick_x;
         right_stick_y = gamepad.right_stick_y;
-        left_trigger = gamepad.left_trigger;
-        right_trigger = gamepad.right_trigger;
+        left_trigger.update(gamepad.left_trigger);
+        right_trigger.update(gamepad.right_trigger);
         dpad_down.update(gamepad.dpad_down);
         dpad_up.update(gamepad.dpad_up);
         dpad_right.update(gamepad.dpad_right);
@@ -337,7 +337,7 @@ public class GamepadEvents {
         void update( boolean value) {
             this.previous = this.value;
             this.value = !isLocked && value;
-            if(value == true) {
+            if(this.value == true && pressedTime > 0) {
                 heldTime = System.currentTimeMillis() - pressedTime;
             } else {
                 heldTime = 0;
@@ -358,5 +358,28 @@ public class GamepadEvents {
         void unlockButton() {
             isLocked = false;
         }
+    }
+
+    public static class Trigger extends GamepadButton {
+        private double triggerValue;
+        private double pressTolerance;
+        public Trigger(double pressTolerance) {
+            super();
+            this.pressTolerance = pressTolerance;
+        }
+
+        void update(double value) {
+            super.update(value > pressTolerance);
+            triggerValue = value;
+        }
+
+        public void setPressTolerance(double newPressTolerance) {
+            pressTolerance = newPressTolerance;
+        }
+
+        public double getTriggerValue() {
+            return triggerValue;
+        }
+
     }
 }

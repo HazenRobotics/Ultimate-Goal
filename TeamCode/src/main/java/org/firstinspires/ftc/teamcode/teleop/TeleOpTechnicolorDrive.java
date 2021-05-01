@@ -153,7 +153,7 @@ public class TeleOpTechnicolorDrive extends LinearOpMode {
 
             // ring shooter = gamepad1.right_trigger
             if(!shootPowershotThread.isAlive()) {
-                robot.ringShooter.setFlyWheelMotorVelocity( (gamepad1.right_trigger + gamepad2.right_trigger)*velocity, AngleUnit.RADIANS );
+                robot.ringShooter.setFlyWheelMotorVelocity( (gamepad1.right_trigger.getTriggerValue() + gamepad2.right_trigger.getTriggerValue())*velocity, AngleUnit.RADIANS );
             }
             //robot.ringShooter.setFlyWheelMotorPower( gamepad1.right_trigger*SHOOTER_POWER );
 
@@ -165,7 +165,7 @@ public class TeleOpTechnicolorDrive extends LinearOpMode {
             // intake = gamepad1.left_trigger
             if(gamepad1.right_bumper.onPress() || gamepad2.right_bumper.onPress())
                 robot.ringShooter.setIntakeMotorPower( robot.ringShooter.getIntakePower() > 0 ? 0 : INTAKE_POWER);
-            else if(gamepad1.left_trigger > 0.2 || gamepad2.left_trigger > 0.2)
+            else if(gamepad1.left_trigger.getTriggerValue() > 0.2 || gamepad2.left_trigger.getTriggerValue() > 0.2)
                 robot.ringShooter.setIntakeMotorPower(-INTAKE_POWER);
             // robot.ringShooter.setIntakeMotorPower( gamepad1.left_trigger*INTAKE_POWER );
 

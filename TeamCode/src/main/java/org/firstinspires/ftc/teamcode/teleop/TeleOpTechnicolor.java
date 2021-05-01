@@ -57,13 +57,11 @@ public class TeleOpTechnicolor extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        RobotTechnicolorRR.initTeleop();
-
         Robot.createMatchLogFile( this.getClass().getSimpleName() );
 
         robot = new RobotTechnicolorRR(hardwareMap, this);
 
-        SoundLibrary.playStartup();
+        SoundLibrary.playRandomStartup();
 
         gamepad1 = new GamepadEvents(super.gamepad1);
         gamepad2 = new GamepadEvents(super.gamepad2);
@@ -77,13 +75,13 @@ public class TeleOpTechnicolor extends LinearOpMode {
         robot.goalLift.setClawPosition(Robot.CLAW_OPEN);
 
         shootPowershotThread = new Thread(() -> {
-            //TODO: Figure out what starting position we want to use
-            robot.setPosition(new Pose2d(0, 14, 0)); // 61, 14 if the robot is 18" wide: 70.125-robotwidth/2, 23.125-robotwidth/2
-            robot.drive(robot.trajectoryBuilder().addDisplacementMarker(() -> robot.ringShooter.setFlyWheelMotorVelocity(9.4, AngleUnit.RADIANS)).splineToLinearHeading(new Pose2d(-4, -19, 0), 0).build());
+            robot.setPosition(new Pose2d(0, 18, 0)); // 61, 14 if the robot is 18" wide: 70.125-robotwidth/2, 23.125-robotwidth/2
+            robot.drive(robot.trajectoryBuilder().addDisplacementMarker(() -> robot.ringShooter.setFlyWheelMotorVelocity(9.4, AngleUnit.RADIANS)).splineToConstantHeading(new Vector2d(-4, -20.5), 0).build());
+            robot.drive.turn(Math.toRadians(0));
             robot.shootAtTarget(FieldMap.ScoringGoals.RED_RIGHT_POWERSHOT, false, false);
-            robot.drive.turnTo(Math.toRadians(5.5));
+            robot.drive.turn(Math.toRadians(6));
             robot.shootAtTarget(FieldMap.ScoringGoals.RED_MIDDLE_POWERSHOT, false, false);
-            robot.drive.turnTo(Math.toRadians(11));
+            robot.drive.turn(Math.toRadians(6));
             robot.shootAtTarget(FieldMap.ScoringGoals.RED_LEFT_POWERSHOT, true, false);
         });
 
@@ -100,13 +98,13 @@ public class TeleOpTechnicolor extends LinearOpMode {
             driveMult = gamepad1.left_stick_button.getValue() ? MAX_DRIVE_SPEED : MIN_DRIVE_SPEED;
             turnMult = gamepad1.right_stick_button.getValue() ? MAX_TURN_SPEED : MIN_TURN_SPEED;
 
-            if(!gamepad1.isLocked())
+            if(!shootPowershotThread.isAlive())
                 robot.teleOpDrive(-gamepad1.left_stick_y*driveMult, gamepad1.left_stick_x*driveMult, -gamepad1.right_stick_x*turnMult);
 
-            if( gamepad2.y.onPress() )
+            /*if( gamepad2.y.onPress() )
                 velocity = maxVelocity;
             else if( gamepad2.a.onPress() )
-                velocity = minVelocity;
+                velocity = minVelocity;*/
 
             /*
             if( gamepad2.x.onPress() )
@@ -118,23 +116,28 @@ public class TeleOpTechnicolor extends LinearOpMode {
             // increases and decreases the velocity of the flyWheels
             if( gamepad1.dpad_up.onPress() || gamepad2.dpad_up.onPress() )
                 velocity += velocityChange;
-            else if( gamepad1.dpad_down.onPress() || gamepad2.dpad_up.onPress() )
+            else if( gamepad1.dpad_down.onPress() || gamepad2.dpad_down.onPress() )
                 velocity -= velocityChange;
-            else if( gamepad1.dpad_right.onPress() || gamepad2.dpad_up.onPress() )
+            else if( gamepad1.dpad_right.onPress() || gamepad2.dpad_right.onPress() )
                 velocity += velocitySmallChange;
-            else if( gamepad1.dpad_left.onPress() || gamepad2.dpad_up.onPress() )
+            else if( gamepad1.dpad_left.onPress() || gamepad2.dpad_left.onPress() )
                 velocity -= velocitySmallChange;
+
+            if(gamepad2.dpad_up.onHeldFor(500))
+                velocity = maxVelocity;
+            if(gamepad2.dpad_down.onHeldFor(500))
+                velocity = minVelocity;
 
             telemetry.addLine( "velocity: " + velocity );
 
             // claw position
-            if(gamepad1.x.onPress())
+            if(gamepad1.x.onPress() || gamepad2.x.onPress())
                 robot.goalLift.setClawPosition( GoalLift.ClawPosition.CLOSED );
-            if(gamepad1.b.onPress())
+            if(gamepad1.b.onPress() || gamepad2.b.onPress())
                 robot.goalLift.setClawPosition( GoalLift.ClawPosition.OPEN );
 
             // goal lift
-            if( gamepad1.y.onPress() ) {
+            if( gamepad1.y.onPress() || gamepad2.y.onPress() ) {
                 //if the goal lift is running but hasn't been lowered all the way yet
                 if(robot.goalLift.goalLiftIsRunning() && robot.goalLift.getCurrentLiftPosition() == GoalLift.LiftPosition.LIFTED) {
                     robot.goalLift.stopGoalLift();
@@ -147,7 +150,7 @@ public class TeleOpTechnicolor extends LinearOpMode {
                     robot.goalLift.setGoalLiftPositionAsync( GoalLift.LiftPosition.LIFTED, LIFT_POWER + 0.3, LIFT_TIME_LIMIT );
                 }
             }
-            if( gamepad1.a.onPress() ) {
+            if( gamepad1.a.onPress() || gamepad2.a.onPress() ) {
                 //if the goal lift is running but hasn't been raised all the way yet
                 if(robot.goalLift.goalLiftIsRunning() && robot.goalLift.getCurrentLiftPosition() == GoalLift.LiftPosition.LOWERED) {
                     robot.goalLift.stopGoalLift();
@@ -162,18 +165,19 @@ public class TeleOpTechnicolor extends LinearOpMode {
             }
 
             // ring shooter = gamepad1.right_trigger
-            robot.ringShooter.setFlyWheelMotorVelocity((gamepad1.right_trigger + gamepad2.right_trigger) * velocity, AngleUnit.RADIANS);
+            if(!shootPowershotThread.isAlive())
+                robot.ringShooter.setFlyWheelMotorVelocity((gamepad1.left_trigger.getTriggerValue() + gamepad2.left_trigger.getTriggerValue()) * velocity, AngleUnit.RADIANS);
             //robot.ringShooter.setFlyWheelMotorPower( gamepad1.right_trigger*SHOOTER_POWER );
 
             // ring pusher (servo) = gamepad1.left_bumper
-            if( gamepad1.left_bumper.onPress() || gamepad2.left_bumper.onPress() )
+            if( (gamepad1.right_trigger.onPress() || gamepad2.right_trigger.onPress()) && !shootPowershotThread.isAlive() )
                 robot.ringShooter.pushRingTimeAsync();
 
             // intake = gamepad1.left_trigger
             if(gamepad1.right_bumper.onPress() || gamepad2.right_bumper.onPress())
                 robot.ringShooter.setIntakeMotorPower( robot.ringShooter.getIntakePower() > 0 ? 0 : INTAKE_POWER);
-            else if(gamepad1.left_trigger > 0.2 || gamepad2.left_trigger > 0.2)
-                robot.ringShooter.setIntakeMotorPower(-INTAKE_POWER);
+            else if(gamepad1.left_bumper.onPress() || gamepad2.left_bumper.onPress())
+                robot.ringShooter.setIntakeMotorPower(robot.ringShooter.getIntakePower() < 0 ? 0 : -INTAKE_POWER);
             // robot.ringShooter.setIntakeMotorPower( gamepad1.left_trigger*INTAKE_POWER );
 
             // addMotorInfoTelemetry();
@@ -185,12 +189,9 @@ public class TeleOpTechnicolor extends LinearOpMode {
             if(gamepad1.back.onPress()) {
                 if(shootPowershotThread.isAlive()) {
                     shootPowershotThread.interrupt();
-                    gamepad1.unlockController();
-                    return;
+                } else {
+                    shootPowershotThread.start();
                 }
-                shootPowershotThread.start();
-                gamepad1.lockController();
-                gamepad1.unlockButton(gamepad1.back);
             }
 
             telemetry.addLine( "Left Fly Wheel Velocity  = " + robot.ringShooter.getFlyWheelVelocity( true ) );
@@ -200,6 +201,7 @@ public class TeleOpTechnicolor extends LinearOpMode {
             telemetry.update();
             gamepad1.update();
             gamepad2.update();
+            robot.drive.update();
 
             if(isStopRequested())
                 if(Vuforia.getInstance().isRunning())
