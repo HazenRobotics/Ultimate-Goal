@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.utils.ShootingMath;
 import org.firstinspires.ftc.teamcode.utils.SoundLibrary;
@@ -308,5 +309,9 @@ public class RingShooter {
 
         leftFlyWheelMotor.setVelocityPIDFCoefficients(coeffs.p, coeffs.i, coeffs.d, coeffs.f);
         rightFlyWheelMotor.setVelocityPIDFCoefficients(coeffs.p, coeffs.i, coeffs.d, coeffs.f);
+    }
+
+    public double getIntakeCurrent() {
+        return ((DcMotorEx)intakeMotor).getCurrent(CurrentUnit.AMPS);
     }
 }

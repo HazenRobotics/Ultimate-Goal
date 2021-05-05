@@ -33,7 +33,7 @@ public class RobotTechnicolorRR {
     public TensorFlowUtil tfod;
 
     private RevBlinkinLedDriver lights;
-    private VoltageSensor batteryVoltageSensor;
+    public VoltageSensor batteryVoltageSensor;
 
     private final double FLY_WHEEL_RADIUS = 4; //in inches
 
