@@ -16,6 +16,7 @@ import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.drives.RRMecanumDriveTechnicolor;
 import org.firstinspires.ftc.teamcode.mechanisms.GoalLift;
+import org.firstinspires.ftc.teamcode.mechanisms.RingBlocker;
 import org.firstinspires.ftc.teamcode.mechanisms.RingShooter;
 import org.firstinspires.ftc.teamcode.utils.FieldMap;
 import org.firstinspires.ftc.teamcode.utils.IntakeSensor;
@@ -33,6 +34,7 @@ public class RobotTechnicolorRR {
 
     public GoalLift goalLift;
     public RingShooter ringShooter;
+    public RingBlocker ringBlocker;
     public TensorFlowUtil tfod;
 
     private RevBlinkinLedDriver lights;
@@ -48,6 +50,9 @@ public class RobotTechnicolorRR {
     public static double OPEN_POSTITION = 0.6;
     public static double CLOSED_POSTITION = 1.0;
 
+    public static double BLOCKED_POSTITION = 0.6;
+    public static double UNBLOCKED_POSTITION = 1.0;
+
     public static boolean REVERSE_LIFT_DIRECTION = false ;
     public static boolean REVERSE_SHOOTER_DIRECTION = false;
 
@@ -55,6 +60,7 @@ public class RobotTechnicolorRR {
         drive = new RRMecanumDriveTechnicolor(hw);
         goalLift = new GoalLift(hw, OPEN_POSTITION, CLOSED_POSTITION, REVERSE_LIFT_DIRECTION);
         ringShooter = new RingShooter(hw, FLY_WHEEL_RADIUS, PUSHED_POSTITION, RETRACTED_POSTITION, REVERSE_SHOOTER_DIRECTION);
+        ringBlocker = new RingBlocker(hw, BLOCKED_POSTITION, UNBLOCKED_POSTITION);
         tfod = new TensorFlowUtil(hw, op);
         intakeSensor = new IntakeSensor((DcMotorEx)ringShooter.intakeMotor, (LinearOpMode)op);
 
