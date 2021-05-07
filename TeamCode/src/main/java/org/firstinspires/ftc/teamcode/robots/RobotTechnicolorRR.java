@@ -4,8 +4,10 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
@@ -16,6 +18,7 @@ import org.firstinspires.ftc.teamcode.drives.RRMecanumDriveTechnicolor;
 import org.firstinspires.ftc.teamcode.mechanisms.GoalLift;
 import org.firstinspires.ftc.teamcode.mechanisms.RingShooter;
 import org.firstinspires.ftc.teamcode.utils.FieldMap;
+import org.firstinspires.ftc.teamcode.utils.IntakeSensor;
 import org.firstinspires.ftc.teamcode.utils.SoundLibrary;
 import org.firstinspires.ftc.teamcode.utils.TensorFlowUtil;
 import org.firstinspires.ftc.teamcode.utils.Vuforia;
@@ -35,6 +38,8 @@ public class RobotTechnicolorRR {
     private RevBlinkinLedDriver lights;
     public VoltageSensor batteryVoltageSensor;
 
+    public IntakeSensor intakeSensor;
+
     private final double FLY_WHEEL_RADIUS = 4; //in inches
 
     public static double PUSHED_POSTITION = 0.4 ;
@@ -51,6 +56,7 @@ public class RobotTechnicolorRR {
         goalLift = new GoalLift(hw, OPEN_POSTITION, CLOSED_POSTITION, REVERSE_LIFT_DIRECTION);
         ringShooter = new RingShooter(hw, FLY_WHEEL_RADIUS, PUSHED_POSTITION, RETRACTED_POSTITION, REVERSE_SHOOTER_DIRECTION);
         tfod = new TensorFlowUtil(hw, op);
+        intakeSensor = new IntakeSensor((DcMotorEx)ringShooter.intakeMotor, (LinearOpMode)op);
 
         opMode = op;
 
@@ -103,11 +109,11 @@ public class RobotTechnicolorRR {
         // backup shoot using power ringShooter.launchRingPower(0.85);
         double omega;
         if(target == FieldMap.ScoringGoals.RED_RIGHT_POWERSHOT)
-            omega = 9.35;
+            omega = 9.0;
         else if (target == FieldMap.ScoringGoals.RED_MIDDLE_POWERSHOT)
-            omega = 9.38;
+            omega = 9.02;
         else
-            omega = 9.25;
+            omega = 9.04;
 
         ringShooter.launchRingAngularVelocity( omega, setSpeedZero, speedUpTime ); // was 9.3
         //ringShooter.launchRingVelocity(ShootingMath.getVelocityToTarget(FieldMap.RobotInfo.getRingLaunchPointPosition().toVector(), target.toVector(), ringShooter.getLaunchAngle()), DistanceUnit.MM);

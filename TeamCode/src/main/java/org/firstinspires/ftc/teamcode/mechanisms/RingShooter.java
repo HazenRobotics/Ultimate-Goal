@@ -19,7 +19,7 @@ import org.firstinspires.ftc.teamcode.utils.SoundLibrary;
  */
 public class RingShooter {
 
-    private DcMotor intakeMotor;
+    public DcMotor intakeMotor;
 
     public DcMotorEx leftFlyWheelMotor;
     public DcMotorEx rightFlyWheelMotor;
