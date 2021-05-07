@@ -18,7 +18,9 @@ public class IntakeSensor {
     private boolean isPickingUp = false;
 
     private double ringPickupCurrentElapsedTime;
+    private double ringPickupCurrentStartTime;
     private double ringStuckCurrentElapsedTime;
+    private double ringStuckCurrentStartTime;
 
     private Thread intakeThread;
 
@@ -33,12 +35,16 @@ public class IntakeSensor {
             while (!this.opMode.isStarted());
             while (this.opMode.opModeIsActive()) {
                 if(isStuckRingCurrentDraw()) {
-                    ringStuckCurrentElapsedTime += ringStuckCurrentElapsedTime > 0 ? System.currentTimeMillis() - ringStuckCurrentElapsedTime : System.currentTimeMillis();
+                    if(ringPickupCurrentStartTime == 0) ringPickupCurrentStartTime = System.currentTimeMillis();
+                    ringStuckCurrentElapsedTime = System.currentTimeMillis() - ringPickupCurrentStartTime;
                 } else if(isPickupRingCurrentDraw()) {
-                    ringPickupCurrentElapsedTime += ringPickupCurrentElapsedTime > 0 ? System.currentTimeMillis() - ringPickupCurrentElapsedTime : System.currentTimeMillis();
+                    if(ringStuckCurrentStartTime == 0) ringStuckCurrentStartTime = System.currentTimeMillis();
+                    ringPickupCurrentElapsedTime = System.currentTimeMillis() - ringStuckCurrentStartTime;
                 } else {
                     ringStuckCurrentElapsedTime = 0;
+                    ringStuckCurrentStartTime = 0;
                     ringPickupCurrentElapsedTime = 0;
+                    ringPickupCurrentStartTime = 0;
                 }
             }
         });
