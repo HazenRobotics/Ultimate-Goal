@@ -51,7 +51,7 @@ public class RobotTechnicolorRR {
     public static double CLOSED_POSTITION = 1.0;
 
     public static double BLOCKED_POSTITION = 0.6;
-    public static double UNBLOCKED_POSTITION = 1.0;
+    public static double UNBLOCKED_POSTITION = 0.2;
 
     public static boolean REVERSE_LIFT_DIRECTION = false ;
     public static boolean REVERSE_SHOOTER_DIRECTION = false;
@@ -96,10 +96,13 @@ public class RobotTechnicolorRR {
         updateTelemetry();
     }
 
-    // add thingy here for milliseconds
+    /**
+     * waits for *delay* milliseconds
+     * @param delay the time to wait in milliseconds
+     */
     public void sleepRobot(long delay) {
         long startTime = System.currentTimeMillis();
-        while( System.currentTimeMillis() < startTime + delay ) ;
+        while( System.currentTimeMillis() < startTime + delay );
     }
 
     /**

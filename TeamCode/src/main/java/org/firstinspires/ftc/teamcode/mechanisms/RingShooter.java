@@ -31,8 +31,8 @@ public class RingShooter {
     private double flyWheelRadius;
     private static double launchAngle = 35; // degrees
 
-    private static final double RING_PUSH_TIME = 300; // milliseconds
-    private static final double RING_RETRACT_TIME = 300;
+    private static final double RING_PUSH_TIME = 150; // milliseconds
+    private static final double RING_RETRACT_TIME = 150;
 
     public enum PusherPosition {
         PUSHED,
@@ -261,7 +261,20 @@ public class RingShooter {
         long currentTime = System.currentTimeMillis();
         while (System.currentTimeMillis() < currentTime + RING_PUSH_TIME);
         setPusherPosition(PusherPosition.RETRACTED);
+        currentTime = System.currentTimeMillis();
         while (System.currentTimeMillis() < currentTime + RING_RETRACT_TIME);
+    }
+
+
+
+    public void pushRingTime( double pushTime, double retractTime ) {
+        setPusherPosition(PusherPosition.PUSHED);
+        SoundLibrary.playRandomPew(); // play a random pew sound
+        long currentTime = System.currentTimeMillis();
+        while (System.currentTimeMillis() < currentTime + pushTime);
+        setPusherPosition(PusherPosition.RETRACTED);
+        currentTime = System.currentTimeMillis();
+        while (System.currentTimeMillis() < currentTime + retractTime);
     }
 
     public void pushRingPosition() {

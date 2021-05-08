@@ -8,10 +8,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
 public class IntakeSensor {
 
-    private final double PICKUP_RING_CURRENT_DRAW = 1.8;
+    private final double PICKUP_RING_CURRENT_DRAW = 1;
     private final double STUCK_RING_CURRENT_DRAW = 3;
-    private final double CURRENT_CHECK_TIME = 700;
-    private final double DOUBLE_RING_PICKUP_TIME = 800;
+    private final double CURRENT_CHECK_TIME = 200;
 
     private final double RING_TRAVEL_TIME = 1000;
 

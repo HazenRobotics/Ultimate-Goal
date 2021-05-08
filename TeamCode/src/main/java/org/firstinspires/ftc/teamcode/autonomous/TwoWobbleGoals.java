@@ -20,6 +20,7 @@ import org.firstinspires.ftc.teamcode.mechanisms.GoalLift;
 import org.firstinspires.ftc.teamcode.robots.Robot;
 import org.firstinspires.ftc.teamcode.robots.RobotTechnicolorRR;
 import org.firstinspires.ftc.teamcode.utils.FieldMap;
+import org.firstinspires.ftc.teamcode.utils.LogUtil;
 import org.firstinspires.ftc.teamcode.utils.SoundLibrary;
 import org.firstinspires.ftc.teamcode.utils.TensorFlowUtil;
 import org.firstinspires.ftc.teamcode.utils.Vuforia;
@@ -42,6 +43,9 @@ public class TwoWobbleGoals extends LinearOpMode {
     private boolean hubWasNotResponding = false;
     private Localizer normalLocalizer;
 
+    private long startTime;
+
+
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -52,6 +56,7 @@ public class TwoWobbleGoals extends LinearOpMode {
         SoundLibrary.playRandomStartup();
 
         robot.setPosition(new Pose2d(-61.125, -41.875));
+        robot.ringBlocker.setBlockerPosition(Robot.BLOCKER_RETRACTED);
         robot.ringShooter.setPusherPosition(Robot.PUSHER_RETRACTED);
         robot.goalLift.setClawPosition(Robot.CLAW_CLOSED);
         robot.tfod.initTensorFlow();
@@ -88,12 +93,20 @@ public class TwoWobbleGoals extends LinearOpMode {
             }
         }).start();
 
+
         robot.tfod.runWhileNotStartedStackDetectionSpeed();
 
         waitForStart();
+        startTime = System.currentTimeMillis();
+        new Thread(() -> {
+            while (!isStopRequested() && System.currentTimeMillis() < startTime + 29500);
+            robot.goalLift.setClawPosition(Robot.CLAW_OPEN);
+        }).start();
 
         //Detect stack
         stack = robot.tfod.getStack();
+
+        //logPath();
 
         // middle of the stack and wobble goal is (-34.75, -30)
 
@@ -134,9 +147,21 @@ public class TwoWobbleGoals extends LinearOpMode {
 
         //Return to center line
 
-        while (opModeIsActive() && !isStopRequested()) {
+        while (opModeIsActive() && !isStopRequested())
             idle();
-        }
+    }
+
+    private void logPath() {
+        String fileName = stack.toString().substring(0,1).concat(stack.toString().toLowerCase()) + "Ring Auto.csv";
+
+        Robot.writeAFile( fileName, "x,y", false, false);
+
+        new Thread(() -> {
+            while( !isStopRequested() ) {
+                Robot.writeAFile( fileName, -robot.drive.getPoseEstimate().getY() + "," + robot.drive.getPoseEstimate().getX(), true, false);
+                robot.sleepRobot(100);
+            }
+        }).start();
     }
 
     private void park() {
@@ -145,7 +170,6 @@ public class TwoWobbleGoals extends LinearOpMode {
             robot.driveAsync(robot.trajectoryBuilder().strafeRight(8).splineToConstantHeading(new Vector2d(14, -36), 0).build());
         else
             robot.driveAsync(robot.trajectoryBuilder().lineTo(new Vector2d(8, -36)).build());
-
     }
 
     private void moveWobbleGoalTwo() {
@@ -172,8 +196,8 @@ public class TwoWobbleGoals extends LinearOpMode {
             robot.goalLift.setGoalLiftPositionAsync(Robot.LIFT_LIFTED, 1.0, 800);*/
 
         // robot's position to have the arm be perfectly centered on the wobble goal: ( -26.375 , -30.5 )
-        // should drive to wobble goal position & lower the wobble goal arm
-        robot.driveAsync(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(-16, stack != Robot.STACK_NONE ? -30 : -30.5, 0), 90/*, speedVeloConstraint, speedAccConstraint*/).build());
+        // should drive to wobble goal position & lower the wobble goal arm            x was -16
+        robot.driveAsync(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(-21, stack == Robot.STACK_NONE ? -30.5 : -30, 0), 90/*, speedVeloConstraint, speedAccConstraint*/).build());
         //robot.goalLift.setGoalLiftPositionAsync(GoalLift.LiftPosition.LIFTED, 0.6, 700);
         robot.drive.waitForIdle();
 
@@ -181,8 +205,7 @@ public class TwoWobbleGoals extends LinearOpMode {
         // close claw async, raise arm async, drive back
         robot.goalLift.setClawPositionAsync(Robot.CLAW_OPEN);
         robot.goalLift.setGoalLiftPositionAsync(GoalLift.LiftPosition.LOWERED, 0.6, 500);
-        //double radianSplice = stack == Robot.STACK_QUAD ? 10 : 6;
-        robot.drive(robot.trajectoryBuilder().lineToLinearHeading(new Pose2d(-25.625 - (1.5), stack != Robot.STACK_NONE ? -32 : -30.5, Math.toRadians(0/*radianSplice*/))).build());
+        robot.drive(robot.trajectoryBuilder().lineToLinearHeading(new Pose2d(-25.625 - (1.5), stack == Robot.STACK_NONE ? -30.5 : -32, Math.toRadians(0))).build());
 
         sleep(300);
         robot.goalLift.setClawPosition(Robot.CLAW_CLOSED);
@@ -375,25 +398,28 @@ public class TwoWobbleGoals extends LinearOpMode {
 
         shootAndPrint(shootPosX, -4, FieldMap.ScoringGoals.RED_RIGHT_POWERSHOT, true);*/
 
-        robot.drive(robot.trajectoryBuilder().addDisplacementMarker(() -> robot.ringShooter.setFlyWheelMotorVelocity(9.1, AngleUnit.RADIANS)).splineToLinearHeading(new Pose2d(-4, -20.5, 0), 0).build());
+        robot.drive(robot.trajectoryBuilder().addDisplacementMarker(() -> robot.ringShooter.setFlyWheelMotorVelocity(9.1, AngleUnit.RADIANS)).splineToLinearHeading(new Pose2d(-4, stack == TensorFlowUtil.Stack.NONE ? -21.5 : stack == TensorFlowUtil.Stack.QUAD ? -19.5 : -20.5, 0), 0).build());
         robot.drive.turn(Math.toRadians(0));
-        telemetry.addData("Angle", robot.drive.getExternalHeading());
-        telemetry.addData("Flywheel Velocity", robot.ringShooter.getFlyWheelVelocity(false));
-        telemetry.update();
+        printPowerShots( robot.drive.getExternalHeading(), robot.ringShooter.getFlyWheelVelocity(false) );
+
         robot.shootAtTarget(FieldMap.ScoringGoals.RED_RIGHT_POWERSHOT, false, false);
-        robot.drive.turn(Math.toRadians(6));
-        telemetry.addData("Angle", robot.drive.getExternalHeading());
-        telemetry.addData("Flywheel Velocity", robot.ringShooter.getFlyWheelVelocity(false));
-        telemetry.update();
+        robot.drive.turn(Math.toRadians(5.5));
+        printPowerShots( robot.drive.getExternalHeading(), robot.ringShooter.getFlyWheelVelocity(false));
+
         robot.shootAtTarget(FieldMap.ScoringGoals.RED_MIDDLE_POWERSHOT, false, false);
-        robot.drive.turn(Math.toRadians(6));
-        telemetry.addData("Angle", robot.drive.getExternalHeading());
-        telemetry.addData("Flywheel Velocity", robot.ringShooter.getFlyWheelVelocity(false));
-        telemetry.update();
+        robot.drive.turn(Math.toRadians(5));
+        printPowerShots( robot.drive.getExternalHeading(), robot.ringShooter.getFlyWheelVelocity(false) );
+
         robot.shootAtTarget(FieldMap.ScoringGoals.RED_LEFT_POWERSHOT, true, false);
     }
 
-    public void shootAndPrint(double posX, double posY, OpenGLMatrix target, boolean setPowerZero) {
+    public void printPowerShots( double angle, double velocity ) {
+        telemetry.addData("Angle", angle);
+        telemetry.addData("Flywheel Velocity", velocity);
+        telemetry.update();
+    }
+
+    public void printPowerShots(double posX, double posY, OpenGLMatrix target, boolean setPowerZero) {
         robot.drive(robot.trajectoryBuilder().lineToLinearHeading(new Pose2d(posX, posY, 0)).build());
         robot.shootAtTarget(FieldMap.ScoringGoals.RED_RIGHT_POWERSHOT, setPowerZero, false);
         robot.logAndPrint("Fly Wheel Speed :: " + robot.ringShooter.rightFlyWheelMotor.getVelocity(AngleUnit.RADIANS), true);

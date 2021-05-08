@@ -15,7 +15,7 @@ import java.util.TimeZone;
 
 public class LogUtil {
 
-    private static final String LOG_PATH = "/" + "FIRST" + "/" + "Logs" + "/";
+    private static final String LOG_PATH = "/" + "FIRST" + "/" + "logs" + "/";
 
     private static final String DEFAULT_ROBOT_LOG = "*robotLog.txt";
     private static final String DEFAULT_MATCH_LOG = "defaultRobotLog.txt";
@@ -72,11 +72,8 @@ public class LogUtil {
 
         Thread fileWriter = new Thread( () -> {
 
-            String time = "";
             Date date = new Date();
-
-            if( includeTimeStamp )
-                time = new SimpleDateFormat( "MM-dd HH:mm:ss" ).format( date ) + " :: ";
+            String time = includeTimeStamp ? new SimpleDateFormat( "MM-dd HH:mm:ss" ).format( date ) + " :: " : "";
 
             //".../Internal Storage";
             String path = Environment.getExternalStorageDirectory().getPath() + LOG_PATH;
@@ -87,7 +84,6 @@ public class LogUtil {
                 writer.close();
             } catch( IOException e ) {
                 e.printStackTrace();
-                Robot.writeToDefaultFile( e.getStackTrace().toString(), true, true );
             }
 
             if( deleteOldLogs )
