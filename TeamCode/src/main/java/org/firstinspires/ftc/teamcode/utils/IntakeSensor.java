@@ -14,8 +14,6 @@ public class IntakeSensor {
 
     private final double RING_TRAVEL_TIME = 1000;
 
-    private boolean isPickingUp = false;
-
     private double ringPickupCurrentElapsedTime;
     private double ringPickupCurrentStartTime;
     private double ringStuckCurrentElapsedTime;

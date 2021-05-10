@@ -78,6 +78,7 @@ public class TwoWobbleGoals extends LinearOpMode {
             while (opModeIsActive() && !isStopRequested()) {
                 for (LynxModule hub : hubs) {
                     if (hub.isNotResponding() && !hubWasNotResponding) {
+                        SoundLibrary.stopAllAudios();
                         Pose2d currentPose = robot.drive.getPoseEstimate();
                         robot.drive.setLocalizer(new MecanumDrive.MecanumLocalizer(robot.drive));
                         robot.drive.setPoseEstimate(currentPose);
@@ -305,11 +306,13 @@ public class TwoWobbleGoals extends LinearOpMode {
             robot.drive(robot.trajectoryBuilder().splineToLinearHeading(new Pose2d(-10, ringPosX, Math.toRadians(0)), 270).build());
 
             if (stack == Robot.STACK_SINGLE) {
+                SoundLibrary.playAudio("my_precious");
                 driveWaitShoot(-17, ringPosX, 10.0, 500);
                 robot.ringShooter.setFlyWheelMotorPower(0);
                 robot.ringShooter.setIntakeMotorPower(0);
             }
             else if (stack == Robot.STACK_QUAD) {
+                SoundLibrary.playAudio("fine_addition");
                 double[] velocities = {10.2, 10.3, 10.6, 10.2};
                 robot.drive(robot.trajectoryBuilder()
                         .lineToLinearHeading(new Pose2d(-34, ringPosX, 0),

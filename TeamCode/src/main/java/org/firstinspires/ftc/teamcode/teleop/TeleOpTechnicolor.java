@@ -236,6 +236,7 @@ public class TeleOpTechnicolor extends LinearOpMode {
             if (robot.intakeSensor.isPickingUpRing() && !isPickingUpRing) {
                 isPickingUpRing = true;
                 ringPickupStart = System.currentTimeMillis();
+                SoundLibrary.playAudio("slurp_yummy");
             }
             //if the robot is still picking up a ring but it should be done by now
             // either the ring is stuck at the bottom or it is picking up 2 rings
