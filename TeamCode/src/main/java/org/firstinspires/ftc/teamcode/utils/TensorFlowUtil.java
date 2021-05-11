@@ -113,15 +113,22 @@ public class TensorFlowUtil {
     }
 
     void determineObjectWhileNotStartedSpeed() {
-        Robot.writeToMatchFile("objectDeterminationWhileLoop", true);
+//        Robot.writeToMatchFile("objectDeterminationWhileLoop", true);
 
         infiniteStackRecognitions = new ArrayList<Stack>();
 
         resetLoopsAndCounters();
 
+        Stack isQuad = Stack.NONE;
+
+        boolean doQuadBreak = false;
+
         while (!((LinearOpMode) opMode).isStarted() || totalLoops < defaultLoops) {
 
-            infiniteStackRecognitions.add(identifyObjects());
+            isQuad = identifyObjects();
+            if( isQuad == Stack.QUAD && doQuadBreak )
+                break;
+            infiniteStackRecognitions.add(isQuad);
             adjustStackCounts(infiniteStackRecognitions.get(totalLoops), 1);
             if (++totalLoops > defaultLoops) {
                 adjustStackCounts(infiniteStackRecognitions.remove(0), -1);
@@ -130,6 +137,9 @@ public class TensorFlowUtil {
         }
 
         determineStackFromCounts();
+
+        if( isQuad == Stack.QUAD && doQuadBreak )
+            stack = Stack.QUAD;
 
         loopRunTime = opMode.getRuntime() - startTime;
 
@@ -259,7 +269,7 @@ public class TensorFlowUtil {
     }
 
     public void runWhileNotStartedStackDetectionSpeed() {
-        Robot.writeToMatchFile("runWhileNotStartedStackDetectionSpeed()", true);
+//        Robot.writeToMatchFile("runWhileNotStartedStackDetectionSpeed()", true);
 
         startTF();
 
@@ -270,7 +280,7 @@ public class TensorFlowUtil {
 
     public void logAndPrint(String text, boolean includeTimeStamp) {
 
-        Robot.writeToMatchFile(text, includeTimeStamp);
+//        Robot.writeToMatchFile(text, includeTimeStamp);
         opMode.telemetry.addLine(text);
         opMode.telemetry.update();
     }

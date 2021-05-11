@@ -91,7 +91,7 @@ public class RobotTechnicolorRR {
     }
 
     public void logAndPrint( String writeText, boolean includeTimeStamp ) {
-        Robot.writeToMatchFile( writeText, includeTimeStamp );
+//        Robot.writeToMatchFile( writeText, includeTimeStamp );
         addline( writeText );
         updateTelemetry();
     }
@@ -120,7 +120,7 @@ public class RobotTechnicolorRR {
         if(target == FieldMap.ScoringGoals.RED_RIGHT_POWERSHOT)
             omega = 9.0;
         else if (target == FieldMap.ScoringGoals.RED_MIDDLE_POWERSHOT)
-            omega = 9.02;
+            omega = 9.04;
         else
             omega = 9.04;
 

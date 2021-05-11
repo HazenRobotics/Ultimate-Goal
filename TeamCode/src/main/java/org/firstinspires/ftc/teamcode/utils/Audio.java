@@ -19,8 +19,6 @@ public class Audio {
 
     private HardwareMap hardwareMap;
 
-    private Thread playAudio;
-
     public Audio(HardwareMap hw) {
 
         hardwareMap = hw;
@@ -62,20 +60,13 @@ public class Audio {
         }
 
         setMasterVolume( masterSound );
-
-        playAudio = new Thread(() -> {
-            SoundPlayer.getInstance().startPlaying( hardwareMap.appContext, audioID );
-        });
     }
 
     public void play() {
         String textToWrite = (audioFound ? "Successfully played" : "Failed to find & play") + " audio " + audioName;
         Robot.writeToDefaultFile( textToWrite, true, true);
 
-        if(playAudio.isAlive())
-            playAudio.interrupt();
-        else
-            playAudio.start();
+        SoundPlayer.getInstance().startPlaying( hardwareMap.appContext, audioID );
     }
 
     public String getName() {
