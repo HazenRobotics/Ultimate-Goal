@@ -44,23 +44,23 @@ public class RobotTechnicolorRR {
 
     private final double FLY_WHEEL_RADIUS = 4; //in inches
 
-    public static double PUSHED_POSTITION = 0.4 ;
-    public static double RETRACTED_POSTITION = 0.18;
+    public static double PUSHED_POSITION = 0.4 ;
+    public static double RETRACTED_POSITION = 0.18;
 
-    public static double OPEN_POSTITION = 0.6;
-    public static double CLOSED_POSTITION = 1.0;
+    public static double OPEN_POSITION = 0.6;
+    public static double CLOSED_POSITION = 1.0;
 
-    public static double BLOCKED_POSTITION = 0.6;
-    public static double UNBLOCKED_POSTITION = 0.2;
+    public static double BLOCKED_POSITION = 0.6;
+    public static double UNBLOCKED_POSITION = 0.2;
 
     public static boolean REVERSE_LIFT_DIRECTION = false ;
     public static boolean REVERSE_SHOOTER_DIRECTION = false;
 
     public RobotTechnicolorRR(HardwareMap hw, OpMode op) {
         drive = new RRMecanumDriveTechnicolor(hw);
-        goalLift = new GoalLift(hw, OPEN_POSTITION, CLOSED_POSTITION, REVERSE_LIFT_DIRECTION);
-        ringShooter = new RingShooter(hw, FLY_WHEEL_RADIUS, PUSHED_POSTITION, RETRACTED_POSTITION, REVERSE_SHOOTER_DIRECTION);
-        ringBlocker = new RingBlocker(hw, BLOCKED_POSTITION, UNBLOCKED_POSTITION);
+        goalLift = new GoalLift(hw, OPEN_POSITION, CLOSED_POSITION, REVERSE_LIFT_DIRECTION);
+        ringShooter = new RingShooter(hw, FLY_WHEEL_RADIUS, PUSHED_POSITION, RETRACTED_POSITION, REVERSE_SHOOTER_DIRECTION);
+        ringBlocker = new RingBlocker(hw, BLOCKED_POSITION, UNBLOCKED_POSITION );
         tfod = new TensorFlowUtil(hw, op);
         intakeSensor = new IntakeSensor((DcMotorEx)ringShooter.intakeMotor, (LinearOpMode)op);
 
@@ -178,7 +178,7 @@ public class RobotTechnicolorRR {
     }
 
     public static void initTeleop() {
-        OPEN_POSTITION = 0.5;
+        OPEN_POSITION = 0.5;
     }
 
 }

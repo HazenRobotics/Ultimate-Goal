@@ -25,14 +25,14 @@ public class TensorFlowTest extends OpMode {
 
     TensorFlow tensorFlow;
     
-    private double zoom = 1;
+    private double zoom = 2;
     
     @Override
     public void init() {
-    
-        gamepad1 = new GamepadEvents(super.gamepad1);
 
         Robot.createMatchLogFile( this.getClass().getSimpleName() );
+
+        gamepad1 = new GamepadEvents(super.gamepad1);
 
         final String VUFORIA_KEY = hardwareMap.appContext.getResources().getString(R.string.vuforiakey);
         vuforia.setParameters(VUFORIA_KEY, "webcam", true, hardwareMap);
@@ -54,22 +54,24 @@ public class TensorFlowTest extends OpMode {
 
     @Override
     public void loop() {
+
+        telemetry.addLine( "dpad up :: + 0.5" );
+        telemetry.addLine( "dpad down :: - 0.5" );
+        telemetry.addLine( "------------------" );
+        telemetry.addLine( "Zoom :: " + zoom );
+
         if(tensorFlow.getRecognition() != null) {
             Recognition recognition = tensorFlow.getRecognition();
-            //String.for
-            telemetry.addData(String.format("label (%d)", 0), recognition.getLabel());
-            telemetry.addData(String.format("  left,top (%d)", 0), "%.03f , %.03f", recognition.getLeft(), recognition.getTop());
-            telemetry.addData(String.format("  right,bottom (%d)", 0), "%.03f , %.03f", recognition.getRight(), recognition.getBottom());
-        }
-        else {
+            telemetry.addData( String.format("label (%d)", 0), recognition.getLabel() );
+            telemetry.addData( String.format("  left,top (%d)", 0), "%.03f , %.03f", recognition.getLeft(), recognition.getTop() );
+            telemetry.addData( String.format("  right,bottom (%d)", 0), "%.03f , %.03f", recognition.getRight(), recognition.getBottom() );
+        } else
             telemetry.addData("No Recognitions", null);
-        }
-        if( gamepad1.dpad_right.onPress() )
-            zoom += 0.5;
-        else if( gamepad1.dpad_left.onPress() )
-            zoom -= 0.5;
 
-        telemetry.addLine( "Zoom :: " + zoom );
+        if( gamepad1.dpad_up.onPress())
+            zoom += 0.5;
+        else if( gamepad1.dpad_down.onPress() && zoom >= 1)
+            zoom -= 0.5;
 
         tensorFlow.setZoom(zoom, 16.0/9.0);
         gamepad1.update();
@@ -79,9 +81,8 @@ public class TensorFlowTest extends OpMode {
     @Override
     public void stop() {
         tensorFlow.shutdown();
-        if(vuforia.isRunning()) {
+        if(vuforia.isRunning())
             vuforia.close();
-        }
     }
 
 }
