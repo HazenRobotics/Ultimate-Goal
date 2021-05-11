@@ -6,54 +6,65 @@ import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.drives.RRMecanumDriveTechnicolor;
 import org.firstinspires.ftc.teamcode.mechanisms.GoalLift;
+import org.firstinspires.ftc.teamcode.mechanisms.RingBlocker;
 import org.firstinspires.ftc.teamcode.mechanisms.RingShooter;
 import org.firstinspires.ftc.teamcode.utils.FieldMap;
+import org.firstinspires.ftc.teamcode.utils.IntakeSensor;
 import org.firstinspires.ftc.teamcode.utils.SoundLibrary;
 import org.firstinspires.ftc.teamcode.utils.TensorFlowUtil;
 import org.firstinspires.ftc.teamcode.utils.Vuforia;
-import org.firstinspires.ftc.teamcode.utils.VuforiaLocalization;
 import org.jetbrains.annotations.NotNull;
+
+import static org.firstinspires.ftc.teamcode.drives.RRDriveConstantsTechnicolor.MOTOR_VELO_PID;
 
 public class RobotTechnicolorRR {
 
     public RRMecanumDriveTechnicolor drive;
+    public OpMode opMode;
 
     public GoalLift goalLift;
     public RingShooter ringShooter;
+    public RingBlocker ringBlocker;
     public TensorFlowUtil tfod;
 
     private RevBlinkinLedDriver lights;
-    private VoltageSensor batteryVoltageSensor;
+    public VoltageSensor batteryVoltageSensor;
+
+    public IntakeSensor intakeSensor;
 
     private final double FLY_WHEEL_RADIUS = 4; //in inches
 
-    public static double PUSHED_POSTITION = 0.2 ;
-    public static double RETRACTED_POSTITION = 0.0;
+    public static double PUSHED_POSTITION = 0.4 ;
+    public static double RETRACTED_POSTITION = 0.18;
 
-    public static double OPEN_POSTITION = 0.0;
+    public static double OPEN_POSTITION = 0.6;
     public static double CLOSED_POSTITION = 1.0;
+
+    public static double BLOCKED_POSTITION = 0.6;
+    public static double UNBLOCKED_POSTITION = 0.2;
 
     public static boolean REVERSE_LIFT_DIRECTION = false ;
     public static boolean REVERSE_SHOOTER_DIRECTION = false;
-    
-    public static final TensorFlowUtil.Stack STACK_NONE = TensorFlowUtil.Stack.NONE;
-    public static final TensorFlowUtil.Stack STACK_SINGLE = TensorFlowUtil.Stack.SINGLE;
-    public static final TensorFlowUtil.Stack  STACK_QUAD = TensorFlowUtil.Stack.QUAD;
 
     public RobotTechnicolorRR(HardwareMap hw, OpMode op) {
         drive = new RRMecanumDriveTechnicolor(hw);
         goalLift = new GoalLift(hw, OPEN_POSTITION, CLOSED_POSTITION, REVERSE_LIFT_DIRECTION);
         ringShooter = new RingShooter(hw, FLY_WHEEL_RADIUS, PUSHED_POSTITION, RETRACTED_POSTITION, REVERSE_SHOOTER_DIRECTION);
+        ringBlocker = new RingBlocker(hw, BLOCKED_POSTITION, UNBLOCKED_POSTITION);
         tfod = new TensorFlowUtil(hw, op);
+        intakeSensor = new IntakeSensor((DcMotorEx)ringShooter.intakeMotor, (LinearOpMode)op);
+
+        opMode = op;
 
         final String VUFORIA_KEY = hw.appContext.getResources().getString(R.string.vuforiakey);
         Vuforia.getInstance().setParameters(VUFORIA_KEY, "webcam", true, hw);
@@ -62,10 +73,36 @@ public class RobotTechnicolorRR {
         new SoundLibrary(hw);
         //lights = hw.get(RevBlinkinLedDriver.class, "lights");
     }
-    
+
+    public void addline() {
+        addline( "" );
+    }
+
+    public void addline( String writeText ) {
+        opMode.telemetry.addLine( writeText );
+    }
+
+    public void updateTelemetry() {
+        opMode.telemetry.update();
+    }
+
+    public void logAndPrint( String writeText ) {
+        logAndPrint( writeText, false );
+    }
+
+    public void logAndPrint( String writeText, boolean includeTimeStamp ) {
+        Robot.writeToMatchFile( writeText, includeTimeStamp );
+        addline( writeText );
+        updateTelemetry();
+    }
+
+    /**
+     * waits for *delay* milliseconds
+     * @param delay the time to wait in milliseconds
+     */
     public void sleepRobot(long delay) {
-        long setTime = System.currentTimeMillis();
-        while( (System.currentTimeMillis() - setTime)*1000 < (delay) );
+        long startTime = System.currentTimeMillis();
+        while( System.currentTimeMillis() < startTime + delay );
     }
 
     /**
@@ -79,7 +116,15 @@ public class RobotTechnicolorRR {
         //assuming we are now lined up for the shot
         //shoot using velocity required to hit the target
         // backup shoot using power ringShooter.launchRingPower(0.85);
-        ringShooter.launchRingAngularVelocity( 9.3, setSpeedZero, speedUpTime );
+        double omega;
+        if(target == FieldMap.ScoringGoals.RED_RIGHT_POWERSHOT)
+            omega = 9.0;
+        else if (target == FieldMap.ScoringGoals.RED_MIDDLE_POWERSHOT)
+            omega = 9.02;
+        else
+            omega = 9.04;
+
+        ringShooter.launchRingAngularVelocity( omega, setSpeedZero, speedUpTime ); // was 9.3
         //ringShooter.launchRingVelocity(ShootingMath.getVelocityToTarget(FieldMap.RobotInfo.getRingLaunchPointPosition().toVector(), target.toVector(), ringShooter.getLaunchAngle()), DistanceUnit.MM);
     }
 
@@ -110,6 +155,7 @@ public class RobotTechnicolorRR {
     }
 
     public void drive(Trajectory trajectory) {
+        drive.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, MOTOR_VELO_PID);
         drive.followTrajectory(trajectory);
     }
 
@@ -121,7 +167,7 @@ public class RobotTechnicolorRR {
         drive.setPoseEstimate(currentPosition);
     }
 
-    public void teleopDrive(double forwardPower, double strafePower, double turnPower) {
+    public void teleOpDrive(double forwardPower, double strafePower, double turnPower) {
         // You might have to play with the + or - depending on how your motors are installed
         double frontLeftPower  = forwardPower + strafePower - turnPower;
         double backLeftPower   = forwardPower - strafePower - turnPower;
@@ -129,6 +175,10 @@ public class RobotTechnicolorRR {
         double backRightPower  = forwardPower + strafePower + turnPower;
 
         drive.setMotorPowers( frontLeftPower, backLeftPower, backRightPower, frontRightPower );
+    }
+
+    public static void initTeleop() {
+        OPEN_POSTITION = 0.5;
     }
 
 }

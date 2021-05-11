@@ -16,7 +16,7 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
  * and op modes themselves.
  */
 @Config
-public class RRDriveConstantsTechnicolor {
+public class  RRDriveConstantsTechnicolor {
 
     /*
      * These are motor constants that should be listed online for your motors.
@@ -34,7 +34,8 @@ public class RRDriveConstantsTechnicolor {
      * Set the value of MOTOR_VELO_PID to `new PIDCoefficients(kP, kI, kD);`
      */
     public static final boolean RUN_USING_ENCODER = true;
-    public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(19, 0, 1, 14.37044936057213);
+    public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(18, 0, 10, 15.75); // was 19, 0, 1, 14.8
+
 
     /*
      * These are physical constants that can be determined from your robot (including the track
@@ -54,6 +55,9 @@ public class RRDriveConstantsTechnicolor {
      * motor encoders or have elected not to use them for velocity control, these values should be
      * empirically tuned.
      */
+    /*public static double kV = 0.0165;
+    public static double kA = 0.005;
+    public static double kStatic = 0.01;*/
     public static double kV = 1.0 / rpmToVelocity(MAX_RPM);
     public static double kA = 0;
     public static double kStatic = 0;
@@ -65,10 +69,10 @@ public class RRDriveConstantsTechnicolor {
      * small and gradually increase them later after everything is working. All distance units are
      * inches.
      */
-    public static double MAX_VEL = 0.95 * 67.03387219453849; // calculated using MaxVelocityTuner.java
-    public static double MAX_ACCEL = 50; // 40
-    public static double MAX_ANG_VEL = Math.toRadians(70);
-    public static double MAX_ANG_ACCEL = Math.toRadians(40);
+    public static double MAX_VEL = 45; // calculated using MaxVelocityTuner.java // was 50
+    public static double MAX_ACCEL = 35; // was 40
+    public static double MAX_ANG_VEL = Math.toRadians(70); // was 70
+    public static double MAX_ANG_ACCEL = Math.toRadians(40); // was 40
 
 
     public static double encoderTicksToInches(double ticks) {

@@ -138,7 +138,7 @@ public class FieldMap {
     //Robot information
     public static class RobotInfo {
         //camera position in relation to the center of the robot
-        private static final float CAMERA_FORWARD_DISPLACEMENT = 9.5f * mmPerInch, CAMERA_LEFT_DISPLACEMENT = -6f * mmPerInch, CAMERA_VERTICAL_DISPLACEMENT = 4f * mmPerInch;
+        private static final float CAMERA_FORWARD_DISPLACEMENT = 8.5f * mmPerInch, CAMERA_LEFT_DISPLACEMENT = 5.5f * mmPerInch, CAMERA_VERTICAL_DISPLACEMENT = 4.75f * mmPerInch;
         private static final float CAMERA_Y_ROTATE = -90f, CAMERA_Z_ROTATE = 0f, CAMERA_X_ROTATE = 0f;
         public static final OpenGLMatrix CAMERA_FROM_ROBOT = OpenGLMatrix
                 .translation(CAMERA_FORWARD_DISPLACEMENT, CAMERA_LEFT_DISPLACEMENT, CAMERA_VERTICAL_DISPLACEMENT)
@@ -205,6 +205,9 @@ public class FieldMap {
 
     public static Pose2d toPose2d(VectorF point, Orientation heading){
 
+        if(point == null || heading == null) {
+            return null;
+        }
         double headingVal = heading.thirdAngle;
         return new Pose2d(point.get(0) * inchPerMM, point.get(1) * inchPerMM, Math.toRadians(headingVal));
     }

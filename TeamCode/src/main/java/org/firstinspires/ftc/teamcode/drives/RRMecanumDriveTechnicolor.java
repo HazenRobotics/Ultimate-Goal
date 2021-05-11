@@ -63,10 +63,10 @@ import static org.firstinspires.ftc.teamcode.drives.RRDriveConstantsTechnicolor.
  */
 @Config
 public class RRMecanumDriveTechnicolor extends MecanumDrive {
-    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(4, 0, 0);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(3, 0, 0);
+    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(3, 0, 0);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(4, 0, 0);
 
-    public static double LATERAL_MULTIPLIER = 1.26;
+    public static double LATERAL_MULTIPLIER = 1.38;
 
     public static double VX_WEIGHT = 3;
     public static double VY_WEIGHT = 3;
@@ -103,7 +103,6 @@ public class RRMecanumDriveTechnicolor extends MecanumDrive {
 
     private Pose2d lastPoseOnTurn;
 
-
     public RRMecanumDriveTechnicolor(HardwareMap hardwareMap) {
         super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
 
@@ -123,7 +122,7 @@ public class RRMecanumDriveTechnicolor extends MecanumDrive {
         ));
         accelConstraint = new ProfileAccelerationConstraint(MAX_ACCEL);
         follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
-                new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.5);
+                new Pose2d(0.5, 0.5, Math.toRadians(1.5)), 0.5);
 
         poseHistory = new LinkedList<>();
 
@@ -211,7 +210,12 @@ public class RRMecanumDriveTechnicolor extends MecanumDrive {
     }
 
     public void turnToAsync(double angle) {
-        turnAsync(angle - getPoseEstimate().getHeading());
+        double heading = getPoseEstimate().getHeading();
+        turnAsync(angle - heading);
+    }
+
+    public double getHeading() {
+        return imu.getAngularHeading();
     }
 
     public void turnTo(double angle) {

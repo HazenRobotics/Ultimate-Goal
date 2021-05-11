@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.utils.ShootingMath;
 import org.firstinspires.ftc.teamcode.utils.SoundLibrary;
@@ -18,7 +19,7 @@ import org.firstinspires.ftc.teamcode.utils.SoundLibrary;
  */
 public class RingShooter {
 
-    private DcMotor intakeMotor;
+    public DcMotor intakeMotor;
 
     public DcMotorEx leftFlyWheelMotor;
     public DcMotorEx rightFlyWheelMotor;
@@ -30,8 +31,8 @@ public class RingShooter {
     private double flyWheelRadius;
     private static double launchAngle = 35; // degrees
 
-    private static final double RING_PUSH_TIME = 800; // milliseconds
-    private static final double RING_RETRACT_TIME = 500;
+    private static final double RING_PUSH_TIME = 150; // milliseconds
+    private static final double RING_RETRACT_TIME = 150;
 
     public enum PusherPosition {
         PUSHED,
@@ -80,6 +81,8 @@ public class RingShooter {
 
         intakeMotor = hw.dcMotor.get(intakeMotorName);
 
+        intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+
         leftFlyWheelMotor = hw.get(DcMotorEx.class, leftFlyWheelName);
         rightFlyWheelMotor = hw.get(DcMotorEx.class, rightFlyWheelName);
 
@@ -124,6 +127,26 @@ public class RingShooter {
     public void setFlyWheelMotorVelocity(double velocity, AngleUnit angleUnit) {
         leftFlyWheelMotor.setVelocity(velocity, angleUnit);
         rightFlyWheelMotor.setVelocity(velocity, angleUnit);
+    }
+
+    /**
+     * Sets velocity for the motor to run at
+     *
+     * @param velocity  target velocity
+     * @param angleUnit unit in which the input velocity is given, in units/second
+     */
+    public void setSingleFlyWheelMotorVelocity(double velocity, AngleUnit angleUnit) {
+        leftFlyWheelMotor.setVelocity(velocity, angleUnit);
+        rightFlyWheelMotor.setVelocity(velocity, angleUnit);
+
+        if( leftFlyWheelMotor.getVelocity() > 0.01 && leftFlyWheelMotor.getVelocity() < 0.01 ) {
+            leftFlyWheelMotor.setPower( rightFlyWheelMotor.getPower() );
+            rightFlyWheelMotor.setPower( rightFlyWheelMotor.getPower() );
+        } else if( rightFlyWheelMotor.getVelocity() > 0.01 && rightFlyWheelMotor.getVelocity() < 0.01 ) {
+            rightFlyWheelMotor.setPower( leftFlyWheelMotor.getPower() );
+            leftFlyWheelMotor.setPower( leftFlyWheelMotor.getPower() );
+        }
+
     }
 
     /**
@@ -181,6 +204,9 @@ public class RingShooter {
         while (System.currentTimeMillis() < currentTime + speedUpTime);
 
         pushRingTime();
+
+
+
         if (setPowerZero)
             setFlyWheelMotorVelocity(0, AngleUnit.RADIANS);
     }
@@ -235,7 +261,20 @@ public class RingShooter {
         long currentTime = System.currentTimeMillis();
         while (System.currentTimeMillis() < currentTime + RING_PUSH_TIME);
         setPusherPosition(PusherPosition.RETRACTED);
+        currentTime = System.currentTimeMillis();
         while (System.currentTimeMillis() < currentTime + RING_RETRACT_TIME);
+    }
+
+
+
+    public void pushRingTime( double pushTime, double retractTime ) {
+        setPusherPosition(PusherPosition.PUSHED);
+        SoundLibrary.playRandomPew(); // play a random pew sound
+        long currentTime = System.currentTimeMillis();
+        while (System.currentTimeMillis() < currentTime + pushTime);
+        setPusherPosition(PusherPosition.RETRACTED);
+        currentTime = System.currentTimeMillis();
+        while (System.currentTimeMillis() < currentTime + retractTime);
     }
 
     public void pushRingPosition() {
@@ -271,13 +310,21 @@ public class RingShooter {
         return intakeMotor.getPower();
     }
 
-    public double getFlyWheelPower() {
-        return leftFlyWheelMotor.getPower();
+    public double getFlyWheelPower( boolean getLeftFlyWheel ) {
+        return getLeftFlyWheel ? leftFlyWheelMotor.getPower() : rightFlyWheelMotor.getVelocity();
+    }
+
+    public double getFlyWheelVelocity( boolean getLeftFlyWheel ) {
+        return getLeftFlyWheel ? leftFlyWheelMotor.getVelocity( AngleUnit.RADIANS ) : rightFlyWheelMotor.getVelocity( AngleUnit.RADIANS );
     }
 
     public void setFlyWheelPID( PIDFCoefficients coeffs ) {
 
         leftFlyWheelMotor.setVelocityPIDFCoefficients(coeffs.p, coeffs.i, coeffs.d, coeffs.f);
         rightFlyWheelMotor.setVelocityPIDFCoefficients(coeffs.p, coeffs.i, coeffs.d, coeffs.f);
+    }
+
+    public double getIntakeCurrent() {
+        return ((DcMotorEx)intakeMotor).getCurrent(CurrentUnit.AMPS);
     }
 }

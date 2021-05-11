@@ -26,7 +26,7 @@ public class RobotClapper extends Robot {
 
         //wait for certain amount of time while motors are running
         long setTime = System.currentTimeMillis();
-        previousTime = opMode.getRuntime();
+        //previousTime = opMode.getRuntime();
 
         while(System.currentTimeMillis() - setTime < (time) && opModeIsActive()) {
             //drive.driveOmni( power, 0, 0 );
@@ -51,7 +51,7 @@ public class RobotClapper extends Robot {
 
         //wait for certain amount of time while motors are running
         long setTime = System.currentTimeMillis();
-        previousTime = opMode.getRuntime();
+        //previousTime = opMode.getRuntime();
 
         while(System.currentTimeMillis() - setTime < (time) && opModeIsActive()) {
             //drive.driveOmni( 0, power, 0 );
@@ -77,7 +77,7 @@ public class RobotClapper extends Robot {
         //wait for certain amount of time while motors are running
         //robotMecanum.wait(time);
         long setTime = System.currentTimeMillis();
-        previousTime = opMode.getRuntime();
+        //previousTime = opMode.getRuntime();
 
         while(System.currentTimeMillis() - setTime < (time) && opModeIsActive()) {
             //drive.driveOmni( 0, 0, power );
@@ -106,7 +106,7 @@ public class RobotClapper extends Robot {
         //wait for certain amount of time while motors are running
         //robotMecanum.wait(time);
         long setTime = System.currentTimeMillis();
-        previousTime = opMode.getRuntime();
+        //previousTime = opMode.getRuntime();
 
         while(System.currentTimeMillis() - setTime < (time) && opModeIsActive())
         {

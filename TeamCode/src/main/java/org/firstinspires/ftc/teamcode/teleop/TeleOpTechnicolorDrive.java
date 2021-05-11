@@ -1,12 +1,16 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.mechanisms.GoalLift;
+import org.firstinspires.ftc.teamcode.mechanisms.RingShooter;
 import org.firstinspires.ftc.teamcode.robots.Robot;
 import org.firstinspires.ftc.teamcode.robots.RobotTechnicolorRR;
+import org.firstinspires.ftc.teamcode.utils.FieldMap;
 import org.firstinspires.ftc.teamcode.utils.GamepadEvents;
 import org.firstinspires.ftc.teamcode.utils.SoundLibrary;
 
@@ -21,11 +25,11 @@ public class TeleOpTechnicolorDrive extends LinearOpMode {
     final double SHOOTER_POWER = 0.85;
     final double INTAKE_POWER = 1.0;
 
-    final double MAX_DRIVE_SPEED = 0.8;
-    final double MIN_DRIVE_SPEED = 0.4;
+    final double MAX_DRIVE_SPEED = 1.0;
+    final double MIN_DRIVE_SPEED = 0.7;
 
-    final double MAX_TURN_SPEED = 0.35;
-    final double MIN_TURN_SPEED = 0.2;
+    final double MAX_TURN_SPEED = 0.65;
+    final double MIN_TURN_SPEED = 0.4;
 
     final long LIFT_TIME_LIMIT = 500;
     final long LOWER_TIME_LIMIT = 500;
@@ -33,15 +37,17 @@ public class TeleOpTechnicolorDrive extends LinearOpMode {
     private double driveMult = MIN_DRIVE_SPEED;
     private double turnMult = MIN_TURN_SPEED;
 
-    double velocity = 9.25 ;
+    double velocity = 10;
     double velocityChange = 0.25;
     double velocitySmallChange = 0.1;
 
-    double maxVelocity = 10.5;
-    double minVelocity = 9.25;
+    double maxVelocity = 9.9;
+    double minVelocity = 9.35;
 
     private GamepadEvents gamepad1;
     private GamepadEvents gamepad2;
+
+    private Thread shootPowershotThread;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -52,8 +58,23 @@ public class TeleOpTechnicolorDrive extends LinearOpMode {
 
         SoundLibrary.playStartup();
 
+        robot.ringShooter.setPusherPosition(Robot.PUSHER_RETRACTED);
+        robot.goalLift.setClawPosition(Robot.CLAW_OPEN);
+
         gamepad1 = new GamepadEvents(super.gamepad1);
         gamepad2 = new GamepadEvents(super.gamepad2);
+
+        shootPowershotThread = new Thread(() -> {
+            robot.setPosition(new Pose2d(0, 14, 0)); // 61, 14 if the robot is 18" wide: 70.125-robotwidth/2, 23.125-robotwidth/2
+            robot.driveAsync(robot.trajectoryBuilder().lineToLinearHeading(new Pose2d(-13, -5, 0)).build());
+            robot.ringShooter.setFlyWheelMotorVelocity(9.25, AngleUnit.RADIANS);
+            robot.drive.waitForIdle();
+            robot.shootAtTarget(FieldMap.ScoringGoals.RED_LEFT_POWERSHOT, false, false);
+            robot.drive(robot.trajectoryBuilder().lineTo(new Vector2d(-13, -12.5)).build());
+            robot.shootAtTarget(FieldMap.ScoringGoals.RED_MIDDLE_POWERSHOT, false, false);
+            robot.drive(robot.trajectoryBuilder().lineTo(new Vector2d(-13, -19)).build());
+            robot.shootAtTarget(FieldMap.ScoringGoals.RED_RIGHT_POWERSHOT, true, false);
+        });
 
         Robot.writeToMatchFile( "Initialization Complete", true );
 
@@ -68,13 +89,21 @@ public class TeleOpTechnicolorDrive extends LinearOpMode {
             driveMult = gamepad1.left_stick_button.getValue() ? MAX_DRIVE_SPEED : MIN_DRIVE_SPEED;
             turnMult = gamepad1.right_stick_button.getValue() ? MAX_TURN_SPEED : MIN_TURN_SPEED;
 
-                robot.teleopDrive(-gamepad1.left_stick_y*driveMult, gamepad1.left_stick_x*driveMult, -gamepad1.right_stick_x*turnMult);
-
+            if(!shootPowershotThread.isAlive()) {
+                robot.teleOpDrive(-gamepad1.left_stick_y*driveMult, gamepad1.left_stick_x*driveMult, -gamepad1.right_stick_x*turnMult);
+            }
 
             if( gamepad2.y.onPress() )
                 velocity = maxVelocity;
             else if( gamepad2.a.onPress() )
                 velocity = minVelocity;
+
+            /*
+            if( gamepad2.x.onPress() )
+                robot.ringBlocker.setBlockerPositionAsync( Robot.BLOCKER_BLOCKED );
+            else if( gamepad2.b.onPress() )
+                robot.ringBlocker.setBlockerPositionAsync( Robot.BLOCKER_RETRACTED );
+             */
 
             // increases and decreases the velocity of the flyWheels
             if( gamepad1.dpad_up.onPress() || gamepad2.dpad_up.onPress() )
@@ -123,7 +152,9 @@ public class TeleOpTechnicolorDrive extends LinearOpMode {
             }
 
             // ring shooter = gamepad1.right_trigger
-            robot.ringShooter.setFlyWheelMotorVelocity( (gamepad1.right_trigger + gamepad2.right_trigger)*velocity, AngleUnit.RADIANS );
+            if(!shootPowershotThread.isAlive()) {
+                robot.ringShooter.setFlyWheelMotorVelocity( (gamepad1.right_trigger.getTriggerValue() + gamepad2.right_trigger.getTriggerValue())*velocity, AngleUnit.RADIANS );
+            }
             //robot.ringShooter.setFlyWheelMotorPower( gamepad1.right_trigger*SHOOTER_POWER );
 
             // ring pusher (servo) = gamepad1.left_bumper
@@ -134,15 +165,22 @@ public class TeleOpTechnicolorDrive extends LinearOpMode {
             // intake = gamepad1.left_trigger
             if(gamepad1.right_bumper.onPress() || gamepad2.right_bumper.onPress())
                 robot.ringShooter.setIntakeMotorPower( robot.ringShooter.getIntakePower() > 0 ? 0 : INTAKE_POWER);
-            else if(gamepad1.left_trigger > 0.2 || gamepad2.left_trigger > 0.2)
+            else if(gamepad1.left_trigger.getTriggerValue() > 0.2 || gamepad2.left_trigger.getTriggerValue() > 0.2)
                 robot.ringShooter.setIntakeMotorPower(-INTAKE_POWER);
-            //robot.ringShooter.setIntakeMotorPower( gamepad1.left_trigger*INTAKE_POWER );
+            // robot.ringShooter.setIntakeMotorPower( gamepad1.left_trigger*INTAKE_POWER );
 
-            //addMotorInfoTelemtry();
+            if(gamepad1.back.onPress()) {
+                if(shootPowershotThread.isAlive())
+                    shootPowershotThread.interrupt();
+                else
+                    shootPowershotThread.start();
+            }
+
+            addMotorInfoTelemetry();
 
             // addControlTelemtry();
 
-            addDriveMotorTelemetry();
+            // addDriveInfoTelemetry();
 
             telemetry.update();
             gamepad1.update();
@@ -150,16 +188,8 @@ public class TeleOpTechnicolorDrive extends LinearOpMode {
         }
     }
 
-    public void addDriveMotorTelemetry() {
 
-        List<Double> positions = robot.drive.getWheelPositions();
-        List<Double> velocities = robot.drive.getWheelVelocities();
-        for( int i = 0; i < positions.size(); i++)
-            telemetry.addLine( " motor " + i + " :: " + positions.get(i) + " ticks, " + velocities.get(i) + " ticks/s" );
-    }
-
-
-    public void addControlTelemtry() {
+    public void addControlTelemetry() {
 
         telemetry.addLine("            Controls:");
         telemetry.addData("Drive ", "Gp1: left stick y (axis)")
@@ -194,7 +224,7 @@ public class TeleOpTechnicolorDrive extends LinearOpMode {
         telemetry.addLine( "Lift Position = " + robot.goalLift.getCurrentLiftPosition() + " :: " + robot.goalLift.getLiftPower() );
         addLine();
 
-        telemetry.addLine( "Shooter Power = " + robot.ringShooter.getFlyWheelPower() );
+        telemetry.addLine( "Average Shooter Power = " + (robot.ringShooter.getFlyWheelPower(true)+robot.ringShooter.getFlyWheelPower(false))/2 );
         addLine();
 
         telemetry.addLine( "Pusher Position = " + robot.ringShooter.getPusherLocation() + " :: " + robot.ringShooter.getPusherPosition() );
@@ -212,7 +242,7 @@ public class TeleOpTechnicolorDrive extends LinearOpMode {
         telemetry.addLine();
     }
 
-    public void addMotorInfoTelemtry() {
+    public void addMotorInfoTelemetry() {
 
         //(leftFront, leftRear, rightRear, rightFront)
 
@@ -233,6 +263,26 @@ public class TeleOpTechnicolorDrive extends LinearOpMode {
         telemetry.addData( "rightFront", "Vel 3: " + velocities.get( 3 ) );
 
         addLine();
+
+    }
+
+    public void addDriveInfoTelemetry() {
+
+        telemetry.addLine( "Gp1: left_stick_x :: " + gamepad1.left_stick_x );
+        telemetry.addLine( "Gp1: left_stick_y :: " + gamepad1.left_stick_y );
+        telemetry.addLine( "Gp1: right_stick_y :: " + gamepad1.right_stick_y );
+
+        addLine();
+
+        telemetry.addLine( "drive multiplier " + driveMult );
+        telemetry.addLine( "turn multiplier " + turnMult );
+
+        addLine();
+
+        telemetry.addLine( "drive input :: " + -gamepad1.left_stick_y*driveMult );
+        telemetry.addLine( "strafe input :: " + gamepad1.left_stick_x*driveMult );
+        telemetry.addLine( "rotate input :: " + -gamepad1.right_stick_x*turnMult );
+
 
     }
 

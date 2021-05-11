@@ -1,0 +1,24 @@
+Ctrl + A                :: Select All
+Ctrl + C                :: Copy
+Ctrl + X                :: Cut
+Ctrl + V                :: Paste
+Ctrl + S                :: Save
+Ctrl + Alt + S          :: Settings
+(Double tap) Ctrl       :: Run anything
+Ctrl + /                :: Comment line(s) out
+Ctrl + shift + /        :: Comment selected out
+Ctrl + Alt + L          :: Auto - indent code
+Shift + F6              :: Rename
+Ctrl + R                :: Find and replace
+Ctrl + F                :: Find in window
+Ctrl + Shift + F        :: Find in project
+Shift + Tab             :: Backwards tab
+Alt + 1                 :: Open project files
+Ctrl + Space            :: Code Completion
+Alt + Enter             :: Context Actions
+Shift + F10             :: Run TeamCode
+Shift + F9              :: Debug TeamCode
+Ctrl + Alt + Shift + T  :: Refactor Options
+Ctrl + T                :: Pull/Update
+Ctrl + K                :: Commit
+Ctrl + Shift + K        :: Push

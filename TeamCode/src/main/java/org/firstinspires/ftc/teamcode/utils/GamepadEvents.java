@@ -5,6 +5,10 @@ import android.view.MotionEvent;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * A gampad class that can access button events
  */
@@ -112,12 +116,12 @@ public class GamepadEvents {
     /**
      * left trigger
      */
-    public float left_trigger = 0f;
+    public Trigger left_trigger = new Trigger(0.5);
 
     /**
      * right trigger
      */
-    public float right_trigger = 0f;
+    public Trigger right_trigger = new Trigger(0.5);
 
     /**
      * PS4 Support - Circle
@@ -159,7 +163,9 @@ public class GamepadEvents {
      */
     public GamepadButton ps = new GamepadButton();
 
+    private final List<GamepadButton> buttons = new ArrayList<>(Arrays.asList(dpad_up, dpad_down, dpad_left, dpad_right, a, b, x, y, guide, start, back, left_bumper, right_bumper, left_stick_button, right_stick_button, circle, cross, triangle, square, share, options, touchpad, ps));
 
+    private boolean isLocked = false;
 
     public GamepadEvents ( Gamepad gamepad ) {
         this.gamepad = gamepad;
@@ -169,12 +175,22 @@ public class GamepadEvents {
      * Updates the button states from the gamepad
      */
     public void update() {
+        if(isLocked) {
+            left_stick_x = 0;
+            left_stick_y = 0;
+            right_stick_x = 0;
+            right_stick_y = 0;
+            left_trigger.update(0);
+            right_trigger.update(0);
+            return;
+        }
+
         left_stick_x = gamepad.left_stick_x;
         left_stick_y = gamepad.left_stick_y;
         right_stick_x = gamepad.right_stick_x;
         right_stick_y = gamepad.right_stick_y;
-        left_trigger = gamepad.left_trigger;
-        right_trigger = gamepad.right_trigger;
+        left_trigger.update(gamepad.left_trigger);
+        right_trigger.update(gamepad.right_trigger);
         dpad_down.update(gamepad.dpad_down);
         dpad_up.update(gamepad.dpad_up);
         dpad_right.update(gamepad.dpad_right);
@@ -195,17 +211,77 @@ public class GamepadEvents {
         right_stick_button.update(gamepad.right_stick_button);
     }
 
+    /**
+     * Locks a specific button
+     * @param button the button to lock
+     */
+    public void lockButton( GamepadButton button ) {
+        buttons.get(buttons.indexOf(button)).lockButton();
+    }
+
+    /**
+     * Locks all buttons
+     */
+    public void lockButtons() {
+        for(GamepadButton button : buttons) {
+            button.lockButton();
+        }
+    }
+
+    /**
+     * Unlocks a specific button
+     * @param button the button to unlock
+     */
+    public void unlockButton( GamepadButton button ) {
+        buttons.get(buttons.indexOf(button)).unlockButton();
+    }
+
+    /**
+     * Unlocks all buttons
+     */
+    public void unlockButtons() {
+        for(GamepadButton button : buttons) {
+            button.unlockButton();
+        }
+    }
+
+    /**
+     * Locks the controller from user interaction
+     */
+    public void lockController() {
+        isLocked = true;
+        lockButtons();
+    }
+
+    /**
+     * Unlocks the controller, allowing user interaction
+     */
+    public void unlockController() {
+        isLocked = false;
+        unlockButtons();
+    }
+
+    /**
+     * Tells whether the controller is locked or not
+     * @return the controller's current lock state
+     */
+    public boolean isLocked() {
+        return isLocked;
+    }
 
 
-    public class GamepadButton {
+
+    public static class GamepadButton {
         private boolean value;
         private boolean previous;
         private long pressedTime;
         private long heldTime;
+        private boolean isLocked;
 
         public GamepadButton() {
             previous = false;
             value = false;
+            isLocked = false;
         }
 
 
@@ -260,15 +336,50 @@ public class GamepadEvents {
          */
         void update( boolean value) {
             this.previous = this.value;
-            this.value = value;
-            if(value == true) {
+            this.value = !isLocked && value;
+            if(this.value == true && pressedTime > 0) {
                 heldTime = System.currentTimeMillis() - pressedTime;
             } else {
                 heldTime = 0;
                 pressedTime = 0;
             }
         }
+
+        /**
+         * Makes the button always return false
+         */
+        void lockButton() {
+            isLocked = true;
+        }
+
+        /**
+         * Allows the button to return normal values
+         */
+        void unlockButton() {
+            isLocked = false;
+        }
     }
 
+    public static class Trigger extends GamepadButton {
+        private double triggerValue;
+        private double pressTolerance;
+        public Trigger(double pressTolerance) {
+            super();
+            this.pressTolerance = pressTolerance;
+        }
 
+        void update(double value) {
+            super.update(value > pressTolerance);
+            triggerValue = value;
+        }
+
+        public void setPressTolerance(double newPressTolerance) {
+            pressTolerance = newPressTolerance;
+        }
+
+        public double getTriggerValue() {
+            return triggerValue;
+        }
+
+    }
 }
