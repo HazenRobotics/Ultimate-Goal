@@ -46,8 +46,8 @@ public class TeleOpTechnicolor extends LinearOpMode {
     double velocityChange = 0.25;
     double velocitySmallChange = 0.1;
 
-    double maxVelocity = 9.9;
-    double minVelocity = 9.5;
+    double maxVelocity = 10.9;
+    double minVelocity = 9.65;
 
     boolean isPickingUpRing = false;
     boolean isRingStuck = false;
@@ -111,11 +111,11 @@ public class TeleOpTechnicolor extends LinearOpMode {
             telemetry.addData("Flywheel Velocity", robot.ringShooter.getFlyWheelVelocity(false));
             telemetry.update();
             robot.shootAtTarget(FieldMap.ScoringGoals.RED_MIDDLE_POWERSHOT, false, false);
-            robot.drive.turn(Math.toRadians(5));
+            robot.drive.turn(Math.toRadians(6));
             telemetry.addData("Angle", robot.drive.getExternalHeading());
             telemetry.addData("Flywheel Velocity", robot.ringShooter.getFlyWheelVelocity(false));
             telemetry.update();
-            robot.shootAtTarget(FieldMap.ScoringGoals.RED_LEFT_POWERSHOT, true, false);
+            robot.shootAtTarget(FieldMap.ScoringGoals.RED_LEFT_POWERSHOT, false, false);
 
 //          ringCounter = 0;
         });
@@ -218,7 +218,7 @@ public class TeleOpTechnicolor extends LinearOpMode {
             //robot.ringShooter.pushRingTimeAsync();
 
             if( gamepad2.right_trigger.onPress() )
-                robot.ringShooter.setFlyWheelMotorVelocity( robot.ringShooter.getFlyWheelVelocity(true) > 0 ? 0 : velocity, AngleUnit.RADIANS );
+                robot.ringShooter.setFlyWheelMotorVelocity( robot.ringShooter.getFlyWheelPower(true) > 0 ? 0 : velocity, AngleUnit.RADIANS );
 
             // intake -> right_bumper = INTAKE_POWER, left_bumper = -INTAKE_POWER
             if (gamepad1.right_bumper.onPress() || gamepad2.right_bumper.onPress())
@@ -265,20 +265,20 @@ public class TeleOpTechnicolor extends LinearOpMode {
                 robot.ringShooter.setFlyWheelMotorVelocity(0, AngleUnit.RADIANS);
                 //robot.ringShooter.setIntakeMotorPower(1);
             }*/
-/*
-            if (robot.intakeSensor.isRingStuck() && !isRingStuck) {
+            /*if (robot.intakeSensor.isRingStuck() && !isRingStuck) {
                 robot.ringShooter.setIntakeMotorPower(-1);
                 isRingStuck = true;
             } else if (!robot.intakeSensor.isRingStuck() && isRingStuck) {
                 isRingStuck = false;
+                robot.ringShooter.setIntakeMotorPower(1);
             }*/
 
-            telemetry.addLine("Left Fly Wheel Velocity  = " + robot.ringShooter.getFlyWheelVelocity(true));
-            telemetry.addLine("Right Fly Wheel Velocity = " + robot.ringShooter.getFlyWheelVelocity(false));
+//            telemetry.addLine("Left Fly Wheel Velocity  = " + robot.ringShooter.getFlyWheelVelocity(true));
+//            telemetry.addLine("Right Fly Wheel Velocity = " + robot.ringShooter.getFlyWheelVelocity(false));
 
 //            telemetry.addData("Number of Rings", ringCounter);
 
-            telemetry.addData("Intake Current Draw", robot.intakeSensor.getCurrent(CurrentUnit.AMPS));
+//            telemetry.addData("Intake Current Draw", robot.intakeSensor.getCurrent(CurrentUnit.AMPS));
 
             //telemetry.addData("Vuforia Position", FieldMap.toPose2d(vuforiaLocalizer.getRobotPosition(), vuforiaLocalizer.getRobotRotation()));
 

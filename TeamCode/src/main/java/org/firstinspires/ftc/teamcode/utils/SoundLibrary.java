@@ -60,7 +60,7 @@ public class SoundLibrary {
         audioList.add( new Audio("slurp_yummy", 1, hardwareMap) );
         audioList.add( new Audio("fine_addition", 1, hardwareMap) );
         audioList.add( new Audio("have_hulk", hardwareMap) );
-        audioList.add( new Audio("hello_there", hardwareMap) );
+        audioList.add( new Audio("hello_there_startup", hardwareMap) );
         audioList.add( new Audio("my_precious", hardwareMap) );
         audioList.add( new Audio("falcon_punch_smash", hardwareMap) );
         audioList.add( new Audio("seismic_charge_smash", hardwareMap) );

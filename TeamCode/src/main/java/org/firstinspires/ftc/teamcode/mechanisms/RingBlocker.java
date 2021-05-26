@@ -23,9 +23,6 @@ public class RingBlocker {
     private double blockedPosition;
     private double retractedPosition;
 
-    private static final double RING_PUSH_TIME = 800; // milliseconds
-    private static final double RING_RETRACT_TIME = 800;
-
     public enum BlockerPosition {
         BLOCKED,
         RETRACTED
@@ -46,7 +43,7 @@ public class RingBlocker {
         this.retractedPosition = retractedPosition;
     }
 
-    public void setNumericalBlockerPosition( double position ) {
+    public void setBlockerPosition( double position ) {
         blocker.setPosition( position );
     }
 
@@ -54,17 +51,17 @@ public class RingBlocker {
         switch (position) {
             case BLOCKED:
                 blockerPosition = BlockerPosition.BLOCKED;
-                setNumericalBlockerPosition(blockedPosition);
+                setBlockerPosition(blockedPosition);
                 break;
             case RETRACTED:
                 blockerPosition = BlockerPosition.RETRACTED;
-                setNumericalBlockerPosition(retractedPosition);
+                setBlockerPosition(retractedPosition);
                 break;
         }
     }
 
-    public void setNumericalBlockerPositionAsync( double position ) {
-        new Thread(() -> setNumericalBlockerPosition( position )).start();
+    public void setBlockerPositionAsync( double position ) {
+        new Thread(() -> setBlockerPosition( position )).start();
     }
 
     public void setBlockerPositionAsync( BlockerPosition position ) {
