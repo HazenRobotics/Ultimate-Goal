@@ -13,8 +13,8 @@ import org.firstinspires.ftc.teamcode.road_runner.util.Encoder;
 
 @TeleOp(name="TeleOpBasics", group="teleop")
 @Disabled
-public class TeleOpBasics extends OpMode
-{
+public class TeleOpBasics extends OpMode {
+
     DcMotor frontLeftMotor;
     DcMotor frontRightMotor;
     DcMotor backLeftMotor;
@@ -30,8 +30,8 @@ public class TeleOpBasics extends OpMode
     Encoder perpendicularEncoder;
 
     @Override
-    public void init()
-    {
+    public void init() {
+
         //Wheels
         frontLeftMotor = hardwareMap.dcMotor.get("frontLeft");
         frontRightMotor = hardwareMap.dcMotor.get("frontRight");
@@ -57,16 +57,13 @@ public class TeleOpBasics extends OpMode
     }
 
     @Override
-    public void loop()
-    {
+    public void loop() {
 
         telemetry.addData("              Controls", "   ");
         telemetry.addData("Drive", "Gp1: left stick y (axis)");
         telemetry.addData("Strafe", "Gp1: left stick x (axis)");
         telemetry.addData("Rotate", "Gp1: right stick x (axis)");
         telemetry.addLine();
-
-
 
         //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
         //driving
